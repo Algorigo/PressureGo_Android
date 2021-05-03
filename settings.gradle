@@ -1,0 +1,3 @@
+include ':pressurego'
+include ':app'
+rootProject.name = "PressureGoApp"
