@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PressureGoApp</string>
+
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnnect</string>
+
 </resources>

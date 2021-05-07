@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PDMSDeviceActivity">
+
+    <Button
+        android:id="@+id/deviceNameBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Device Name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/deviceNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/deviceNameBtn" />
+
+    <Button
+        android:id="@+id/manufactureNameBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manufacture Name"
+        app:layout_constraintTop_toBottomOf="@+id/deviceNameTextView" />
+
+    <TextView
+        android:id="@+id/manufactureNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/manufactureNameBtn" />
+
+    <Button
+        android:id="@+id/hardwareVersionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hardware Version"
+        app:layout_constraintTop_toBottomOf="@+id/manufactureNameTextView" />
+
+    <TextView
+        android:id="@+id/hardwareTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/hardwareVersionBtn" />
+
+    <Button
+        android:id="@+id/firmwareVersionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Firmware Version"
+        app:layout_constraintTop_toBottomOf="@+id/hardwareTextView" />
+
+    <TextView
+        android:id="@+id/firmwareTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/firmwareVersionBtn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
