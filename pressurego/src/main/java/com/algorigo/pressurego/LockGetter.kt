@@ -8,12 +8,14 @@ class LockGetter<T> {
     private var value: T? = null
     private var continuation: Continuation<T>? = null
 
+    @Synchronized
     fun setValue(value: T) {
         this.value = value
         continuation?.resume(value)
     }
 
     // This function suspends the calling coroutine and is resumed when continued with desired return object
+    @Synchronized
     suspend fun getValue(): T {
         return if (value != null) {
             value!!

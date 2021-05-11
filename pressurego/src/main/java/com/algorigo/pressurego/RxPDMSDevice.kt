@@ -2,7 +2,9 @@ package com.algorigo.pressurego
 
 import android.bluetooth.BluetoothDevice
 import android.util.Log
+import androidx.annotation.IntRange
 import com.algorigo.algorigoble.*
+import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -18,18 +20,40 @@ class RxPDMSDevice : InitializableBleDevice() {
     private var hardwareVersion = ""
     private var firmwareVersion = ""
     private var amp = -1
-    private var sens = -1
-    private var data = ByteArray(32)
-    private var dataDisposable: Disposable? = null
+//    private var sens = -1
+    private var callbackDisposable: Disposable? = null
+    private var relayMap = mutableMapOf<Byte, PublishRelay<ByteArray>>()
     private var dataSubject = PublishSubject.create<IntArray>().toSerialized()
-    private var heartRateDisposable: Disposable? = null
 
     override fun initializeCompletable(): Completable {
         return getDeviceNameSingle()!!.ignoreElement()
             .andThen(getManufacturerNameSingle()!!.ignoreElement())
             .andThen(getHardwareVersionSingle()!!.ignoreElement())
             .andThen(getFirmwareVersionSingle()!!.ignoreElement())
-//            .andThen(getAmplificationSingle()!!.ignoreElement())
+            .andThen(Completable.create { emitter ->
+                callbackDisposable = setupNotification(UUID.fromString(PDMSUtil.UUID_DATA_NOTIFICATION))
+                    ?.doFinally {
+                        callbackDisposable = null
+                    }
+                    ?.flatMap {
+                        emitter.onComplete()
+                        it
+                    }
+                    ?.doFinally {
+                        disconnect()
+                    }
+                    ?.subscribe({
+                        onData(it)
+                    }, {
+                        Log.e(LOG_TAG, "enableSensor error", Exception(it))
+                        dataSubject.onError(it)
+                        dataSubject = PublishSubject.create<IntArray>().toSerialized()
+                        if (!emitter.isDisposed) {
+                            emitter.onError(it)
+                        }
+                    })
+            })
+            .andThen(getAmplificationSingle()!!.ignoreElement())
             .doOnComplete {
                 heartBeatRead()
             }
@@ -37,59 +61,32 @@ class RxPDMSDevice : InitializableBleDevice() {
 
     override fun onDisconnected() {
         super.onDisconnected()
-        heartRateDisposable?.dispose()
-        heartRateDisposable = null
+        callbackDisposable?.dispose()
     }
 
     fun sendDataOn(): Observable<IntArray>? {
         return dataSubject
-            .doOnSubscribe {
-                if (dataDisposable == null) {
-                    heartRateDisposable?.dispose()
-                    heartRateDisposable = null
-                    dataDisposable = setupNotification(UUID.fromString(PDMSUtil.UUID_DATA_NOTIFICATION))
-                        ?.flatMap { it }
-                        ?.doFinally {
-                            if (!dataSubject.hasObservers()) {
-                                dataDisposable = null
-                            }
-                        }
-                        ?.subscribe({
-                            onData(it)
-                        }, {
-                            Log.e(LOG_TAG, "enableSensor error", Exception(it))
-                            dataSubject.onError(it)
-                        })
-                }
-            }
-            .doFinally {
-                if (!dataSubject.hasObservers()) {
-                    dataDisposable?.dispose()
-                    heartBeatRead()
-                }
-            }
-            .doOnError {
-                dataSubject = PublishSubject.create<IntArray>().toSerialized()
-            }
     }
 
     private fun onData(byteArray: ByteArray) {
 //        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
-        val lineIdx = byteArray[0].toInt()
-        byteArray.copyInto(data, 16*lineIdx, 1)
-
-        if (lineIdx == 1) {
-            val intArray = IntArray(16) {
-                val aLower = data[it*2].toInt() and 0xff
-                val aUpper = data[it*2+1].toInt() and 0xff
-                (aUpper shl 8) + aLower
+        when (byteArray[0]) {
+            0x02.toByte() -> {
+                relayMap.remove(byteArray[1])?.accept(byteArray)
             }
-            dataSubject.onNext(intArray)
+            0x01.toByte() -> {
+                val intArray = IntArray(4) {
+                    val aLower = byteArray[it*2+2].toInt() and 0xff
+                    val aUpper = byteArray[it*2+3].toInt() and 0xff
+                    (aUpper shl 8) + aLower
+                }
+                dataSubject.onNext(intArray)
+            }
         }
     }
 
     private fun heartBeatRead() {
-        heartRateDisposable = Observable.interval(1, TimeUnit.MINUTES)
+        Observable.interval(1, TimeUnit.MINUTES)
             .flatMapSingle { getBatteryPercentSingle() }
             .subscribe({
             }, {
@@ -154,19 +151,33 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     private fun getAmplificationSingle(): Single<Int>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_AMPLIFICATION))
+        var relay: PublishRelay<ByteArray>? = null
+        val code = 0xb2.toByte()
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), byteArrayOf(0x02, code, 0x03))
+            ?.doOnSubscribe {
+                if (relayMap[code] != null) {
+                    relay = relayMap[code]
+                } else {
+                    relay = PublishRelay.create<ByteArray>().also {
+                        relayMap[code] = it
+                    }
+                }
+            }
+            ?.flatMap {
+                relay!!.firstOrError()
+            }
             ?.map {
                 Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
-                it.toInt()
+                it[2].toInt()
             }
             ?.doOnSuccess { amp = it }
     }
 
-    fun setAmplificationCompletable(amplification: Int): Completable? {
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_AMPLIFICATION), byteArrayOf(amplification.toByte()))
+    fun setAmplificationCompletable(@IntRange(from = 1, to = 255) amplification: Int): Completable? {
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), byteArrayOf(0x02, 0xb1.toByte(), amplification.toByte(), 0x03))
             ?.doOnSuccess {
                 Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
-                amp = it.toInt()
+                amp = amplification
             }
             ?.ignoreElement()
     }

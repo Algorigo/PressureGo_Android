@@ -58,4 +58,38 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/firmwareVersionBtn" />
 
+    <Button
+        android:id="@+id/amplificationGetBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Amplification"
+        app:layout_constraintTop_toBottomOf="@+id/firmwareTextView" />
+
+    <EditText
+        android:id="@+id/amplificationEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Amplification"
+        app:layout_constraintTop_toBottomOf="@+id/amplificationGetBtn" />
+
+    <Button
+        android:id="@+id/amplificationSetBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Amplification"
+        app:layout_constraintTop_toBottomOf="@+id/amplificationEditText" />
+
+    <Button
+        android:id="@+id/dataBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Data"
+        app:layout_constraintTop_toBottomOf="@+id/amplificationSetBtn" />
+
+    <TextView
+        android:id="@+id/dataTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/dataBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

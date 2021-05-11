@@ -1,5 +1,6 @@
 package com.algorigo.pressuregoapp
 
+import android.util.Log
 import com.algorigo.pressurego.PDMSDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
 
     private var pdmsDevice: PDMSDevice? = null
+    private var callback: PDMSDevice.DataCallback? = null
 
     override fun initDevice(macAddress: String) {
         pdmsDevice = BasicActivity.pdmsDevices[macAddress]
@@ -62,6 +64,48 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             }
             runBlocking(Dispatchers.Main) {
                 firmwareVersionTextView.text = firmware
+            }
+        }
+    }
+
+    override fun getAmplification() {
+        CoroutineScope(Dispatchers.IO).async {
+            val amplification = try {
+                pdmsDevice?.getAmplification()
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                amplificationEditText.setText(amplification.toString())
+            }
+        }
+    }
+
+    override fun setAmplification(amplification: Int) {
+        CoroutineScope(Dispatchers.IO).async {
+            try {
+                pdmsDevice?.setAmplification(amplification)
+            } catch (e: Exception) {
+                return@async
+            }
+            runBlocking(Dispatchers.Main) {
+                amplificationEditText.setText(amplification.toString())
+            }
+        }
+    }
+
+    override fun data() {
+        if (callback != null) {
+            pdmsDevice?.unregisterDataCallback(callback!!)
+        } else {
+            callback = object : PDMSDevice.DataCallback {
+                override fun onData(intArray: IntArray) {
+                    runOnUiThread {
+                        dataTextView.text = intArray.contentToString()
+                    }
+                }
+            }.also {
+                pdmsDevice?.registerDataCallback(it)
             }
         }
     }

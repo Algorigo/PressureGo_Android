@@ -106,9 +106,9 @@ class RxActivity : PermissionAppCompatActivity() {
         devices.find { it.macAddress == macAddress }?.connectCompletable(false)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                Log.e("!!!", "connect complete")
+                Log.e(LOG_TAG, "connect complete")
             }, {
-                Log.e("!!!", "connect error", it)
+                Log.e(LOG_TAG, "connect error", it)
             })
     }
 

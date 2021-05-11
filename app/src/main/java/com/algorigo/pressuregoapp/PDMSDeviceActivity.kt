@@ -2,13 +2,9 @@ package com.algorigo.pressuregoapp
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.algorigo.pressurego.PDMSDevice
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
 abstract class PDMSDeviceActivity : AppCompatActivity() {
 
@@ -20,6 +16,11 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected lateinit var hardwareVersionTextView: TextView
     private lateinit var firmwareVersionBtn: Button
     protected lateinit var firmwareVersionTextView: TextView
+    private lateinit var amplificationGetBtn: Button
+    protected lateinit var amplificationEditText: EditText
+    private lateinit var amplificationSetBtn: Button
+    private lateinit var dataBtn: Button
+    protected lateinit var dataTextView: TextView
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,11 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         hardwareVersionTextView = findViewById(R.id.hardwareTextView)
         firmwareVersionBtn = findViewById(R.id.firmwareVersionBtn)
         firmwareVersionTextView = findViewById(R.id.firmwareTextView)
+        amplificationGetBtn = findViewById(R.id.amplificationGetBtn)
+        amplificationEditText = findViewById(R.id.amplificationEditText)
+        amplificationSetBtn = findViewById(R.id.amplificationSetBtn)
+        dataBtn = findViewById(R.id.dataBtn)
+        dataTextView = findViewById(R.id.dataTextView)
 
         deviceNameBtn.setOnClickListener {
             getDeviceName()
@@ -51,6 +57,17 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         firmwareVersionBtn.setOnClickListener {
             getFirmware()
         }
+        amplificationGetBtn.setOnClickListener {
+            getAmplification()
+        }
+        amplificationSetBtn.setOnClickListener {
+            amplificationEditText.text.toString().toIntOrNull()?.let {
+                setAmplification(it)
+            }
+        }
+        dataBtn.setOnClickListener {
+            data()
+        }
     }
 
     protected abstract fun initDevice(macAddress: String)
@@ -62,6 +79,12 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected abstract fun getHardware()
 
     protected abstract fun getFirmware()
+
+    protected abstract fun getAmplification()
+
+    protected abstract fun setAmplification(amplification: Int)
+
+    protected abstract fun data()
 
     companion object {
         const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"
