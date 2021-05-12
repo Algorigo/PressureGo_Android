@@ -137,4 +137,21 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             }
         }
     }
+
+    override fun battery() {
+        CoroutineScope(Dispatchers.IO).async {
+            val battery = try {
+                pdmsDevice?.getBattery()
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                batteryTextView.text = "$battery%"
+            }
+        }
+    }
+
+    override fun lowBattery() {
+        lowBatteryTextView.text = "Not working with basic"
+    }
 }

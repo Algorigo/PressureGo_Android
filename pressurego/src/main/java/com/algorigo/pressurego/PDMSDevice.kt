@@ -190,6 +190,22 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         throw IllegalStateException()
     }
 
+    suspend fun getBattery(): Int {
+        bluetoothGatt?.let { gatt ->
+            val uuid = UUID.fromString(PDMSUtil.UUID_BATTERY_LEVEL)
+            gatt.getService(UUID.fromString(PDMSUtil.UUID_BATTERY_SERVICE))
+                ?.getCharacteristic(uuid)?.let { characteristic ->
+                    LockGetter<ByteArray>().let {
+                        characteristicMap[uuid] = it
+                        gatt.readCharacteristic(characteristic)
+                        val byteArray = it.getValue()
+                        return byteArray[0].toInt()
+                    }
+                }
+        }
+        throw IllegalStateException()
+    }
+
     private suspend fun sendGetMessage(code: PDMSUtil.MessageGetCode): Int {
         bluetoothGatt?.let { gatt ->
             val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
@@ -200,21 +216,8 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
                         characteristic.value = code.message
                         gatt.writeCharacteristic(characteristic)
                         val byteArray = it.getValue()
-                        return byteArray[2].toInt()
+                        return byteArray[2].toUInt().toInt()
                     }
-                }
-        }
-        throw IllegalStateException()
-    }
-
-    private fun sendSetMessage(code: PDMSUtil.MessageSetCode, value: Byte) {
-        bluetoothGatt?.let { gatt ->
-            val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
-            gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
-                ?.getCharacteristic(uuid)?.let { characteristic ->
-                    characteristic.value = code.getMessage(value)
-                    gatt.writeCharacteristic(characteristic)
-                    return
                 }
         }
         throw IllegalStateException()
@@ -248,6 +251,19 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
     fun setSensitivity(@IntRange(from = 1, to = 255) sens: Int) {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         sendSetMessage(code, sens.toByte())
+    }
+
+    private fun sendSetMessage(code: PDMSUtil.MessageSetCode, value: Byte) {
+        bluetoothGatt?.let { gatt ->
+            val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
+            gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
+                ?.getCharacteristic(uuid)?.let { characteristic ->
+                    characteristic.value = code.getMessage(value)
+                    gatt.writeCharacteristic(characteristic)
+                    return
+                }
+        }
+        throw IllegalStateException()
     }
 
     fun registerDataCallback(dataCallback: DataCallback) {

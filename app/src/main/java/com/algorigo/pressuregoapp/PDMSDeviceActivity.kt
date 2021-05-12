@@ -27,6 +27,10 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     private lateinit var sensitivitySetBtn: Button
     private lateinit var dataBtn: Button
     protected lateinit var dataTextView: TextView
+    private lateinit var batteryBtn: Button
+    protected lateinit var batteryTextView: TextView
+    private lateinit var lowBatteryBtn: Button
+    protected lateinit var lowBatteryTextView: TextView
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,10 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         sensitivitySetBtn = findViewById(R.id.sensitivity_set_btn)
         dataBtn = findViewById(R.id.data_btn)
         dataTextView = findViewById(R.id.data_textview)
+        batteryBtn = findViewById(R.id.battery_btn)
+        batteryTextView = findViewById(R.id.battery_textview)
+        lowBatteryBtn = findViewById(R.id.low_battery_btn)
+        lowBatteryTextView = findViewById(R.id.low_battery_textview)
 
         deviceNameBtn.setOnClickListener {
             getDeviceName()
@@ -96,6 +104,12 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         dataBtn.setOnClickListener {
             data()
         }
+        batteryBtn.setOnClickListener {
+            battery()
+        }
+        lowBatteryBtn.setOnClickListener {
+            lowBattery()
+        }
     }
 
     protected abstract fun initDevice(macAddress: String)
@@ -121,6 +135,10 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected abstract fun setSensitivity(sensitivity: Int)
 
     protected abstract fun data()
+
+    protected abstract fun battery()
+
+    protected abstract fun lowBattery()
 
     companion object {
         const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"

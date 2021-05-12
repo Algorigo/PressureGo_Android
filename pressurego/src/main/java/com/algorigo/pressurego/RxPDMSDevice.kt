@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.util.Log
 import androidx.annotation.IntRange
 import com.algorigo.algorigoble.*
+import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Completable
@@ -26,6 +27,7 @@ class RxPDMSDevice : InitializableBleDevice() {
     private var callbackDisposable: Disposable? = null
     private var relayMap = mutableMapOf<Byte, PublishRelay<ByteArray>>()
     private var dataSubject = PublishSubject.create<IntArray>().toSerialized()
+    private var batteryRelay = BehaviorRelay.create<Int>().toSerialized()
 
     override fun initializeCompletable(): Completable {
         return getDeviceNameSingle()!!.ignoreElement()
@@ -90,9 +92,10 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     private fun heartBeatRead() {
-        Observable.interval(1, TimeUnit.MINUTES)
+        Observable.interval(0, 1, TimeUnit.MINUTES)
             .flatMapSingle { getBatteryPercentSingle() }
             .subscribe({
+                batteryRelay.accept(it)
             }, {
                 Log.e(LOG_TAG, "heartBeatRead error", Exception(it))
             })
@@ -144,31 +147,33 @@ class RxPDMSDevice : InitializableBleDevice() {
     private fun getHardwareVersionSingle(): Single<String>? {
         return readCharacteristic(UUID.fromString(PDMSUtil.UUID_HARDWARE_REVISION))
             ?.map {
-                Log.i(LOG_TAG, "UUID_FIRMWARE_VERSION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                Log.i(LOG_TAG, "UUID_HARDWARE_REVISION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 String(it)
             }
             ?.doOnSuccess { hardwareVersion = it }
     }
 
-    private fun getSingle(code: PDMSUtil.MessageGetCode): @NonNull Single<Int>? {
-        var relay: PublishRelay<ByteArray>? = null
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.message)
-            ?.doOnSubscribe {
-                if (relayMap[code] != null) {
-                    relay = relayMap[code]
-                } else {
-                    relay = PublishRelay.create<ByteArray>().also {
-                        relayMap[code.byte] = it
-                    }
-                }
-            }
-            ?.flatMap {
-                relay!!.firstOrError()
-            }
+    fun getBatteryPercentSingle(): Single<Int>? {
+        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_BATTERY_LEVEL))
             ?.map {
-                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
-                it[2].toInt()
+                Log.i(LOG_TAG, "UUID_BATTERY_LEVEL:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                it.toInt()
             }
+    }
+
+    fun getBatteryPercentObservable(): Observable<Int> {
+        return batteryRelay
+            .scan(Pair(-1, -1), { a, b -> Pair(a.second, b) })
+            .filter { it.first != it.second }
+            .map { it.second }
+    }
+
+    fun getLowBatteryObservable(threshold: Int = 15): Observable<Any> {
+        return batteryRelay
+            .map { it < threshold }
+            .scan(Pair(false, false), { a, b -> Pair(a.second, b)})
+            .filter { it.first != it.second }
+            .map { it.second }
     }
 
     fun getSensingInterval(): Int {
@@ -185,7 +190,7 @@ class RxPDMSDevice : InitializableBleDevice() {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
         return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensingInterval.toByte()))
             ?.doOnSuccess {
-                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 this.sensingInterval = sensingInterval
             }
             ?.ignoreElement()
@@ -205,7 +210,7 @@ class RxPDMSDevice : InitializableBleDevice() {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
         return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(amplification.toByte()))
             ?.doOnSuccess {
-                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 amp = amplification
             }
             ?.ignoreElement()
@@ -225,17 +230,30 @@ class RxPDMSDevice : InitializableBleDevice() {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensitivity.toByte()))
             ?.doOnSuccess {
-                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 sens = sensitivity
             }
             ?.ignoreElement()
     }
 
-    fun getBatteryPercentSingle(): Single<Int>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_BATTERY_LEVEL))
+    private fun getSingle(code: PDMSUtil.MessageGetCode): @NonNull Single<Int>? {
+        var relay: PublishRelay<ByteArray>? = null
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.message)
+            ?.doOnSubscribe {
+                if (relayMap[code] != null) {
+                    relay = relayMap[code]
+                } else {
+                    relay = PublishRelay.create<ByteArray>().also {
+                        relayMap[code.byte] = it
+                    }
+                }
+            }
+            ?.flatMap {
+                relay!!.firstOrError()
+            }
             ?.map {
-                Log.i(LOG_TAG, "UUID_VOLTAGE:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
-                it.toInt()
+                Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                it[2].toUByte().toInt()
             }
     }
 

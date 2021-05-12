@@ -1,6 +1,7 @@
 package com.algorigo.pressuregoapp
 
 import android.util.Log
+import android.widget.Toast
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -10,6 +11,8 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
 
     private var pdmsDevice: RxPDMSDevice? = null
     private var dataDisposable: Disposable? = null
+    private var batteryDisposable: Disposable? = null
+    private var lowBatteryDisposable: Disposable? = null
 
     override fun initDevice(macAddress: String) {
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
@@ -84,6 +87,40 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({
                     dataTextView.text = it.contentToString()
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                })
+        }
+    }
+
+    override fun battery() {
+        if (batteryDisposable != null) {
+            batteryDisposable?.dispose()
+        } else {
+            batteryDisposable = pdmsDevice?.getBatteryPercentObservable()
+                ?.doFinally {
+                    batteryDisposable = null
+                }
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({
+                    batteryTextView.text = "$it%"
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                })
+        }
+    }
+
+    override fun lowBattery() {
+        if (lowBatteryDisposable != null) {
+            lowBatteryDisposable?.dispose()
+        } else {
+            lowBatteryDisposable = pdmsDevice?.getLowBatteryObservable(15)
+                ?.doFinally {
+                    lowBatteryDisposable = null
+                }
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({
+                    Toast.makeText(this, "Low Battery", Toast.LENGTH_LONG).show()
                 }, {
                     Log.e(LOG_TAG, "", it)
                 })
