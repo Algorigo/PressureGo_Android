@@ -12,6 +12,14 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     private var pdmsDevice: PDMSDevice? = null
     private var callback: PDMSDevice.DataCallback? = null
 
+    override fun onPause() {
+        super.onPause()
+        if (callback != null) {
+            pdmsDevice?.unregisterDataCallback(callback!!)
+            callback = null
+        }
+    }
+
     override fun initDevice(macAddress: String) {
         pdmsDevice = BasicActivity.pdmsDevices[macAddress]
     }
@@ -125,6 +133,7 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     override fun data() {
         if (callback != null) {
             pdmsDevice?.unregisterDataCallback(callback!!)
+            callback = null
         } else {
             callback = object : PDMSDevice.DataCallback {
                 override fun onData(intArray: IntArray) {

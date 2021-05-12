@@ -14,6 +14,13 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     private var batteryDisposable: Disposable? = null
     private var lowBatteryDisposable: Disposable? = null
 
+    override fun onPause() {
+        super.onPause()
+        dataDisposable?.dispose()
+        batteryDisposable?.dispose()
+        lowBatteryDisposable?.dispose()
+    }
+
     override fun initDevice(macAddress: String) {
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
     }
