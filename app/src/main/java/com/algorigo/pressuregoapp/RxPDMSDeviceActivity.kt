@@ -31,6 +31,20 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         firmwareVersionTextView.text = pdmsDevice?.getFirmwareVersion()
     }
 
+    override fun getInterval() {
+        intervalEditText.setText(pdmsDevice?.getSensingInterval()?.toString())
+    }
+
+    override fun setInterval(interval: Int) {
+        pdmsDevice?.setSensingIntervalCompletable(interval)
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
+                dataTextView.text = "Set Sensor Scan Interval OK"
+            }, {
+                Log.e(LOG_TAG, "", it)
+            })
+    }
+
     override fun getAmplification() {
         amplificationEditText.setText(pdmsDevice?.getAmplification()?.toString())
     }
@@ -39,7 +53,21 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         pdmsDevice?.setAmplificationCompletable(amplification)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                amplificationEditText.setText(amplification.toString())
+                dataTextView.text = "Set Amplification OK"
+            }, {
+                Log.e(LOG_TAG, "", it)
+            })
+    }
+
+    override fun getSensitivity() {
+        sensitivityEditText.setText(pdmsDevice?.getSensitivity()?.toString())
+    }
+
+    override fun setSensitivity(sensitivity: Int) {
+        pdmsDevice?.setSensitivityCompletable(sensitivity)
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
+                dataTextView.text = "Set Sensitivity OK"
             }, {
                 Log.e(LOG_TAG, "", it)
             })

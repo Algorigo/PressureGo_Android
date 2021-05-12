@@ -190,15 +190,14 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         throw IllegalStateException()
     }
 
-    suspend fun getAmplification(): Int {
+    private suspend fun sendGetMessage(code: PDMSUtil.MessageGetCode): Int {
         bluetoothGatt?.let { gatt ->
             val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
             gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
                 ?.getCharacteristic(uuid)?.let { characteristic ->
-                    val code = 0xb2.toByte()
                     LockGetter<ByteArray>().let {
-                        communicationMap[code] = it
-                        characteristic.value = byteArrayOf(0x02, code, 0x03)
+                        communicationMap[code.byte] = it
+                        characteristic.value = code.message
                         gatt.writeCharacteristic(characteristic)
                         val byteArray = it.getValue()
                         return byteArray[2].toInt()
@@ -208,22 +207,47 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         throw IllegalStateException()
     }
 
-    suspend fun setAmplification(@IntRange(from = 1, to = 255) amp: Int) {
+    private fun sendSetMessage(code: PDMSUtil.MessageSetCode, value: Byte) {
         bluetoothGatt?.let { gatt ->
             val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
             gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
                 ?.getCharacteristic(uuid)?.let { characteristic ->
-                    val code = 0xb1.toByte()
-                    LockGetter<ByteArray>().let {
-                        communicationMap[code] = it
-                        characteristic.value = byteArrayOf(0x02, code, amp.toByte(), 0x03)
-                        gatt.writeCharacteristic(characteristic)
-                        val byteArray = it.getValue()
-                        return
-                    }
+                    characteristic.value = code.getMessage(value)
+                    gatt.writeCharacteristic(characteristic)
+                    return
                 }
         }
         throw IllegalStateException()
+    }
+
+    suspend fun getSensorScanInterval(): Int {
+        val code = PDMSUtil.MessageGetCode.CODE_SENSOR_SCAN_INTERVAL
+        return sendGetMessage(code)
+    }
+
+    fun setSensorScanInterval(@IntRange(from = 1, to = 255) interval: Int) {
+        val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
+        sendSetMessage(code, interval.toByte())
+    }
+
+    suspend fun getAmplification(): Int {
+        val code = PDMSUtil.MessageGetCode.CODE_AMPLIFICATION
+        return sendGetMessage(code)
+    }
+
+    fun setAmplification(@IntRange(from = 1, to = 255) amp: Int) {
+        val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
+        sendSetMessage(code, amp.toByte())
+    }
+
+    suspend fun getSensitivity(): Int {
+        val code = PDMSUtil.MessageGetCode.CODE_SENSITIVITY
+        return sendGetMessage(code)
+    }
+
+    fun setSensitivity(@IntRange(from = 1, to = 255) sens: Int) {
+        val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
+        sendSetMessage(code, sens.toByte())
     }
 
     fun registerDataCallback(dataCallback: DataCallback) {

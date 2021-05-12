@@ -1,95 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PDMSDeviceActivity">
 
-    <Button
-        android:id="@+id/deviceNameBtn"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Device Name"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/deviceNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/deviceNameBtn" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/manufactureNameBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Manufacture Name"
-        app:layout_constraintTop_toBottomOf="@+id/deviceNameTextView" />
+            <Button
+                android:id="@+id/device_name_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Device Name"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/manufactureNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/manufactureNameBtn" />
+            <TextView
+                android:id="@+id/device_name_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/device_name_btn" />
 
-    <Button
-        android:id="@+id/hardwareVersionBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hardware Version"
-        app:layout_constraintTop_toBottomOf="@+id/manufactureNameTextView" />
+            <Button
+                android:id="@+id/manufacture_name_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Manufacture Name"
+                app:layout_constraintTop_toBottomOf="@+id/device_name_textview" />
 
-    <TextView
-        android:id="@+id/hardwareTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/hardwareVersionBtn" />
+            <TextView
+                android:id="@+id/manufacture_name_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/manufacture_name_btn" />
 
-    <Button
-        android:id="@+id/firmwareVersionBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Firmware Version"
-        app:layout_constraintTop_toBottomOf="@+id/hardwareTextView" />
+            <Button
+                android:id="@+id/hardware_version_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hardware Version"
+                app:layout_constraintTop_toBottomOf="@+id/manufacture_name_textview" />
 
-    <TextView
-        android:id="@+id/firmwareTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/firmwareVersionBtn" />
+            <TextView
+                android:id="@+id/hardware_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/hardware_version_btn" />
 
-    <Button
-        android:id="@+id/amplificationGetBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Get Amplification"
-        app:layout_constraintTop_toBottomOf="@+id/firmwareTextView" />
+            <Button
+                android:id="@+id/firmware_version_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Firmware Version"
+                app:layout_constraintTop_toBottomOf="@+id/hardware_textview" />
 
-    <EditText
-        android:id="@+id/amplificationEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Amplification"
-        app:layout_constraintTop_toBottomOf="@+id/amplificationGetBtn" />
+            <TextView
+                android:id="@+id/firmware_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/firmware_version_btn" />
 
-    <Button
-        android:id="@+id/amplificationSetBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Set Amplification"
-        app:layout_constraintTop_toBottomOf="@+id/amplificationEditText" />
+            <Button
+                android:id="@+id/interval_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_200"
+                android:text="Get Interval"
+                app:layout_constraintTop_toBottomOf="@+id/firmware_textview" />
 
-    <Button
-        android:id="@+id/dataBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Data"
-        app:layout_constraintTop_toBottomOf="@+id/amplificationSetBtn" />
+            <EditText
+                android:id="@+id/interval_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_200"
+                android:hint="Interval"
+                app:layout_constraintTop_toBottomOf="@+id/interval_get_btn" />
 
-    <TextView
-        android:id="@+id/dataTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/dataBtn" />
+            <Button
+                android:id="@+id/interval_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_200"
+                android:text="Set Interval"
+                app:layout_constraintTop_toBottomOf="@+id/interval_edittext" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/amplification_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/teal_200"
+                android:text="Get Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/interval_set_btn" />
+
+            <EditText
+                android:id="@+id/amplification_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_200"
+                android:hint="Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_get_btn" />
+
+            <Button
+                android:id="@+id/amplification_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/teal_200"
+                android:text="Set Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_edittext" />
+
+            <Button
+                android:id="@+id/sensitivity_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="Get Sensitivity"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_set_btn" />
+
+            <EditText
+                android:id="@+id/sensitivity_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:hint="Sensitivity"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_get_btn" />
+
+            <Button
+                android:id="@+id/sensitivity_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="Set Sensitivity"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_edittext" />
+
+            <Button
+                android:id="@+id/data_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_set_btn" />
+
+            <TextView
+                android:id="@+id/data_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/data_btn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</FrameLayout>

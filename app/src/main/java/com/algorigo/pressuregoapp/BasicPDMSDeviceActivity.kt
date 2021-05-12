@@ -68,6 +68,24 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
         }
     }
 
+    override fun getInterval() {
+        CoroutineScope(Dispatchers.IO).async {
+            val interval = try {
+                pdmsDevice?.getSensorScanInterval()
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                intervalEditText.setText(interval.toString())
+            }
+        }
+    }
+
+    override fun setInterval(interval: Int) {
+        pdmsDevice?.setSensorScanInterval(interval)
+        dataTextView.text = "Set Sensor Scan Interval OK"
+    }
+
     override fun getAmplification() {
         CoroutineScope(Dispatchers.IO).async {
             val amplification = try {
@@ -82,16 +100,26 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setAmplification(amplification: Int) {
+        pdmsDevice?.setAmplification(amplification)
+        dataTextView.text = "Set Amplification OK"
+    }
+
+    override fun getSensitivity() {
         CoroutineScope(Dispatchers.IO).async {
-            try {
-                pdmsDevice?.setAmplification(amplification)
+            val sensitivity = try {
+                pdmsDevice?.getSensitivity()
             } catch (e: Exception) {
-                return@async
+                null
             }
             runBlocking(Dispatchers.Main) {
-                amplificationEditText.setText(amplification.toString())
+                sensitivityEditText.setText(sensitivity.toString())
             }
         }
+    }
+
+    override fun setSensitivity(sensitivity: Int) {
+        pdmsDevice?.setSensitivity(sensitivity)
+        dataTextView.text = "Set Sensitivity OK"
     }
 
     override fun data() {

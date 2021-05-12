@@ -31,4 +31,23 @@ object PDMSUtil {
     internal const val UUID_COMMUNICATION =             "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
     internal const val UUID_DATA_NOTIFICATION =         "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
     internal const val UUID_DATA_DESCRIPTOR =           "00002902-0000-1000-8000-00805f9b34fb"
+
+    internal enum class MessageSetCode(val byte: Byte) {
+        CODE_SENSOR_SCAN_INTERVAL(0xa1.toByte()),
+        CODE_AMPLIFICATION(0xb1.toByte()),
+        CODE_SENSITIVITY(0xc1.toByte()),
+        ;
+
+        fun getMessage(value: Byte) = byteArrayOf(0x02, byte, value, 0x03)
+    }
+
+    internal enum class MessageGetCode(val byte: Byte) {
+        CODE_SENSOR_SCAN_INTERVAL(0xa2.toByte()),
+        CODE_AMPLIFICATION(0xb2.toByte()),
+        CODE_SENSITIVITY(0xc2.toByte()),
+        ;
+
+        val message: ByteArray
+            get() = byteArrayOf(0x02, byte, 0x03)
+    }
 }

@@ -16,9 +16,15 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected lateinit var hardwareVersionTextView: TextView
     private lateinit var firmwareVersionBtn: Button
     protected lateinit var firmwareVersionTextView: TextView
+    private lateinit var intervalGetBtn: Button
+    protected lateinit var intervalEditText: EditText
+    private lateinit var intervalSetBtn: Button
     private lateinit var amplificationGetBtn: Button
     protected lateinit var amplificationEditText: EditText
     private lateinit var amplificationSetBtn: Button
+    private lateinit var sensitivityGetBtn: Button
+    protected lateinit var sensitivityEditText: EditText
+    private lateinit var sensitivitySetBtn: Button
     private lateinit var dataBtn: Button
     protected lateinit var dataTextView: TextView
 
@@ -31,19 +37,25 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
             initDevice(it)
         }
 
-        deviceNameBtn = findViewById(R.id.deviceNameBtn)
-        deviceNameTextView = findViewById(R.id.deviceNameTextView)
-        manufactureNameBtn = findViewById(R.id.manufactureNameBtn)
-        manufactureNameTextView = findViewById(R.id.manufactureNameTextView)
-        hardwareVersionBtn = findViewById(R.id.hardwareVersionBtn)
-        hardwareVersionTextView = findViewById(R.id.hardwareTextView)
-        firmwareVersionBtn = findViewById(R.id.firmwareVersionBtn)
-        firmwareVersionTextView = findViewById(R.id.firmwareTextView)
-        amplificationGetBtn = findViewById(R.id.amplificationGetBtn)
-        amplificationEditText = findViewById(R.id.amplificationEditText)
-        amplificationSetBtn = findViewById(R.id.amplificationSetBtn)
-        dataBtn = findViewById(R.id.dataBtn)
-        dataTextView = findViewById(R.id.dataTextView)
+        deviceNameBtn = findViewById(R.id.device_name_btn)
+        deviceNameTextView = findViewById(R.id.device_name_textview)
+        manufactureNameBtn = findViewById(R.id.manufacture_name_btn)
+        manufactureNameTextView = findViewById(R.id.manufacture_name_textview)
+        hardwareVersionBtn = findViewById(R.id.hardware_version_btn)
+        hardwareVersionTextView = findViewById(R.id.hardware_textview)
+        firmwareVersionBtn = findViewById(R.id.firmware_version_btn)
+        firmwareVersionTextView = findViewById(R.id.firmware_textview)
+        intervalGetBtn = findViewById(R.id.interval_get_btn)
+        intervalEditText = findViewById(R.id.interval_edittext)
+        intervalSetBtn = findViewById(R.id.interval_set_btn)
+        amplificationGetBtn = findViewById(R.id.amplification_get_btn)
+        amplificationEditText = findViewById(R.id.amplification_edittext)
+        amplificationSetBtn = findViewById(R.id.amplification_set_btn)
+        sensitivityGetBtn = findViewById(R.id.sensitivity_get_btn)
+        sensitivityEditText = findViewById(R.id.sensitivity_edittext)
+        sensitivitySetBtn = findViewById(R.id.sensitivity_set_btn)
+        dataBtn = findViewById(R.id.data_btn)
+        dataTextView = findViewById(R.id.data_textview)
 
         deviceNameBtn.setOnClickListener {
             getDeviceName()
@@ -57,12 +69,28 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         firmwareVersionBtn.setOnClickListener {
             getFirmware()
         }
+        intervalGetBtn.setOnClickListener {
+            getInterval()
+        }
+        intervalSetBtn.setOnClickListener {
+            intervalEditText.text.toString().toIntOrNull()?.let {
+                setInterval(it)
+            }
+        }
         amplificationGetBtn.setOnClickListener {
             getAmplification()
         }
         amplificationSetBtn.setOnClickListener {
             amplificationEditText.text.toString().toIntOrNull()?.let {
                 setAmplification(it)
+            }
+        }
+        sensitivityGetBtn.setOnClickListener {
+            getSensitivity()
+        }
+        sensitivitySetBtn.setOnClickListener {
+            sensitivityEditText.text.toString().toIntOrNull()?.let {
+                setSensitivity(it)
             }
         }
         dataBtn.setOnClickListener {
@@ -80,9 +108,17 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
 
     protected abstract fun getFirmware()
 
+    protected abstract fun getInterval()
+
+    protected abstract fun setInterval(interval: Int)
+
     protected abstract fun getAmplification()
 
     protected abstract fun setAmplification(amplification: Int)
+
+    protected abstract fun getSensitivity()
+
+    protected abstract fun setSensitivity(sensitivity: Int)
 
     protected abstract fun data()
 

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.IntRange
 import com.algorigo.algorigoble.*
 import com.jakewharton.rxrelay3.PublishRelay
+import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -19,8 +20,9 @@ class RxPDMSDevice : InitializableBleDevice() {
     private var manufactureName = ""
     private var hardwareVersion = ""
     private var firmwareVersion = ""
+    private var sensingInterval = -1
     private var amp = -1
-//    private var sens = -1
+    private var sens = -1
     private var callbackDisposable: Disposable? = null
     private var relayMap = mutableMapOf<Byte, PublishRelay<ByteArray>>()
     private var dataSubject = PublishSubject.create<IntArray>().toSerialized()
@@ -53,7 +55,9 @@ class RxPDMSDevice : InitializableBleDevice() {
                         }
                     })
             })
+            .andThen(getSensingIntervalSingle()!!.ignoreElement())
             .andThen(getAmplificationSingle()!!.ignoreElement())
+            .andThen(getSensitivitySingle()!!.ignoreElement())
             .doOnComplete {
                 heartBeatRead()
             }
@@ -146,20 +150,15 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { hardwareVersion = it }
     }
 
-    fun getAmplification(): Int {
-        return amp
-    }
-
-    private fun getAmplificationSingle(): Single<Int>? {
+    private fun getSingle(code: PDMSUtil.MessageGetCode): @NonNull Single<Int>? {
         var relay: PublishRelay<ByteArray>? = null
-        val code = 0xb2.toByte()
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), byteArrayOf(0x02, code, 0x03))
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.message)
             ?.doOnSubscribe {
                 if (relayMap[code] != null) {
                     relay = relayMap[code]
                 } else {
                     relay = PublishRelay.create<ByteArray>().also {
-                        relayMap[code] = it
+                        relayMap[code.byte] = it
                     }
                 }
             }
@@ -170,14 +169,64 @@ class RxPDMSDevice : InitializableBleDevice() {
                 Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it[2].toInt()
             }
+    }
+
+    fun getSensingInterval(): Int {
+        return sensingInterval
+    }
+
+    private fun getSensingIntervalSingle(): Single<Int>? {
+        val code = PDMSUtil.MessageGetCode.CODE_SENSOR_SCAN_INTERVAL
+        return getSingle(code)
+            ?.doOnSuccess { sensingInterval = it }
+    }
+
+    fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingInterval: Int): Completable? {
+        val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensingInterval.toByte()))
+            ?.doOnSuccess {
+                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                this.sensingInterval = sensingInterval
+            }
+            ?.ignoreElement()
+    }
+
+    fun getAmplification(): Int {
+        return amp
+    }
+
+    private fun getAmplificationSingle(): Single<Int>? {
+        val code = PDMSUtil.MessageGetCode.CODE_AMPLIFICATION
+        return getSingle(code)
             ?.doOnSuccess { amp = it }
     }
 
     fun setAmplificationCompletable(@IntRange(from = 1, to = 255) amplification: Int): Completable? {
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), byteArrayOf(0x02, 0xb1.toByte(), amplification.toByte(), 0x03))
+        val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(amplification.toByte()))
             ?.doOnSuccess {
                 Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 amp = amplification
+            }
+            ?.ignoreElement()
+    }
+
+    fun getSensitivity(): Int {
+        return sens
+    }
+
+    private fun getSensitivitySingle(): Single<Int>? {
+        val code = PDMSUtil.MessageGetCode.CODE_SENSITIVITY
+        return getSingle(code)
+            ?.doOnSuccess { sens = it }
+    }
+
+    fun setSensitivityCompletable(@IntRange(from = 1, to = 255) sensitivity: Int): Completable? {
+        val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensitivity.toByte()))
+            ?.doOnSuccess {
+                Log.i(LOG_TAG, "UUID_AMPLIFICATION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
+                sens = sensitivity
             }
             ?.ignoreElement()
     }

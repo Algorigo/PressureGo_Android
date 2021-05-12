@@ -4,7 +4,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class LockGetter<T> {
+internal class LockGetter<T> {
     private var value: T? = null
     private var continuation: Continuation<T>? = null
 
