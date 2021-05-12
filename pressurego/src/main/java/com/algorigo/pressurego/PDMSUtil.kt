@@ -34,8 +34,8 @@ object PDMSUtil {
 
     internal enum class MessageSetCode(val byte: Byte) {
         CODE_SENSOR_SCAN_INTERVAL(0xa1.toByte()),
-        CODE_AMPLIFICATION(0xb1.toByte()),
-        CODE_SENSITIVITY(0xc1.toByte()),
+        CODE_AMPLIFICATION(0xc1.toByte()),
+        CODE_SENSITIVITY(0xb1.toByte()),
         ;
 
         fun getMessage(value: Byte) = byteArrayOf(0x02, byte, value, 0x03)
@@ -43,8 +43,8 @@ object PDMSUtil {
 
     internal enum class MessageGetCode(val byte: Byte) {
         CODE_SENSOR_SCAN_INTERVAL(0xa2.toByte()),
-        CODE_AMPLIFICATION(0xb2.toByte()),
-        CODE_SENSITIVITY(0xc2.toByte()),
+        CODE_AMPLIFICATION(0xc2.toByte()),
+        CODE_SENSITIVITY(0xb2.toByte()),
         ;
 
         val message: ByteArray
