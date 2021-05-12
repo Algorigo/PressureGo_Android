@@ -1,5 +1,6 @@
 package com.algorigo.pressuregoapp
 
+import android.Manifest
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -7,10 +8,13 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.pressurego.PDMSDevice
 import io.reactivex.rxjava3.disposables.Disposable
@@ -85,9 +89,13 @@ class BasicActivity : AppCompatActivity(), PDMSDevice.Callback {
     }
 
     private fun startScan() {
-        scanning = true
-        findViewById<Button>(R.id.scan_btn).text = getText(R.string.stop_scan)
-        bluetoothAdapter.bluetoothLeScanner.startScan(PDMSDevice.scanFilters, PDMSDevice.scanSettings, callback)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            scanning = true
+            findViewById<Button>(R.id.scan_btn).text = getText(R.string.stop_scan)
+            bluetoothAdapter.bluetoothLeScanner.startScan(PDMSDevice.scanFilters, PDMSDevice.scanSettings, callback)
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQ_CODE)
+        }
     }
 
     private fun adjustRecycler() {
@@ -119,6 +127,8 @@ class BasicActivity : AppCompatActivity(), PDMSDevice.Callback {
 
     companion object {
         private val LOG_TAG = BasicActivity::class.java.simpleName
+
+        private const val PERMISSION_REQ_CODE = 0x01
 
         val pdmsDevices = mutableMapOf<String, PDMSDevice>()
     }
