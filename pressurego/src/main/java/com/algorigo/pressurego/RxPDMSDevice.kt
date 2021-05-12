@@ -21,7 +21,7 @@ class RxPDMSDevice : InitializableBleDevice() {
     private var manufactureName = ""
     private var hardwareVersion = ""
     private var firmwareVersion = ""
-    private var sensingInterval = -1
+    private var sensingIntervalMillis = -1
     private var amp = -1
     private var sens = -1
     private var callbackDisposable: Disposable? = null
@@ -176,22 +176,27 @@ class RxPDMSDevice : InitializableBleDevice() {
             .map { it.second }
     }
 
-    fun getSensingInterval(): Int {
-        return sensingInterval
+    fun getSensingIntervalMillis(): Int {
+        return sensingIntervalMillis
     }
 
     private fun getSensingIntervalSingle(): Single<Int>? {
         val code = PDMSUtil.MessageGetCode.CODE_SENSOR_SCAN_INTERVAL
         return getSingle(code)
-            ?.doOnSuccess { sensingInterval = it }
+            ?.doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
     }
 
-    fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingInterval: Int): Completable? {
+    fun setSensingIntervalMillisCompletable(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Completable? {
+        val sensingIntervalValue = PDMSUtil.intervalMillisToValue(sensingIntervalMillis)
+        return setSensingIntervalCompletable(sensingIntervalValue)
+    }
+
+    private fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Completable? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensingInterval.toByte()))
+        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(sensingIntervalValue.toByte()))
             ?.doOnSuccess {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
-                this.sensingInterval = sensingInterval
+                sensingIntervalMillis = PDMSUtil.intervalValueToMillis(sensingIntervalValue)
             }
             ?.ignoreElement()
     }

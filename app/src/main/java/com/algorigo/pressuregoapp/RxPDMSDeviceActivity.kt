@@ -42,11 +42,11 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun getInterval() {
-        intervalEditText.setText(pdmsDevice?.getSensingInterval()?.toString())
+        intervalEditText.setText(pdmsDevice?.getSensingIntervalMillis()?.toString())
     }
 
     override fun setInterval(interval: Int) {
-        pdmsDevice?.setSensingIntervalCompletable(interval)
+        pdmsDevice?.setSensingIntervalMillisCompletable(interval)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 dataTextView.text = "Set Sensor Scan Interval OK"

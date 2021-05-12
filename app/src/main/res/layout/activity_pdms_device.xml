@@ -96,11 +96,21 @@
 
             <EditText
                 android:id="@+id/interval_edittext"
-                android:layout_width="match_parent"
+                android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:background="@color/purple_200"
                 android:hint="Interval"
+                app:layout_constraintEnd_toStartOf="@+id/interval_unit"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/interval_get_btn" />
+
+            <TextView
+                android:id="@+id/interval_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ms"
+                app:layout_constraintBaseline_toBaselineOf="@id/interval_edittext"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <Button
                 android:id="@+id/interval_set_btn"

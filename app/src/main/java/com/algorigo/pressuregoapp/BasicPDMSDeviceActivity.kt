@@ -79,7 +79,7 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     override fun getInterval() {
         CoroutineScope(Dispatchers.IO).async {
             val interval = try {
-                pdmsDevice?.getSensorScanInterval()
+                pdmsDevice?.getSensingIntervalMillis()
             } catch (e: Exception) {
                 null
             }
@@ -90,7 +90,7 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setInterval(interval: Int) {
-        pdmsDevice?.setSensorScanInterval(interval)
+        pdmsDevice?.setSensorScanIntervalMillis(interval)
         dataTextView.text = "Set Sensor Scan Interval OK"
     }
 

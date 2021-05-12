@@ -1,5 +1,7 @@
 package com.algorigo.pressurego
 
+import kotlin.math.roundToInt
+
 object PDMSUtil {
 
     internal const val LOW_BATTERY_RATIO = 10.0
@@ -49,5 +51,16 @@ object PDMSUtil {
 
         val message: ByteArray
             get() = byteArrayOf(0x02, byte, 0x03)
+    }
+
+    internal const val intervalMillisMin = 25L
+    internal const val intervalMillisMax = 6375L
+
+    internal fun intervalValueToMillis(interval: Int): Int {
+        return interval * 25
+    }
+
+    internal fun intervalMillisToValue(millis: Int): Int {
+        return (millis.toFloat()/25).roundToInt()
     }
 }

@@ -7,7 +7,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.IntRange
 import kotlinx.coroutines.*
-import java.lang.Exception
 import java.util.*
 
 class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? = null) {
@@ -223,14 +222,23 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         throw IllegalStateException()
     }
 
-    suspend fun getSensorScanInterval(): Int {
+    suspend fun getSensingIntervalMillis(): Int {
+        return PDMSUtil.intervalValueToMillis(getSensingInterval())
+    }
+
+    private suspend fun getSensingInterval(): Int {
         val code = PDMSUtil.MessageGetCode.CODE_SENSOR_SCAN_INTERVAL
         return sendGetMessage(code)
     }
 
-    fun setSensorScanInterval(@IntRange(from = 1, to = 255) interval: Int) {
+    fun setSensorScanIntervalMillis(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) intervalMillis: Int) {
+        val intervalValue = PDMSUtil.intervalMillisToValue(intervalMillis)
+        return setSensorScanInterval(intervalValue)
+    }
+
+    private fun setSensorScanInterval(@IntRange(from = 1, to = 255) intervalValue: Int) {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
-        sendSetMessage(code, interval.toByte())
+        sendSetMessage(code, intervalValue.toByte())
     }
 
     suspend fun getAmplification(): Int {
