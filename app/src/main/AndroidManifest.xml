@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PressureGoApp">
+        <activity android:name=".RxPDMSDeviceActivity"></activity>
+        <activity android:name=".BasicPDMSDeviceActivity" />
+        <activity android:name=".RxActivity" />
+        <activity android:name=".BasicActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PDMSDeviceActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/device_name_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Device Name"
+                app:layout_constraintEnd_toStartOf="@+id/manufacture_name_btn"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/device_name_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/device_name_btn"
+                app:layout_constraintStart_toStartOf="@+id/device_name_btn"
+                app:layout_constraintTop_toBottomOf="@+id/device_name_btn" />
+
+            <Button
+                android:id="@+id/manufacture_name_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Manufacture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/device_name_btn"
+                app:layout_constraintTop_toTopOf="@+id/device_name_btn" />
+
+            <TextView
+                android:id="@+id/manufacture_name_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/manufacture_name_btn"
+                app:layout_constraintStart_toStartOf="@+id/manufacture_name_btn"
+                app:layout_constraintTop_toBottomOf="@+id/manufacture_name_btn" />
+
+            <Button
+                android:id="@+id/hardware_version_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Hardware Version"
+                app:layout_constraintEnd_toStartOf="@+id/firmware_version_btn"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/manufacture_name_textview" />
+
+            <TextView
+                android:id="@+id/hardware_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/hardware_version_btn"
+                app:layout_constraintStart_toStartOf="@+id/hardware_version_btn"
+                app:layout_constraintTop_toBottomOf="@+id/hardware_version_btn" />
+
+            <Button
+                android:id="@+id/firmware_version_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Firmware Version"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/hardware_version_btn"
+                app:layout_constraintTop_toTopOf="@+id/hardware_version_btn" />
+
+            <TextView
+                android:id="@+id/firmware_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/firmware_version_btn"
+                app:layout_constraintStart_toStartOf="@+id/firmware_version_btn"
+                app:layout_constraintTop_toBottomOf="@+id/firmware_version_btn" />
+
+            <Button
+                android:id="@+id/interval_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_200"
+                android:text="Get Interval"
+                app:layout_constraintTop_toBottomOf="@+id/firmware_textview" />
+
+            <EditText
+                android:id="@+id/interval_edittext"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_200"
+                android:hint="Interval"
+                app:layout_constraintEnd_toStartOf="@+id/interval_unit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/interval_get_btn" />
+
+            <TextView
+                android:id="@+id/interval_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ms"
+                app:layout_constraintBaseline_toBaselineOf="@id/interval_edittext"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/interval_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_200"
+                android:text="Set Interval"
+                app:layout_constraintTop_toBottomOf="@+id/interval_edittext" />
+
+            <Button
+                android:id="@+id/amplification_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/teal_200"
+                android:text="Get Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/interval_set_btn" />
+
+            <EditText
+                android:id="@+id/amplification_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_200"
+                android:hint="Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_get_btn" />
+
+            <Button
+                android:id="@+id/amplification_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/teal_200"
+                android:text="Set Amplification"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_edittext" />
+
+            <Button
+                android:id="@+id/sensitivity_get_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="Get Sensitivity"
+                app:layout_constraintTop_toBottomOf="@+id/amplification_set_btn" />
+
+            <EditText
+                android:id="@+id/sensitivity_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:hint="Sensitivity"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_get_btn" />
+
+            <Button
+                android:id="@+id/sensitivity_set_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="Set Sensitivity"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_edittext" />
+
+            <Button
+                android:id="@+id/data_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data"
+                app:layout_constraintTop_toBottomOf="@+id/sensitivity_set_btn" />
+
+            <LinearLayout
+                android:id="@+id/data_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/data_btn">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/data_textview_1"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="1" />
+
+                    <TextView
+                        android:id="@+id/data_textview_2"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="2" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/data_textview_3"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="3" />
+
+                    <TextView
+                        android:id="@+id/data_textview_4"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="4" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/battery_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Battery"
+                app:layout_constraintEnd_toStartOf="@+id/low_battery_btn"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/data_linear_layout" />
+
+            <TextView
+                android:id="@+id/battery_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/battery_btn"
+                app:layout_constraintStart_toStartOf="@+id/battery_btn"
+                app:layout_constraintTop_toBottomOf="@+id/battery_btn" />
+
+            <Button
+                android:id="@+id/low_battery_btn"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:text="Low Battery"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/battery_btn"
+                app:layout_constraintTop_toTopOf="@+id/battery_btn" />
+
+            <TextView
+                android:id="@+id/low_battery_textview"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/low_battery_btn"
+                app:layout_constraintStart_toStartOf="@+id/low_battery_btn"
+                app:layout_constraintTop_toBottomOf="@+id/low_battery_btn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</FrameLayout>
