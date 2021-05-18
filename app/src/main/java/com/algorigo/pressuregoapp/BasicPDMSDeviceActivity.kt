@@ -90,8 +90,17 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setInterval(interval: Int) {
-        pdmsDevice?.setSensorScanIntervalMillis(interval)
-        dataTextView.text = "Set Sensor Scan Interval OK"
+        CoroutineScope(Dispatchers.IO).async {
+            val interval = try {
+                pdmsDevice?.setSensorScanIntervalMillis(interval)
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                intervalEditText.setText(interval.toString())
+                dataTextView.text = "Set Interval Complete"
+            }
+        }
     }
 
     override fun getAmplification() {
@@ -108,8 +117,17 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setAmplification(amplification: Int) {
-        pdmsDevice?.setAmplification(amplification)
-        dataTextView.text = "Set Amplification OK"
+        CoroutineScope(Dispatchers.IO).async {
+            val amplification = try {
+                pdmsDevice?.setAmplification(amplification)
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                amplificationEditText.setText(amplification.toString())
+                dataTextView.text = "Set Amplification Complete"
+            }
+        }
     }
 
     override fun getSensitivity() {
@@ -126,8 +144,17 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setSensitivity(sensitivity: Int) {
-        pdmsDevice?.setSensitivity(sensitivity)
-        dataTextView.text = "Set Sensitivity OK"
+        CoroutineScope(Dispatchers.IO).async {
+            val sensitivity = try {
+                pdmsDevice?.setSensitivity(sensitivity)
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                sensitivityEditText.setText(sensitivity.toString())
+                dataTextView.text = "Set Sensitivity Complete"
+            }
+        }
     }
 
     override fun data() {

@@ -222,6 +222,23 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         throw IllegalStateException()
     }
 
+    private suspend fun sendSetMessage(code: PDMSUtil.MessageSetCode, value: Byte): Int {
+        bluetoothGatt?.let { gatt ->
+            val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
+            gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
+                ?.getCharacteristic(uuid)?.let { characteristic ->
+                    LockGetter<ByteArray>().let {
+                        communicationMap[code.byte] = it
+                        characteristic.value = code.getMessage(value)
+                        gatt.writeCharacteristic(characteristic)
+                        val byteArray = it.getValue()
+                        return byteArray[2].toUInt().toInt()
+                    }
+                }
+        }
+        throw IllegalStateException()
+    }
+
     suspend fun getSensingIntervalMillis(): Int {
         return PDMSUtil.intervalValueToMillis(getSensingInterval())
     }
@@ -231,14 +248,14 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         return sendGetMessage(code)
     }
 
-    fun setSensorScanIntervalMillis(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) intervalMillis: Int) {
+    suspend fun setSensorScanIntervalMillis(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) intervalMillis: Int): Int {
         val intervalValue = PDMSUtil.intervalMillisToValue(intervalMillis)
-        return setSensorScanInterval(intervalValue)
+        return PDMSUtil.intervalValueToMillis(setSensorScanInterval(intervalValue))
     }
 
-    private fun setSensorScanInterval(@IntRange(from = 1, to = 255) intervalValue: Int) {
+    private suspend fun setSensorScanInterval(@IntRange(from = 1, to = 255) intervalValue: Int): Int {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
-        sendSetMessage(code, intervalValue.toByte())
+        return sendSetMessage(code, intervalValue.toByte())
     }
 
     suspend fun getAmplification(): Int {
@@ -246,9 +263,9 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         return sendGetMessage(code)
     }
 
-    fun setAmplification(@IntRange(from = 1, to = 255) amp: Int) {
+    suspend fun setAmplification(@IntRange(from = 1, to = 255) amp: Int): Int {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
-        sendSetMessage(code, amp.toByte())
+        return sendSetMessage(code, amp.toByte())
     }
 
     suspend fun getSensitivity(): Int {
@@ -256,22 +273,9 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         return sendGetMessage(code)
     }
 
-    fun setSensitivity(@IntRange(from = 1, to = 255) sens: Int) {
+    suspend fun setSensitivity(@IntRange(from = 1, to = 255) sens: Int): Int {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
-        sendSetMessage(code, sens.toByte())
-    }
-
-    private fun sendSetMessage(code: PDMSUtil.MessageSetCode, value: Byte) {
-        bluetoothGatt?.let { gatt ->
-            val uuid = UUID.fromString(PDMSUtil.UUID_COMMUNICATION)
-            gatt.getService(UUID.fromString(PDMSUtil.UUID_SERVICE_DATA))
-                ?.getCharacteristic(uuid)?.let { characteristic ->
-                    characteristic.value = code.getMessage(value)
-                    gatt.writeCharacteristic(characteristic)
-                    return
-                }
-        }
-        throw IllegalStateException()
+        return sendSetMessage(code, sens.toByte())
     }
 
     fun registerDataCallback(dataCallback: DataCallback) {
