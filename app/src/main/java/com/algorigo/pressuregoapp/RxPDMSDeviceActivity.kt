@@ -49,7 +49,6 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         pdmsDevice?.setSensingIntervalMillisCompletable(interval)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                dataTextView.text = "Set Sensor Scan Interval OK"
             }, {
                 Log.e(LOG_TAG, "", it)
             })
@@ -63,7 +62,6 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         pdmsDevice?.setAmplificationCompletable(amplification)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                dataTextView.text = "Set Amplification OK"
             }, {
                 Log.e(LOG_TAG, "", it)
             })
@@ -77,7 +75,6 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         pdmsDevice?.setSensitivityCompletable(sensitivity)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                dataTextView.text = "Set Sensitivity OK"
             }, {
                 Log.e(LOG_TAG, "", it)
             })
@@ -93,7 +90,7 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
                 }
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({
-                    dataTextView.text = it.contentToString()
+                    setData(it)
                 }, {
                     Log.e(LOG_TAG, "", it)
                 })

@@ -26,7 +26,10 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected lateinit var sensitivityEditText: EditText
     private lateinit var sensitivitySetBtn: Button
     private lateinit var dataBtn: Button
-    protected lateinit var dataTextView: TextView
+    protected lateinit var dataTextView1: TextView
+    protected lateinit var dataTextView2: TextView
+    protected lateinit var dataTextView3: TextView
+    protected lateinit var dataTextView4: TextView
     private lateinit var batteryBtn: Button
     protected lateinit var batteryTextView: TextView
     private lateinit var lowBatteryBtn: Button
@@ -59,7 +62,10 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         sensitivityEditText = findViewById(R.id.sensitivity_edittext)
         sensitivitySetBtn = findViewById(R.id.sensitivity_set_btn)
         dataBtn = findViewById(R.id.data_btn)
-        dataTextView = findViewById(R.id.data_textview)
+        dataTextView1 = findViewById(R.id.data_textview_1)
+        dataTextView2 = findViewById(R.id.data_textview_2)
+        dataTextView3 = findViewById(R.id.data_textview_3)
+        dataTextView4 = findViewById(R.id.data_textview_4)
         batteryBtn = findViewById(R.id.battery_btn)
         batteryTextView = findViewById(R.id.battery_textview)
         lowBatteryBtn = findViewById(R.id.low_battery_btn)
@@ -139,6 +145,13 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected abstract fun battery()
 
     protected abstract fun lowBattery()
+
+    protected fun setData(intArray: IntArray) {
+        dataTextView1.text = intArray[3].toString()
+        dataTextView2.text = intArray[2].toString()
+        dataTextView3.text = intArray[0].toString()
+        dataTextView4.text = intArray[1].toString()
+    }
 
     companion object {
         const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"

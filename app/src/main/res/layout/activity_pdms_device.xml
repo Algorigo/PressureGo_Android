@@ -177,11 +177,60 @@
                 android:text="Data"
                 app:layout_constraintTop_toBottomOf="@+id/sensitivity_set_btn" />
 
-            <TextView
-                android:id="@+id/data_textview"
+            <LinearLayout
+                android:id="@+id/data_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/data_btn" />
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/data_btn">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/data_textview_1"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="1" />
+
+                    <TextView
+                        android:id="@+id/data_textview_2"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="2" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/data_textview_3"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="3" />
+
+                    <TextView
+                        android:id="@+id/data_textview_4"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        tools:text="4" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/battery_btn"
@@ -191,7 +240,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/low_battery_btn"
                 app:layout_constraintHorizontal_weight="1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/data_textview" />
+                app:layout_constraintTop_toBottomOf="@+id/data_linear_layout" />
 
             <TextView
                 android:id="@+id/battery_textview"

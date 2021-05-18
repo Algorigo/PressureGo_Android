@@ -98,7 +98,6 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             }
             runBlocking(Dispatchers.Main) {
                 intervalEditText.setText(interval.toString())
-                dataTextView.text = "Set Interval Complete"
             }
         }
     }
@@ -125,7 +124,6 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             }
             runBlocking(Dispatchers.Main) {
                 amplificationEditText.setText(amplification.toString())
-                dataTextView.text = "Set Amplification Complete"
             }
         }
     }
@@ -152,7 +150,6 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             }
             runBlocking(Dispatchers.Main) {
                 sensitivityEditText.setText(sensitivity.toString())
-                dataTextView.text = "Set Sensitivity Complete"
             }
         }
     }
@@ -165,7 +162,7 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
             callback = object : PDMSDevice.DataCallback {
                 override fun onData(intArray: IntArray) {
                     runOnUiThread {
-                        dataTextView.text = intArray.contentToString()
+                        setData(intArray)
                     }
                 }
             }.also {
