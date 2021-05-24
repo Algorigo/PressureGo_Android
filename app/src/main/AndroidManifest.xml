@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".DfuService"
+            android:exported="true" />
+        <activity android:name=".NotificationActivity" />
     </application>
 
 </manifest>

@@ -62,4 +62,7 @@ dependencies {
     implementation 'com.algorigo.library:algorigoutil:1.3.0'
 
     implementation 'com.algorigo.rx:algorigoble:1.4.0'
+
+    //DFU
+    implementation 'no.nordicsemi.android:dfu:1.11.1'
 }

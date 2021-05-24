@@ -131,6 +131,24 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         }
     }
 
+    override fun updateFirmware() {
+        firmwarePath?.let {
+            pdmsDevice
+                ?.update(this, DfuService::class.java, it)
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({
+                    Log.i(LOG_TAG, "update $it%")
+                    firmwareUpdateResultTextView.text = "update $it%"
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                    firmwareUpdateResultTextView.text = it.message
+                }, {
+                    Log.i(LOG_TAG, "update complete")
+                    firmwareUpdateResultTextView.text = "complete"
+                })
+        }
+    }
+
     companion object {
         private val LOG_TAG = RxPDMSDeviceActivity::class.java.simpleName
     }

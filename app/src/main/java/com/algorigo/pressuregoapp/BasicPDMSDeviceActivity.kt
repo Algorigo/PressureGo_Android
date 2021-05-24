@@ -187,4 +187,26 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
     override fun lowBattery() {
         lowBatteryTextView.text = "Not working with basic"
     }
+
+    override fun updateFirmware() {
+        firmwarePath?.let {
+            CoroutineScope(Dispatchers.IO).async {
+                try {
+                    pdmsDevice?.update(
+                        this@BasicPDMSDeviceActivity,
+                        DfuService::class.java,
+                        it
+                    )
+                    firmwareUpdateResultTextView.text = "complete"
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, "Dfu Error", e)
+                    firmwareUpdateResultTextView.text = e.message
+                }
+            }
+        }
+    }
+
+    companion object {
+        private val LOG_TAG = BasicPDMSDeviceActivity::class.java.simpleName
+    }
 }

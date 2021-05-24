@@ -52,4 +52,7 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     //ReactiveX Relay
     implementation 'com.jakewharton.rxrelay3:rxrelay:3.0.0'
+
+    //DFU
+    implementation 'no.nordicsemi.android:dfu:1.11.1'
 }

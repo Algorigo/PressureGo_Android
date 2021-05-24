@@ -1,17 +1,20 @@
 package com.algorigo.pressurego
 
 import android.bluetooth.BluetoothDevice
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.annotation.IntRange
+import androidx.annotation.RawRes
 import com.algorigo.algorigoble.*
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
-import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.subjects.PublishSubject
+import no.nordicsemi.android.dfu.DfuBaseService
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -281,6 +284,52 @@ class RxPDMSDevice : InitializableBleDevice() {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it[2].toUByte().toInt()
             }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, uri).let {
+            update(clazz, it)
+        }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, path: String): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, path).let {
+            update(clazz, it)
+        }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, @RawRes resRawId: Int): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, resRawId).let {
+            update(clazz, it)
+        }
+    }
+
+    private fun <T : DfuBaseService> update(clazz: Class<T>, adapter: DfuAdapter): Observable<Int> {
+        if (!connected) {
+            return Observable.error(IllegalStateException("Disconnected"))
+        }
+
+        return Observable.create {
+            val callback = object : DfuAdapter.Callback(adapter.address) {
+                override fun onProgress(percent: Int) {
+                    it.onNext(percent)
+                }
+
+                override fun onCompleted() {
+                    it.onComplete()
+                }
+
+                override fun onAborted() {
+                    it.onError(IllegalStateException("Aborted"))
+                }
+
+                override fun onError(error: Exception) {
+                    it.onError(error)
+                }
+            }
+
+            adapter.start(clazz, callback)
+        }
     }
 
     class DeviceDelegate : BleManager.BleDeviceDelegate() {

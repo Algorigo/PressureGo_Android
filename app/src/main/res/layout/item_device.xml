@@ -15,7 +15,7 @@
         android:id="@+id/mac_address_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="8dp"
         tools:text="12:34:56:78:90:ab" />
 
     <View
@@ -26,6 +26,7 @@
     <Button
         android:id="@+id/connect_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="Connect" />
 
 </LinearLayout>
