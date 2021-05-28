@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
 
 object PDMSUtil {
 
-    private val LOG_TAG = "!!!"//PDMSUtil::class.java.simpleName
+    private val LOG_TAG = PDMSUtil::class.java.simpleName
 
     internal const val LOW_BATTERY_RATIO = 10.0
 
