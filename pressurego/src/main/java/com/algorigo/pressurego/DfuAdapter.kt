@@ -3,7 +3,6 @@ package com.algorigo.pressurego
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RawRes
 import no.nordicsemi.android.dfu.*
 

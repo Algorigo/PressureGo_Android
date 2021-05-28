@@ -2,10 +2,10 @@ package com.algorigo.pressurego
 
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.net.URL
 import java.net.URLConnection
 import kotlin.math.roundToInt

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RawRes
-import io.reactivex.rxjava3.core.Maybe
 import kotlinx.coroutines.*
 import no.nordicsemi.android.dfu.DfuBaseService
 import java.util.*
