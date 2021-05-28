@@ -10,13 +10,17 @@ import com.algorigo.algorigoble.*
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import no.nordicsemi.android.dfu.DfuBaseService
+import no.nordicsemi.android.dfu.DfuServiceController
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.NoSuchElementException
 
 class RxPDMSDevice : InitializableBleDevice() {
 
@@ -286,6 +290,23 @@ class RxPDMSDevice : InitializableBleDevice() {
             }
     }
 
+    fun checkUpdateExist(): Maybe<String> {
+        return Single.create<List<Pair<String, String>>> {
+            val result = PDMSUtil.firmwareList()
+            if (result != null) {
+                it.onSuccess(result)
+            } else {
+                it.onError(NoSuchElementException())
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapMaybe {
+                PDMSUtil.latestFirmware(it, firmwareVersion)?.let {
+                    Maybe.just(it)
+                } ?: Maybe.empty()
+            }
+    }
+
     fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri): Observable<Int> {
         return DfuAdapter(context, macAddress, deviceName, uri).let {
             update(clazz, it)
@@ -309,7 +330,9 @@ class RxPDMSDevice : InitializableBleDevice() {
             return Observable.error(IllegalStateException("Disconnected"))
         }
 
-        return Observable.create {
+        var controller: DfuServiceController? = null
+
+        return Observable.create<Int> {
             val callback = object : DfuAdapter.Callback(adapter.address) {
                 override fun onProgress(percent: Int) {
                     it.onNext(percent)
@@ -320,16 +343,26 @@ class RxPDMSDevice : InitializableBleDevice() {
                 }
 
                 override fun onAborted() {
-                    it.onError(IllegalStateException("Aborted"))
+                    if (!it.isDisposed) {
+                        it.onError(IllegalStateException("Aborted"))
+                    }
                 }
 
                 override fun onError(error: Exception) {
-                    it.onError(error)
+                    if (!it.isDisposed) {
+                        it.onError(error)
+                    }
                 }
             }
 
-            adapter.start(clazz, callback)
+            controller = adapter.start(clazz, callback)
         }
+            .doOnDispose {
+                controller?.abort()
+            }
+            .doFinally {
+                controller = null
+            }
     }
 
     class DeviceDelegate : BleManager.BleDeviceDelegate() {

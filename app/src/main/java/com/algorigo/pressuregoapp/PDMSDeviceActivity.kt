@@ -38,11 +38,13 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected lateinit var batteryTextView: TextView
     private lateinit var lowBatteryBtn: Button
     protected lateinit var lowBatteryTextView: TextView
+    private lateinit var checkFirmwareExist: Button
     private lateinit var getFirmwareBtn: Button
-    private lateinit var firmwarePathTextView: TextView
+    protected lateinit var firmwarePathTextView: TextView
     private lateinit var updateFirmwareBtn: Button
     protected lateinit var firmwareUpdateResultTextView: TextView
 
+    protected var firmwareRemotePath: String? = null
     protected var firmwarePath: Uri? = null
 
     final override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +82,7 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         batteryTextView = findViewById(R.id.battery_textview)
         lowBatteryBtn = findViewById(R.id.low_battery_btn)
         lowBatteryTextView = findViewById(R.id.low_battery_textview)
+        checkFirmwareExist = findViewById(R.id.check_firmware_exist)
         getFirmwareBtn = findViewById(R.id.get_firmware_btn)
         firmwarePathTextView = findViewById(R.id.firmware_path_textview)
         updateFirmwareBtn = findViewById(R.id.update_firmware_btn)
@@ -130,6 +133,9 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         lowBatteryBtn.setOnClickListener {
             lowBattery()
         }
+        checkFirmwareExist.setOnClickListener {
+            checkFirmwareExist()
+        }
         getFirmwareBtn.setOnClickListener {
             getFirmwarePath()
         }
@@ -142,6 +148,7 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         when (requestCode) {
             GET_PATH_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
+                    firmwareRemotePath = null
                     firmwarePath = data?.data
                     firmwarePathTextView.text = firmwarePath?.toString()
                 }
@@ -177,6 +184,8 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected abstract fun battery()
 
     protected abstract fun lowBattery()
+
+    protected abstract fun checkFirmwareExist()
 
     private fun getFirmwarePath() {
         Intent(Intent.ACTION_GET_CONTENT).apply {

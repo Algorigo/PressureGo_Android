@@ -1,11 +1,13 @@
 package com.algorigo.pressuregoapp
 
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.algorigo.pressurego.PDMSDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
 
@@ -188,19 +190,90 @@ class BasicPDMSDeviceActivity : PDMSDeviceActivity() {
         lowBatteryTextView.text = "Not working with basic"
     }
 
+    override fun checkFirmwareExist() {
+        firmwarePath = null
+        CoroutineScope(Dispatchers.IO).async {
+            val url = try {
+                pdmsDevice?.checkUpdateExist()
+            } catch (e: Exception) {
+                null
+            }
+            runBlocking(Dispatchers.Main) {
+                if (url != null) {
+                    firmwareRemotePath = url
+                    firmwarePathTextView.text = url
+                } else {
+                    firmwarePathTextView.text = "Firmware Not Found"
+                }
+            }
+        }
+    }
+
     override fun updateFirmware() {
-        firmwarePath?.let {
+        if (firmwarePath != null) {
+            updateLocally()
+        } else if (firmwareRemotePath != null) {
+            updateRemotely()
+        }
+    }
+
+    private fun updateLocally() {
+        firmwarePath?.also {
             CoroutineScope(Dispatchers.IO).async {
                 try {
                     pdmsDevice?.update(
                         this@BasicPDMSDeviceActivity,
                         DfuService::class.java,
                         it
-                    )
-                    firmwareUpdateResultTextView.text = "complete"
+                    ) {
+                        runOnUiThread {
+                            firmwareUpdateResultTextView.text = "update $it%"
+                        }
+                    }
+                    runBlocking(Dispatchers.Main) {
+                        firmwareUpdateResultTextView.text = "complete"
+                    }
                 } catch (e: Exception) {
                     Log.e(LOG_TAG, "Dfu Error", e)
-                    firmwareUpdateResultTextView.text = e.message
+                    runBlocking(Dispatchers.Main) {
+                        firmwareUpdateResultTextView.text = e.message
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateRemotely() {
+        firmwareRemotePath?.also {
+            val file = File(ContextCompat.getDataDir(this), "temp.zip")
+            CoroutineScope(Dispatchers.IO).async {
+                try {
+                    Utility.download(it, file) {
+                        runOnUiThread {
+                            firmwareUpdateResultTextView.text = "Download $it%"
+                        }
+                    }
+                    runBlocking(Dispatchers.Main) {
+                        firmwareUpdateResultTextView.text = "Downloaded"
+                    }
+                    pdmsDevice?.update(
+                        this@BasicPDMSDeviceActivity,
+                        DfuService::class.java,
+                        file.absolutePath
+                    ) {
+                        runOnUiThread {
+                            firmwareUpdateResultTextView.text = "update $it%"
+                        }
+                    }
+                    runBlocking(Dispatchers.Main) {
+                        firmwareUpdateResultTextView.text = "complete"
+                    }
+                } catch (e: Exception) {
+                    runBlocking(Dispatchers.Main) {
+                        firmwareUpdateResultTextView.text = e.message
+                    }
+                } finally {
+                    file.delete()
                 }
             }
         }

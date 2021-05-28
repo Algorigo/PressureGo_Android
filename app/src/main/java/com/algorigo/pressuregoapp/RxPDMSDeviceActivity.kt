@@ -2,10 +2,12 @@ package com.algorigo.pressuregoapp
 
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
+import java.io.File
 
 class RxPDMSDeviceActivity : PDMSDeviceActivity() {
 
@@ -131,12 +133,73 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         }
     }
 
+    override fun checkFirmwareExist() {
+        firmwarePath = null
+        pdmsDevice?.checkUpdateExist()
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe({
+                firmwareRemotePath = it
+                firmwarePathTextView.text = it
+            }, {
+                Log.e(LOG_TAG, "", it)
+                firmwarePathTextView.text = "Firmware Error : ${it.message}"
+            }, {
+                firmwarePathTextView.text = "Firmware Not Found"
+            })
+    }
+
+    var disposable: Disposable? = null
+
     override fun updateFirmware() {
-        firmwarePath?.let {
+        if (disposable != null) {
+            disposable?.dispose()
+            return
+        }
+
+        if (firmwarePath != null) {
+            updateLocally()
+        } else if (firmwareRemotePath != null) {
+            updateRemotely()
+        }
+    }
+
+    private fun updateLocally() {
+        disposable = firmwarePath?.let {
             pdmsDevice
                 ?.update(this, DfuService::class.java, it)
+                ?.doFinally {
+                    disposable = null
+                }
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({
+                    Log.i(LOG_TAG, "update $it%")
+                    firmwareUpdateResultTextView.text = "update $it%"
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                    firmwareUpdateResultTextView.text = it.message
+                }, {
+                    Log.i(LOG_TAG, "update complete")
+                    firmwareUpdateResultTextView.text = "complete"
+                })
+        }
+    }
+
+    private fun updateRemotely() {
+        disposable = firmwareRemotePath?.let {
+            val file = File(ContextCompat.getDataDir(this), "temp.zip")
+            Utility.downloadObservable(it, file)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    firmwareUpdateResultTextView.text = "Download $it%"
+                }
+                .ignoreElements()
+                .andThen(pdmsDevice?.update(this, DfuService::class.java, file.absolutePath))
+                .doFinally {
+                    disposable = null
+                    file.delete()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     Log.i(LOG_TAG, "update $it%")
                     firmwareUpdateResultTextView.text = "update $it%"
                 }, {

@@ -5,10 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RawRes
-import no.nordicsemi.android.dfu.DfuBaseService
-import no.nordicsemi.android.dfu.DfuProgressListenerAdapter
-import no.nordicsemi.android.dfu.DfuServiceInitiator
-import no.nordicsemi.android.dfu.DfuServiceListenerHelper
+import no.nordicsemi.android.dfu.*
 
 internal class DfuAdapter private constructor(private val context: Context, val address: String, name: String) {
 
@@ -115,9 +112,9 @@ internal class DfuAdapter private constructor(private val context: Context, val 
         }
     }
 
-    fun <T : DfuBaseService> start(clazz: Class<T>, callback: Callback) {
+    fun <T : DfuBaseService> start(clazz: Class<T>, callback: Callback): DfuServiceController {
         callback.context = context
         DfuServiceListenerHelper.registerProgressListener(context, callback)
-        initiator.start(context, clazz)
+        return initiator.start(context, clazz)
     }
 }

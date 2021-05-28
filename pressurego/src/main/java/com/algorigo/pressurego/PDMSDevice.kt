@@ -8,6 +8,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RawRes
+import io.reactivex.rxjava3.core.Maybe
 import kotlinx.coroutines.*
 import no.nordicsemi.android.dfu.DfuBaseService
 import java.util.*
@@ -294,31 +295,39 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         dataCallbacks.remove(dataCallback)
     }
 
-    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri) {
+    suspend fun checkUpdateExist(): String? {
+        val firmwareVersion = getFirmwareVersion()
+        val result = PDMSUtil.firmwareList()
+        return result?.let {
+            PDMSUtil.latestFirmware(it, firmwareVersion)
+        }
+    }
+
+    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri, callback: ((Int) -> Unit)? = null) {
         bluetoothGatt?.device?.let {
             DfuAdapter(context, it.address, it.name, uri)
         }?.also {
-            update(clazz, it)
+            update(clazz, it, callback)
         }
     }
 
-    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, path: String) {
+    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, path: String, callback: ((Int) -> Unit)? = null) {
         bluetoothGatt?.device?.let {
             DfuAdapter(context, it.address, it.name, path)
         }?.also {
-            update(clazz, it)
+            update(clazz, it, callback)
         }
     }
 
-    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, @RawRes resRawId: Int) {
+    suspend fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, @RawRes resRawId: Int, callback: ((Int) -> Unit)? = null) {
         bluetoothGatt?.device?.let {
             DfuAdapter(context, it.address, it.name, resRawId)
         }?.also {
-            update(clazz, it)
+            update(clazz, it, callback)
         }
     }
 
-    private suspend fun <T : DfuBaseService> update(clazz: Class<T>, adapter: DfuAdapter) {
+    private suspend fun <T : DfuBaseService> update(clazz: Class<T>, adapter: DfuAdapter, callback: ((Int) -> Unit)?) {
         if (!connected) {
             throw IllegalStateException("Disconnected")
         }
@@ -326,6 +335,7 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         val lockGetter = LockGetter<DfuResult>()
         val callback = object : DfuAdapter.Callback(adapter.address) {
             override fun onProgress(percent: Int) {
+                callback?.invoke(percent)
             }
 
             override fun onCompleted() {
