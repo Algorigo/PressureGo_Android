@@ -2,6 +2,73 @@
 
 Pressure Go library for android and Sample Application repository.
 
+### Bluetooth Specification
+
+You can use Bluetooth characteristic like below.
+
+#### Device Info Service
+```
+    UUID_DEVICE_INFO_SERVICE =       "0000180A-0000-1000-8000-00805F9B34FB"
+    UUID_MANUFACTURER_NAME =         "00002A29-0000-1000-8000-00805F9B34FB"
+    UUID_HARDWARE_REVISION =         "00002A27-0000-1000-8000-00805F9B34FB"
+    UUID_FIRMWARE_REVISION =         "00002A26-0000-1000-8000-00805F9B34FB"
+```
+
+#### Device Info Service
+```
+    UUID_GENERIC_ACCESS_SERVICE =    "00001800-0000-1000-8000-00805F9B34FB"
+    UUID_DEVICE_NAME =               "00002A00-0000-1000-8000-00805F9B34FB"
+    UUID_APPEARANCE =                "00002A01-0000-1000-8000-00805F9B34FB"
+    UUID_PERIPHERAL_PREFERRED =      "00002A04-0000-1000-8000-00805F9B34FB"
+    UUID_CENTRAL_ADDRESS_RESOL =     "00002AA6-0000-1000-8000-00805F9B34FB"
+```
+
+#### Battery Service
+```
+    UUID_BATTERY_SERVICE =           "0000180F-0000-1000-8000-00805F9B34FB"
+    UUID_BATTERY_LEVEL =             "00002A19-0000-1000-8000-00805F9B34FB"
+```
+
+#### Communication Service
+```
+    UUID_SERVICE_DATA =              "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
+    UUID_COMMUNICATION =             "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
+    UUID_DATA_NOTIFICATION =         "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+```
+
+#### Protocol
+You can run command like read, change value with writing characteristic to UUID_COMMUNICATION.
+
+Data should be like below.
+
+```kotlin
+    //Change Value Command
+    byteArrayOf(0x02, COMMAND, VALUE, 0x03)
+
+    CODE_SENSOR_SCAN_INTERVAL = 0xa1.toByte()
+    CODE_AMPLIFICATION =        0xc1.toByte()
+    CODE_SENSITIVITY =          0xb1.toByte()
+
+    //Read Value Command
+    byteArrayOf(0x02, byte, 0x03)
+    CODE_SENSOR_SCAN_INTERVAL = 0xa2.toByte()
+    CODE_AMPLIFICATION =        0xc2.toByte()
+    CODE_SENSITIVITY =          0xb2.toByte()
+```
+
+Command Callback and Pressure Data are notified by characteristic UUID_DATA_NOTIFICATION.
+
+Received Data will be like below.
+
+```kotlin
+    //Callback Data
+    [0x02, COMMAND, VALUE, 0x03]
+
+    //Pressure Data
+    [0x01, BYTE_LOWER_1, BYTE_UPPER_1, BYTE_LOWER_2, BYTE_UPPER_2, BYTE_LOWER_3, BYTE_UPPER_3, BYTE_LOWER_4, BYTE_UPPER_4, 0x03]
+    pressureValue[i] = (BYTE_LOWER[i] shl 8) + BYTE_UPPER[i]
+```
+
 ### Integration
 
 The easiest way to include the library to your project is to add the 
