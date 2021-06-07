@@ -43,14 +43,15 @@ Data should be like below.
 
 ```kotlin
     //Change Value Command
-    byteArrayOf(0x02, COMMAND, VALUE, 0x03)
+    byteArrayOf(0x02, CODE, VALUE, 0x03)
 
     CODE_SENSOR_SCAN_INTERVAL = 0xa1.toByte()
     CODE_AMPLIFICATION =        0xc1.toByte()
     CODE_SENSITIVITY =          0xb1.toByte()
 
     //Read Value Command
-    byteArrayOf(0x02, byte, 0x03)
+    byteArrayOf(0x02, CODE, 0x03)
+
     CODE_SENSOR_SCAN_INTERVAL = 0xa2.toByte()
     CODE_AMPLIFICATION =        0xc2.toByte()
     CODE_SENSITIVITY =          0xb2.toByte()
@@ -62,7 +63,7 @@ Received Data will be like below.
 
 ```kotlin
     //Callback Data
-    [0x02, COMMAND, VALUE, 0x03]
+    [0x02, CODE, VALUE, 0x03]
 
     //Pressure Data
     [0x01, BYTE_LOWER_1, BYTE_UPPER_1, BYTE_LOWER_2, BYTE_UPPER_2, BYTE_LOWER_3, BYTE_UPPER_3, BYTE_LOWER_4, BYTE_UPPER_4, 0x03]
