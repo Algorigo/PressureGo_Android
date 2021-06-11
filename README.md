@@ -1,6 +1,11 @@
 # Pressure Go
 
-Pressure Go library for android and Sample Application repository.
+Pressure Go library for Android and Sample Application repository.
+
+## Supporting Bluetooth Version
+
+Tested with Bluetooth 5, Bluetooth 4.2 Devices.
+This device is supporting Bluetooth Low Energy protocol.
 
 ### Bluetooth Specification
 
@@ -37,7 +42,7 @@ You can use Bluetooth characteristic like below.
 ```
 
 #### Protocol
-You can run command like read, change value with writing characteristic to UUID_COMMUNICATION.
+You can run commands like read and change value with writing characteristic to UUID_COMMUNICATION.
 
 Data should be like below.
 
@@ -70,6 +75,10 @@ Received Data will be like below.
     pressureValue[i] = (BYTE_LOWER[i] shl 8) + BYTE_UPPER[i]
 ```
 
+## Sample Code
+
+This repository shows how to use our device by android sample project.
+
 ### Integration
 
 The easiest way to include the library to your project is to add the 
@@ -82,7 +91,7 @@ line to your build.gradle file.
 
 There is two way to use of pressure go library.
 
-If you want to use [android default bluetooth framework](https://developer.android.com/guide/topics/connectivity/bluetooth?hl=ko, "android default bluetooth framework") and [kotlin coroutine](https://developer.android.com/kotlin/coroutines?hl=ko, "kotlin coroutine") you can use PDMSDevice class.
+If you want to use [Android default bluetooth framework](https://developer.android.com/guide/topics/connectivity/bluetooth?hl=ko, "Android default bluetooth framework") and [kotlin coroutine](https://developer.android.com/kotlin/coroutines?hl=ko, "kotlin coroutine") you can use PDMSDevice class.
 
 ```kotlin
 import android.bluetooth.le.ScanCallback
@@ -469,11 +478,17 @@ When you use RxPDMSDevice class
 
 Remember to add your service to *AndroidManifest.xml*.
 
-#### Firmware Info
+## Firmware Info
 - [Firmware List](https://pressure-go.s3.ap-northeast-2.amazonaws.com/firmware/firmware.json "Firmware List")
 
-### Store
+## Store
 - [Device Mart](https://www.devicemart.co.kr/main/index "Device Mart")
 
-### Link
+## Link
 - [Algorigo](https://www.algorigo.com "Algorigo")
+
+## Reporting Issues
+For SDK feedback or to report a bug, please file a [GitHub Issue](https://github.com/Algorigo/PressureGo_Android/issues). For general suggestions or ideas, email us <[rouddy@algorigo.com](mailto:rouddy@algorigo.com)>.
+
+## License
+[MIT License](LICENSE)
