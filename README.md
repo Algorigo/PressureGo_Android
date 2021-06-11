@@ -14,7 +14,7 @@ You can use Bluetooth characteristic like below.
     UUID_FIRMWARE_REVISION =         "00002A26-0000-1000-8000-00805F9B34FB"
 ```
 
-#### Device Info Service
+#### Device Generic Access Service
 ```
     UUID_GENERIC_ACCESS_SERVICE =    "00001800-0000-1000-8000-00805F9B34FB"
     UUID_DEVICE_NAME =               "00002A00-0000-1000-8000-00805F9B34FB"
