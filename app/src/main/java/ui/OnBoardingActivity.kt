@@ -57,7 +57,7 @@ class OnBoardingActivity : AppCompatActivity() {
             .attach()
 
         skipButton.setOnClickListener {
-            moveToBluetoothScan()
+            moveToNewMain()
         }
 
         pairingButton.setOnClickListener {
@@ -67,6 +67,10 @@ class OnBoardingActivity : AppCompatActivity() {
 
     private fun moveToBluetoothScan() {
         startActivity(Intent(this, BluetoothScanActivity::class.java))
+        finish()
+    }
+    private fun moveToNewMain() {
+        startActivity(Intent(this, NewMainActivity::class.java))
         finish()
     }
 }
