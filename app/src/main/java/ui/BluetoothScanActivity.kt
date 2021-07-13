@@ -1,6 +1,7 @@
 package ui
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -102,7 +103,11 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
-
+        Intent(this, NewMainActivity::class.java).apply {
+            putExtra(NewMainActivity.MAC_ADDRESS_KEY, device.macAddress)
+        }.also {
+            startActivity(it)
+        }
     }
 
     override fun onConnectedMoreSelected(device: RxPDMSDevice) {
