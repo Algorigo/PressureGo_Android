@@ -99,14 +99,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
-            android:id="@+id/device_progress"
+            android:id="@+id/bluetooth_scan_scan_progress"
             style="@android:style/Widget.ProgressBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/bluetooth_scan_scanned_label"
             app:layout_constraintStart_toEndOf="@+id/bluetooth_scan_scanned_label"
-            app:layout_constraintTop_toTopOf="@+id/bluetooth_scan_scanned_label" />
+            app:layout_constraintTop_toTopOf="@+id/bluetooth_scan_scanned_label"
+            tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bluetooth_scan_scanned_recycler"

@@ -1,0 +1,45 @@
+package ui
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.algorigo.pressurego.RxPDMSDevice
+import com.algorigo.pressuregoapp.R
+
+class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate): RecyclerView.Adapter<ConnectedRecyclerAdapter.ConnectedRecyclerViewHolder>() {
+
+    interface ConnectedRecyclerDelegate {
+        fun getConnectedItemCount(): Int
+        fun getConnectedDevice(position: Int): RxPDMSDevice
+        fun onConnectedDeviceSelected(device: RxPDMSDevice)
+    }
+
+    inner class ConnectedRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun setDevice(device: RxPDMSDevice) {
+            itemView.setOnClickListener {
+                delegate.onConnectedDeviceSelected(device)
+            }
+            itemView.findViewById<TextView>(R.id.device_name).text = device.getDisplayName()
+            itemView.findViewById<TextView>(R.id.mac_address_view).text = device.macAddress
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConnectedRecyclerViewHolder {
+        return LayoutInflater.from(parent.context).inflate(R.layout.item_bluetooth_scan_connected_device, parent, false).let {
+            ConnectedRecyclerViewHolder(it)
+        }
+    }
+
+    override fun onBindViewHolder(holder: ConnectedRecyclerViewHolder, position: Int) {
+        delegate.getConnectedDevice(position).also {
+            holder.setDevice(it)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return delegate.getConnectedItemCount()
+    }
+}

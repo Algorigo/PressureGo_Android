@@ -108,6 +108,10 @@ class RxPDMSDevice : InitializableBleDevice() {
             })
     }
 
+    fun getDisplayName(): String {
+        return "PRESSUREGO"
+    }
+
     fun getDeviceName(): String {
         return deviceName
     }
