@@ -11,10 +11,15 @@ import android.widget.TextView
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.reactivex.Observable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 
 class DeviceInfoDialog : BottomSheetDialogFragment() {
 
     lateinit var device: RxPDMSDevice
+
+    private var batteryDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +36,15 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<BatteryView>(R.id.device_info_battery_view).run {
+            batteryDisposable = device.getBatteryPercentObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    batteryPercent = it
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                })
+        }
         view.findViewById<TextView>(R.id.device_info_display_name_view).run {
             text = device.getDisplayName()
         }
@@ -49,5 +63,14 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
 
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        batteryDisposable?.dispose()
+    }
+
+    companion object {
+        private val LOG_TAG = DeviceInfoDialog::class.java.simpleName
     }
 }
