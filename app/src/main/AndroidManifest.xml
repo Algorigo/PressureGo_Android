@@ -9,21 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PressureGoApp">
-        <activity android:name=".RxPDMSDeviceActivity"></activity>
-        <activity android:name=".BasicPDMSDeviceActivity" />
-        <activity android:name=".RxActivity" />
-        <activity android:name=".BasicActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="ui.OnBoardingActivity" />
+        <activity android:name=".RxPDMSDeviceActivity" />
+        <activity android:name=".BasicPDMSDeviceActivity" />
+        <activity android:name=".RxActivity" />
+        <activity android:name=".BasicActivity" />
+        <activity android:name=".MainActivity" />
 
         <service
             android:name=".DfuService"
             android:exported="true" />
+
         <activity android:name=".NotificationActivity" />
     </application>
 
