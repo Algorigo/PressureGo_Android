@@ -91,24 +91,28 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         scanRecyclerAdapter.notifyDataSetChanged()
     }
 
+    private fun getConnectedDevices() = BleManager.getInstance().getConnectedDevices().mapNotNull { it as? RxPDMSDevice }
+
     override fun getConnectedItemCount(): Int {
-        return devices.filter { it.connected }.size
+        return getConnectedDevices().count()
     }
 
     override fun getConnectedDevice(position: Int): RxPDMSDevice {
-        return devices.filter { it.connected }[position]
+        return getConnectedDevices()[position]
     }
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
 
     }
 
+    private fun getScannedDevices() = devices.filter { !it.connected }
+
     override fun getScanItemCount(): Int {
-        return devices.filter { !it.connected }.size
+        return getScannedDevices().size
     }
 
     override fun getScanDevice(position: Int): RxPDMSDevice {
-        return devices.filter { !it.connected }[position]
+        return getScannedDevices()[position]
     }
 
     override fun onDeviceSelected(device: RxPDMSDevice) {
