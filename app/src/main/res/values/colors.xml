@@ -7,5 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="pressure_go_white">#fcfcfc</color>
     <color name="dark">#131315</color>
+    <color name="black_30">#4c000000</color>
+    <color name="slate_grey_35">#59505053</color>
+    <color name="slate_grey">#505053</color>
+    <color name="blue_grey">#8e8d94</color>
+    <color name="charcoal_grey">#2f2f32</color>
 </resources>

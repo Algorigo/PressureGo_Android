@@ -6,4 +6,12 @@
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnnect</string>
 
+    <string name="main_sensing_data">Sensing Data</string>
+    <string name="main_my_devices">My devices</string>
+    <string name="main_select_info">Select the model of sensor to use</string>
+    <string name="main_sensor_settings">Sensor Settings</string>
+    <string name="main_interval_title">Interval</string>
+    <string name="main_amplification_title">Amplification</string>
+    <string name="main_sensitivity_title">Sensitivity</string>
+
 </resources>
