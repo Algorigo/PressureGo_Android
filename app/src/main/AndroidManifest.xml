@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PressureGoApp">
+        <activity android:name="ui.BluetoothScanActivity"></activity>
         <activity android:name="ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

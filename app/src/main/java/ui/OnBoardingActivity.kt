@@ -1,10 +1,10 @@
 package ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -18,6 +18,8 @@ class OnBoardingActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
+    private lateinit var skipButton: Button
+    private lateinit var pairingButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +27,8 @@ class OnBoardingActivity : AppCompatActivity() {
 
         viewPager = findViewById(R.id.on_boarding_view_pager)
         tabLayout = findViewById(R.id.on_boarding_view_pager_tab)
+        skipButton = findViewById(R.id.on_boarding_skip_button)
+        pairingButton = findViewById(R.id.on_boarding_pairing_button)
 
         viewPager.adapter = object : RecyclerView.Adapter<ImageViewHolder>() {
 
@@ -48,7 +52,21 @@ class OnBoardingActivity : AppCompatActivity() {
                 return 2
             }
         }
+
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }
             .attach()
+
+        skipButton.setOnClickListener {
+            moveToBluetoothScan()
+        }
+
+        pairingButton.setOnClickListener {
+            moveToBluetoothScan()
+        }
+    }
+
+    private fun moveToBluetoothScan() {
+        startActivity(Intent(this, BluetoothScanActivity::class.java))
+        finish()
     }
 }
