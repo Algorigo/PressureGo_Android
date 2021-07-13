@@ -105,6 +105,14 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
 
     }
 
+    override fun onConnectedMoreSelected(device: RxPDMSDevice) {
+        DeviceInfoDialog().also {
+            it.device = device
+        }.apply {
+            show(supportFragmentManager, DeviceInfoDialog::class.java.simpleName)
+        }
+    }
+
     private fun getScannedDevices() = devices.filter { !it.connected }
 
     override fun getScanItemCount(): Int {

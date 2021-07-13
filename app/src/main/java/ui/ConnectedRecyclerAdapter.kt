@@ -3,6 +3,7 @@ package ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.pressurego.RxPDMSDevice
@@ -14,6 +15,7 @@ class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate):
         fun getConnectedItemCount(): Int
         fun getConnectedDevice(position: Int): RxPDMSDevice
         fun onConnectedDeviceSelected(device: RxPDMSDevice)
+        fun onConnectedMoreSelected(device: RxPDMSDevice)
     }
 
     inner class ConnectedRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +26,9 @@ class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate):
             }
             itemView.findViewById<TextView>(R.id.device_name).text = device.getDisplayName()
             itemView.findViewById<TextView>(R.id.mac_address_view).text = device.macAddress
+            itemView.findViewById<ImageButton>(R.id.device_more_button).setOnClickListener {
+                delegate.onConnectedMoreSelected(device)
+            }
         }
     }
 
