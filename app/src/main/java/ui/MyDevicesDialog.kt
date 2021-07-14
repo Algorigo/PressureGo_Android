@@ -1,10 +1,12 @@
 package ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
@@ -38,6 +40,10 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
         super.onViewCreated(view, savedInstanceState)
         bluetoothConnectedRecycler = view.findViewById(R.id.my_devices_connected_device)
         bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
+
+        view.findViewById<Button>(R.id.my_devices_add_device_button).setOnClickListener {
+            onAddDeviceClick()
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -61,6 +67,13 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
             }.apply {
                 show(it.supportFragmentManager, DeviceInfoDialog::class.java.simpleName)
             }
+        }
+    }
+
+    private fun onAddDeviceClick() {
+        dismiss()
+        context?.apply {
+            startActivity(Intent(this, BluetoothScanActivity::class.java))
         }
     }
 }
