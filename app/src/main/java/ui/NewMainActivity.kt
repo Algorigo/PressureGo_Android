@@ -6,7 +6,10 @@ import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.algorigo.algorigoble.BleManager
+import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import kotlin.math.abs
@@ -14,11 +17,13 @@ import kotlin.math.abs
 class NewMainActivity: AppCompatActivity() {
 
     private lateinit var binding: ActivityNewMainBinding
+    private var pdmsDevice: RxPDMSDevice? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initDevice()
         initView()
     }
 
@@ -50,6 +55,16 @@ class NewMainActivity: AppCompatActivity() {
         binding.ivSensitivityArrow.setOnClickListener {
             expandCollapseSensitivityView(it.isActivated.not())
         }
+
+    }
+
+    private fun initDevice() {
+        intent?.getStringExtra(MAC_ADDRESS_KEY)?.let {
+            pdmsDevice = BleManager.getInstance().getDevice(it) as? RxPDMSDevice
+            Log.d(TAG, pdmsDevice?.getDeviceName()!!)
+            binding.tvIntervalValue.isInvisible = false
+        }
+
     }
 
     private fun expandCollapseIntervalView(expand: Boolean) {
@@ -104,7 +119,7 @@ class NewMainActivity: AppCompatActivity() {
     }
 
     companion object {
-        val TAG = NewMainActivity::class.java.simpleName
+        val TAG: String = NewMainActivity::class.java.simpleName
 
         const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"
     }
