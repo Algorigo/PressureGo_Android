@@ -14,8 +14,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            android:minHeight="?attr/actionBarSize">
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
@@ -33,15 +33,13 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            >
+            android:paddingVertical="8dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_sensor"
@@ -214,13 +212,76 @@
                     tools:text="100ms" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_interval_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_down_arrow"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_interval_value"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@id/tv_interval_title" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_interval_sub_title"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="6sp"
+                    android:text="@string/main_interval_title"
+                    android:textColor="@color/blue_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_interval_value" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_interval"
+                    style="@style/MainEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_interval_sub_title" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_interval_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:src="@drawable/ic_check_red"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_interval" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_interval_message"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/main_interval_warning"
+                    android:textColor="@color/orangey_red"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_interval_check"
+                    app:layout_constraintStart_toEndOf="@id/iv_interval_check" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_interval"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="14dp"
+                    android:text="Set"
+                    android:textColor="@color/blue_grey"
+                    app:layout_constraintTop_toBottomOf="@id/iv_interval_check" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="tv_interval_sub_title, et_interval, iv_interval_check, tv_interval_message, btn_interval" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -263,9 +324,73 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_down_arrow"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_amplification_value"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@id/tv_amplification_title" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_amplification_sub_title"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="6sp"
+                    android:text="@string/main_amplification_title"
+                    android:textColor="@color/blue_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_amplification_value" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_amplification"
+                    style="@style/MainEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_amplification_sub_title" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_amplification_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:src="@drawable/ic_check_red"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_amplification" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_amplification_message"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/main_amplification_warning"
+                    android:textColor="@color/orangey_red"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_amplification_check"
+                    app:layout_constraintStart_toEndOf="@id/iv_amplification_check" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_amplification"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="14dp"
+                    android:text="Set"
+                    android:textColor="@color/blue_grey"
+                    app:layout_constraintTop_toBottomOf="@id/iv_amplification_check" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="tv_amplification_sub_title, et_amplification, iv_amplification_check, tv_amplification_message, btn_amplification" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -307,9 +432,73 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_down_arrow"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_sensitivity_value"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@id/tv_sensitivity_title" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensitivity_sub_title"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="6sp"
+                    android:text="@string/main_sensitivity_title"
+                    android:textColor="@color/blue_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_sensitivity_value" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_sensitivity"
+                    style="@style/MainEditTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_sensitivity_sub_title" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_sensitivity_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:src="@drawable/ic_check_red"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_sensitivity" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensitivity_message"
+                    style="@style/NotoSansKrRegularStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/main_amplification_warning"
+                    android:textColor="@color/orangey_red"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensitivity_check"
+                    app:layout_constraintStart_toEndOf="@id/iv_sensitivity_check" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_sensitivity"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="14dp"
+                    android:text="Set"
+                    android:textColor="@color/blue_grey"
+                    app:layout_constraintTop_toBottomOf="@id/iv_sensitivity_check" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="tv_sensitivity_sub_title, et_sensitivity, iv_sensitivity_check, tv_sensitivity_message, btn_sensitivity" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

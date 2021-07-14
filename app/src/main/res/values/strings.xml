@@ -11,7 +11,9 @@
     <string name="main_select_info">Select the model of sensor to use</string>
     <string name="main_sensor_settings">Sensor Settings</string>
     <string name="main_interval_title">Interval</string>
+    <string name="main_interval_warning">Set a value in 25 multiples</string>
     <string name="main_amplification_title">Amplification</string>
     <string name="main_sensitivity_title">Sensitivity</string>
+    <string name="main_amplification_warning">Please set a value to 254</string>
 
 </resources>
