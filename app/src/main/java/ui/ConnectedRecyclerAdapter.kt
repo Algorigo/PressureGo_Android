@@ -6,14 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 
 class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate): RecyclerView.Adapter<ConnectedRecyclerAdapter.ConnectedRecyclerViewHolder>() {
 
     interface ConnectedRecyclerDelegate {
-        fun getConnectedItemCount(): Int
-        fun getConnectedDevice(position: Int): RxPDMSDevice
         fun onConnectedDeviceSelected(device: RxPDMSDevice)
         fun onConnectedMoreSelected(device: RxPDMSDevice)
     }
@@ -39,12 +38,18 @@ class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate):
     }
 
     override fun onBindViewHolder(holder: ConnectedRecyclerViewHolder, position: Int) {
-        delegate.getConnectedDevice(position).also {
-            holder.setDevice(it)
-        }
+        BleManager.getInstance()
+            .getConnectedDevices()
+            .mapNotNull { it as? RxPDMSDevice }[position]
+            .also {
+                holder.setDevice(it)
+            }
     }
 
     override fun getItemCount(): Int {
-        return delegate.getConnectedItemCount()
+        return BleManager.getInstance()
+            .getConnectedDevices()
+            .mapNotNull { it as? RxPDMSDevice }
+            .count()
     }
 }

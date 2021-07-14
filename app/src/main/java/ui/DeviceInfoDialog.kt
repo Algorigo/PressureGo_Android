@@ -6,13 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.reactivex.Observable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 
@@ -98,7 +96,7 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
                         it.device = device
                         it.firmwareRemote = remoteFirmware
                     }.apply {
-                        show(it.supportFragmentManager, DeviceInfoDialog::class.java.simpleName)
+                        show(it.supportFragmentManager, FirmwareUpdateDialog::class.java.simpleName)
                     }
                 }
                 .create().show()

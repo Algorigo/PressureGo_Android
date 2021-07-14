@@ -62,6 +62,7 @@
                 app:layout_constraintTop_toTopOf="@id/iv_sensor" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/new_main_my_devices"
                 style="@style/NotoSansKrMediumStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

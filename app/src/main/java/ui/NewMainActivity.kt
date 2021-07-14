@@ -1,7 +1,6 @@
 package ui
 
 import android.os.Bundle
-import android.text.Editable
 import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
@@ -14,10 +13,8 @@ import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlin.math.abs
 
-class NewMainActivity : AppCompatActivity() {
+class NewMainActivity: AppCompatActivity(), MyDevicesDialog.Callback {
 
     private lateinit var binding: ActivityNewMainBinding
     private var pdmsDevice: RxPDMSDevice? = null
@@ -26,11 +23,20 @@ class NewMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initDevice()
         initView()
+
+        intent.getStringExtra(MAC_ADDRESS_KEY)?.let {
+            initDevice(it)
+        }
     }
 
     private fun initView() {
+        binding.newMainMyDevices.setOnClickListener {
+            MyDevicesDialog().apply {
+                show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
+            }
+        }
+
         binding.btnPgS01S02.setOnClickListener {
             Log.d(TAG, it.isSelected.toString())
             if (!it.isSelected) {
@@ -125,30 +131,25 @@ class NewMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initDevice() {
-        intent?.getStringExtra(MAC_ADDRESS_KEY)?.let {
-            pdmsDevice = BleManager.getInstance().getDevice(it) as? RxPDMSDevice
-            pdmsDevice?.apply {
-                binding.clCenterDisconnected.isInvisible = true
-                binding.clCenterConnected.isInvisible = false
+    private fun initDevice(macAddress: String) {
+        pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
+        pdmsDevice?.apply {
+            binding.clCenterDisconnected.isInvisible = true
+            binding.clCenterConnected.isInvisible = false
 
-                binding.tvIntervalValue.isInvisible = false
-                binding.tvAmplificationValue.isInvisible = false
-                binding.tvSensitivityValue.isInvisible = false
+            binding.tvIntervalValue.isInvisible = false
+            binding.tvAmplificationValue.isInvisible = false
+            binding.tvSensitivityValue.isInvisible = false
 
-                binding.tvIntervalValue.text = "${getSensingIntervalMillis()}ms"
-                binding.tvAmplificationValue.text = "${getAmplification()}"
-                binding.tvSensitivityValue.text = "${getSensitivity()}"
+            binding.tvIntervalValue.text = "${getSensingIntervalMillis()}ms"
+            binding.tvAmplificationValue.text = "${getAmplification()}"
+            binding.tvSensitivityValue.text = "${getSensitivity()}"
 
-
-                // test Log
-                Log.d(TAG, getSensingIntervalMillis().toString())
-                Log.d(TAG, getAmplification().toString())
-                Log.d(TAG, getSensitivity().toString())
-
-            }
+            // test Log
+            Log.d(TAG, getSensingIntervalMillis().toString())
+            Log.d(TAG, getAmplification().toString())
+            Log.d(TAG, getSensitivity().toString())
         }
-
     }
 
     private fun expandCollapseIntervalView(expand: Boolean) {
@@ -200,6 +201,10 @@ class NewMainActivity : AppCompatActivity() {
         })
         binding.ivSensitivityArrow.isActivated = expand
         binding.group3.isVisible = expand
+    }
+
+    override fun onDeviceSelected(macAddress: String) {
+        initDevice(macAddress)
     }
 
     companion object {

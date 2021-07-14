@@ -92,16 +92,6 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         scanRecyclerAdapter.notifyDataSetChanged()
     }
 
-    private fun getConnectedDevices() = BleManager.getInstance().getConnectedDevices().mapNotNull { it as? RxPDMSDevice }
-
-    override fun getConnectedItemCount(): Int {
-        return getConnectedDevices().count()
-    }
-
-    override fun getConnectedDevice(position: Int): RxPDMSDevice {
-        return getConnectedDevices()[position]
-    }
-
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
         Intent(this, NewMainActivity::class.java).apply {
             putExtra(NewMainActivity.MAC_ADDRESS_KEY, device.macAddress)
