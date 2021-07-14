@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/selector_main_btn"
+                android:background="@drawable/selector_btn_main_sensor"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="PG_S01/S02"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/selector_main_btn"
+                android:background="@drawable/selector_btn_main_sensor"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="PG_S03/S04"
@@ -181,7 +181,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/bg_round_charcoal_grey"
+                android:background="@drawable/bg_round_charcoal_grey_radius_8"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -269,18 +269,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:background="@drawable/selector_btn_main_settings"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="Set"
-                    android:textColor="@color/blue_grey"
+                    android:textColor="@drawable/selector_btn_main_settings_text_color"
                     app:layout_constraintTop_toBottomOf="@id/iv_interval_check" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:constraint_referenced_ids="tv_interval_sub_title, et_interval, iv_interval_check, tv_interval_message, btn_interval" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -290,7 +290,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/bg_round_charcoal_grey"
+                android:background="@drawable/bg_round_charcoal_grey_radius_8"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -377,11 +377,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:background="@drawable/selector_btn_main_settings"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="Set"
-                    android:textColor="@color/blue_grey"
+                    android:textColor="@drawable/selector_btn_main_settings_text_color"
                     app:layout_constraintTop_toBottomOf="@id/iv_amplification_check" />
 
                 <androidx.constraintlayout.widget.Group
@@ -398,7 +398,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/bg_round_charcoal_grey"
+                android:background="@drawable/bg_round_charcoal_grey_radius_8"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -485,11 +485,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/btn_round_charcoal_grey2"
+                    android:background="@drawable/selector_btn_main_settings"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="Set"
-                    android:textColor="@color/blue_grey"
+                    android:textColor="@drawable/selector_btn_main_settings_text_color"
                     app:layout_constraintTop_toBottomOf="@id/iv_sensitivity_check" />
 
                 <androidx.constraintlayout.widget.Group
