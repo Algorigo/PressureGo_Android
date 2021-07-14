@@ -132,16 +132,17 @@
                 app:layout_constraintTop_toTopOf="@id/iv_info" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_center"
-                android:layout_width="328dp"
-                android:layout_height="290dp"
-                android:layout_marginTop="24dp"
+                android:id="@+id/cl_center_disconnected"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_info">
+                app:layout_constraintTop_toTopOf="@id/cl_center_connected"
+                app:layout_constraintBottom_toBottomOf="@id/cl_center_connected"
+                >
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/view"
+                    android:id="@+id/sensor_disconnected"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/sensor_round"
@@ -152,8 +153,55 @@
 
                 </androidx.appcompat.widget.AppCompatImageView>
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_center_connected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:paddingHorizontal="32dp"
+                android:paddingVertical="12dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_info">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/sensor_connected_left_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/sensor_round"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/sensor_connected_right_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/sensor_round"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/sensor_connected_left_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/sensor_round"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sensor_connected_left_top" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/sensor_connected_right_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/sensor_round"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sensor_connected_right_top" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_settings"
@@ -162,7 +210,7 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/ic_settings"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_center" />
+                app:layout_constraintTop_toBottomOf="@id/cl_center_connected" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/NotoSansKrMediumStyle"
