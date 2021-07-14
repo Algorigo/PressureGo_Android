@@ -62,6 +62,7 @@
         tools:visibility="visible" />
 
     <Button
+        android:id="@+id/firmware_update_start_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
