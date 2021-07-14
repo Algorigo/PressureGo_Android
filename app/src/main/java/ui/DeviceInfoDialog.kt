@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -20,6 +21,7 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
     lateinit var device: RxPDMSDevice
 
     private var batteryDisposable: Disposable? = null
+    private var checkUpdateDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +62,20 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
         view.findViewById<TextView>(R.id.device_info_firmware_update_button).run {
             paintFlags += Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
-
+                if (checkUpdateDisposable == null) {
+                    checkUpdateDisposable = device.checkUpdateExist()
+                        .doFinally {
+                            checkUpdateDisposable = null
+                        }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            showUpdateCheckDialog(it)
+                        }, {
+                            Log.e(LOG_TAG, "", it)
+                        }, {
+                            showUpdateCheckDialog(null)
+                        })
+                }
             }
         }
     }
@@ -68,6 +83,26 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         batteryDisposable?.dispose()
+        checkUpdateDisposable?.dispose()
+    }
+
+    private fun showUpdateCheckDialog(remoteFirmware: String?) {
+        activity?.let {
+            AlertDialog.Builder(it)
+                .setTitle("Update Firmware")
+                .setMessage("Do you want to update?")
+                .setNegativeButton("Cancel") { _, _ -> }
+                .setPositiveButton("OK") { _, _ ->
+                    dismiss()
+                    FirmwareUpdateDialog().also {
+                        it.device = device
+                        it.firmwareRemote = remoteFirmware
+                    }.apply {
+                        show(it.supportFragmentManager, DeviceInfoDialog::class.java.simpleName)
+                    }
+                }
+                .create().show()
+        }
     }
 
     companion object {

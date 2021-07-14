@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_device_info_dialog"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="30dp">
+
+    <TextView
+        android:id="@+id/firmware_update_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
+        android:lineSpacingExtra="5sp"
+        android:text="Update Firmware"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/firmware_update_location_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:lineSpacingExtra="6sp"
+        android:text="Firmware location"
+        android:textColor="@color/blue_grey"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firmware_update_title" />
+
+    <TextView
+        android:id="@+id/firmware_update_location_view"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edittext_round_bg_bordered"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firmware_update_location_label"
+        tools:text="app_dfu_package.zip" />
+
+    <ProgressBar
+        android:id="@+id/firmware_update_progress_bar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:max="100"
+        android:progressBackgroundTint="#434345"
+        android:progressTint="#61cf7c"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/firmware_update_location_view"
+        tools:progress="50"
+        tools:visibility="visible" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/btn_round_bg_main"
+        android:lineSpacingExtra="7sp"
+        android:text="Start update"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firmware_update_progress_bar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
