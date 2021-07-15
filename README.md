@@ -4,8 +4,7 @@ Pressure Go library for Android and Sample Application repository.
 
 ## Supporting Bluetooth Version
 
-Tested with Bluetooth 5, Bluetooth 4.2 Devices.
-This device is supporting Bluetooth Low Energy protocol.
+This device is supporting Bluetooth 5.2 protocol.
 
 ### Bluetooth Specification
 
