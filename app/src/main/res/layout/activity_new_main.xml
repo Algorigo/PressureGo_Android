@@ -118,7 +118,7 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ic_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_pg_s01_s02" />
+                app:layout_constraintTop_toBottomOf="@id/btn_pg_s03_s04" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/NotoSansKrRegularStyle"
@@ -133,19 +133,19 @@
                 app:layout_constraintTop_toTopOf="@id/iv_info" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_center_disconnected"
+                android:id="@+id/cl_center_pg_s01_s02"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="@id/cl_center_connected"
+                app:layout_constraintBottom_toBottomOf="@id/cl_center_pg_s03_s04"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cl_center_connected">
+                app:layout_constraintTop_toTopOf="@id/cl_center_pg_s03_s04">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/sensor_disconnected"
+                    android:id="@+id/iv_sensor_pg_s01_s02"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/sensor_round"
+                    android:src="@drawable/sensor_s0102"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -156,7 +156,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_center_connected"
+                android:id="@+id/cl_center_pg_s03_s04"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -168,86 +168,90 @@
                 app:layout_constraintTop_toBottomOf="@id/iv_info">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_sensor_connected_left_top"
+                    android:id="@+id/iv_sensor_pg_s03_s04_left_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/sensor_round"
+                    android:src="@drawable/sensor_s0304"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_sensor_connected_left_top"
+                    android:id="@+id/tv_sensor_pg_s03_s04_left_top"
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_left_top"
-                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_left_top"
-                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_left_top"
-                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_left_top" />
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_left_top"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_left_top"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_left_top"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s03_s04_left_top" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_sensor_connected_right_top"
+                    android:id="@+id/iv_sensor_pg_s03_s04_right_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/sensor_round"
+                    android:src="@drawable/sensor_s0304"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_sensor_connected_right_top"
+                    android:id="@+id/tv_sensor_pg_s03_s04_right_top"
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_right_top"
-                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_right_top"
-                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_right_top"
-                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_right_top" />
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_right_top"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_right_top"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_right_top"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s03_s04_right_top" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_sensor_connected_left_bottom"
+                    android:id="@+id/iv_sensor_pg_s03_s04_left_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/sensor_round"
+                    android:src="@drawable/sensor_s0304"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_connected_left_top" />
+                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_pg_s03_s04_left_top" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_sensor_connected_left_bottom"
+                    android:id="@+id/tv_sensor_pg_s03_s04_left_bottom"
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_left_bottom"
-                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_left_bottom"
-                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_left_bottom"
-                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_left_bottom" />
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_left_bottom"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_left_bottom"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_left_bottom"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s03_s04_left_bottom" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_sensor_connected_right_bottom"
+                    android:id="@+id/iv_sensor_pg_s03_s04_right_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/sensor_round"
+                    android:src="@drawable/sensor_s0304"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_connected_right_top" />
+                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_pg_s03_s04_right_top" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_sensor_connected_right_bottom"
+                    android:id="@+id/tv_sensor_pg_s03_s04_right_bottom"
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_right_bottom"
-                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_right_bottom"
-                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_right_bottom"
-                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_right_bottom" />
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_right_bottom"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_right_bottom"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_right_bottom"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s03_s04_right_bottom" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -259,7 +263,7 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/ic_settings"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_center_connected" />
+                app:layout_constraintTop_toBottomOf="@id/cl_center_pg_s03_s04" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 style="@style/NotoSansKrMediumStyle"
@@ -331,42 +335,56 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_interval_value" />
 
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/et_interval"
-                    style="@style/MainEditTextStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_interval_sub_title" />
+<!--                <androidx.appcompat.widget.AppCompatEditText-->
+<!--                    android:id="@+id/et_interval"-->
+<!--                    style="@style/MainEditTextStyle"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/tv_interval_sub_title" />-->
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_interval_check"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:src="@drawable/ic_check_red"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_interval" />
+<!--                <androidx.appcompat.widget.AppCompatImageView-->
+<!--                    android:id="@+id/iv_interval_check"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:src="@drawable/ic_check_red"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/et_interval" />-->
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_interval_message"
-                    style="@style/NotoSansKrRegularStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/main_interval_warning"
-                    android:textColor="@color/orangey_red"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_interval_check"
-                    app:layout_constraintStart_toEndOf="@id/iv_interval_check" />
+<!--                <androidx.appcompat.widget.AppCompatTextView-->
+<!--                    android:id="@+id/tv_interval_message"-->
+<!--                    style="@style/NotoSansKrRegularStyle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="4dp"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="@string/main_interval_warning"-->
+<!--                    android:textColor="@color/orangey_red"-->
+<!--                    android:textSize="12sp"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@id/iv_interval_check"-->
+<!--                    app:layout_constraintStart_toEndOf="@id/iv_interval_check" />-->
 
-                <androidx.constraintlayout.widget.Group
-                    android:id="@+id/error_group1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"
-                    app:constraint_referenced_ids="iv_interval_check, tv_interval_message" />
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/til_interval"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    app:hintTextAppearance="@style/MainTextInputLayoutStyle2"
+                                    app:layout_constraintTop_toBottomOf="@id/tv_interval_sub_title">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:hint="@string/main_interval_warning" />
+
+                                </com.google.android.material.textfield.TextInputLayout>
+<!--                <androidx.constraintlayout.widget.Group-->
+<!--                    android:id="@+id/error_group1"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="invisible"-->
+<!--                    app:constraint_referenced_ids="iv_interval_check, tv_interval_message" />-->
 
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -380,14 +398,14 @@
                     android:paddingVertical="14dp"
                     android:text="Set"
                     android:textColor="@drawable/selector_btn_main_settings_text_color"
-                    app:layout_constraintTop_toBottomOf="@id/iv_interval_check" />
+                    app:layout_constraintTop_toBottomOf="@id/til_interval" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="tv_interval_sub_title, et_interval, iv_interval_check, tv_interval_message, btn_interval" />
+                    app:constraint_referenced_ids="tv_interval_sub_title, til_interval, btn_interval" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

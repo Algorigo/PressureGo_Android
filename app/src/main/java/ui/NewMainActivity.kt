@@ -25,6 +25,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.btnPgS03S04.isSelected = true
         initView()
 
         intent.getStringExtra(MAC_ADDRESS_KEY)?.let {
@@ -34,9 +35,10 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     override fun onResume() {
         super.onResume()
-        pdmsDisposable?.let {
+        if(pdmsDisposable == null) {
             pdmsDisposable = BleManager.getInstance().getConnectedDevices()
-                .mapNotNull { it as? RxPDMSDevice }[0].sendDataOn()
+                .mapNotNull { it as? RxPDMSDevice }
+                .getOrNull(0)?.sendDataOn()
                 ?.doFinally {
                     pdmsDisposable = null
                 }
@@ -44,29 +46,29 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 ?.subscribe({
                     with(binding) {
                         if(it[0] != 0) {
-                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round_on)
+                            ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
                         } else {
-                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round)
+                            ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
                         }
                         if(it[1] != 0) {
-                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round_on)
+                            ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
                         } else {
-                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round)
+                            ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
                         }
                         if(it[2] != 0) {
-                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round_on)
+                            ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
                         } else {
-                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round)
+                            ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304)
                         }
                         if(it[3] != 0) {
-                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round_on)
+                            ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304_on)
                         } else {
-                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round)
+                            ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                         }
-                        tvSensorConnectedLeftTop.text = "${it[0]}"
-                        tvSensorConnectedRightTop.text = "${it[1]}"
-                        tvSensorConnectedLeftBottom.text = "${it[2]}"
-                        tvSensorConnectedRightBottom.text = "${it[3]}"
+                        tvSensorPgS03S04LeftTop.text = "${it[0]}"
+                        tvSensorPgS03S04RightTop.text = "${it[1]}"
+                        tvSensorPgS03S04LeftBottom.text = "${it[2]}"
+                        tvSensorPgS03S04RightBottom.text = "${it[3]}"
                     }
                 }, {
                     Log.d(TAG, it.toString())
@@ -82,111 +84,118 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
 
     private fun initView() {
-        binding.newMainMyDevices.setOnClickListener {
-            MyDevicesDialog().apply {
-                show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
+        with(binding) {
+            newMainMyDevices.setOnClickListener {
+                MyDevicesDialog().apply {
+                    show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
+                }
             }
-        }
 
-        binding.btnPgS01S02.setOnClickListener {
-            Log.d(TAG, it.isSelected.toString())
-            if (!it.isSelected) {
-                it.isSelected = !it.isSelected
-                binding.btnPgS03S04.isSelected = false
+            btnPgS01S02.setOnClickListener {
+                Log.d(TAG, it.isSelected.toString())
+                if (!it.isSelected) {
+                    it.isSelected = !it.isSelected
+                    clCenterPgS01S02.isInvisible = false
+                    clCenterPgS03S04.isInvisible = true
+                    btnPgS03S04.isSelected = false
+                }
             }
-        }
 
-        binding.btnPgS03S04.setOnClickListener {
-            Log.d(TAG, it.isSelected.toString())
-            if (!it.isSelected) {
-                it.isSelected = !it.isSelected
-                binding.btnPgS01S02.isSelected = false
+            btnPgS03S04.setOnClickListener {
+                Log.d(TAG, it.isSelected.toString())
+                if (!it.isSelected) {
+                    it.isSelected = !it.isSelected
+                    clCenterPgS01S02.isInvisible = true
+                    clCenterPgS03S04.isInvisible = false
+                    btnPgS01S02.isSelected = false
+                }
             }
-        }
 
-        binding.ivIntervalArrow.setOnClickListener {
-            expandCollapseIntervalView(it.isActivated.not())
-        }
+            ivIntervalArrow.setOnClickListener {
+                expandCollapseIntervalView(it.isActivated.not())
+            }
 
-        binding.ivAmplificationArrow.setOnClickListener {
-            expandCollapseAmplificationView(it.isActivated.not())
-        }
+            ivAmplificationArrow.setOnClickListener {
+                expandCollapseAmplificationView(it.isActivated.not())
+            }
 
-        binding.ivSensitivityArrow.setOnClickListener {
-            expandCollapseSensitivityView(it.isActivated.not())
-        }
+            ivSensitivityArrow.setOnClickListener {
+                expandCollapseSensitivityView(it.isActivated.not())
+            }
 
-        binding.btnInterval.setOnClickListener {
-            if (!binding.etInterval.text.isNullOrEmpty()) {
-                binding.etInterval.text.toString().toIntOrNull()?.let {
-                    Log.d(TAG, binding.etInterval.text.toString())
-                    pdmsDevice?.setSensingIntervalMillisCompletable(it)
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.doOnSuccess {
-                            Log.d(TAG, "doOnSuccess = ${it}")
-                        }
-                        ?.doOnTerminate {
-                            Log.d(TAG, "terminated")
-                        }
-                        ?.subscribe({
-                            binding.tvIntervalMessage.text = "$it"
-                            Log.d(TAG, "onSuccess = ${it}")
-                        }, {
-                            Log.d(TAG, it.toString())
-                        })
+//        binding.btnInterval.setOnClickListener {
+//            if (!binding.etInterval.text.isNullOrEmpty()) {
+//                binding.etInterval.text.toString().toIntOrNull()?.let {
+//                    Log.d(TAG, binding.etInterval.text.toString())
+//                    pdmsDevice?.setSensingIntervalMillisCompletable(it)
+//                        ?.observeOn(AndroidSchedulers.mainThread())
+//                        ?.doOnSuccess {
+//                            Log.d(TAG, "doOnSuccess = ${it}")
+//                        }
+//                        ?.doOnTerminate {
+//                            Log.d(TAG, "terminated")
+//                        }
+//                        ?.subscribe({
+//                            binding.tvIntervalMessage.text = "$it"
+//                                    Log.d(TAG, "onSuccess = ${it}")
+//                        }, {
+//                            Log.d(TAG, it.toString())
+//                        })
+//                }
+//            }
+//        }
+
+            btnAmplification.setOnClickListener {
+                if (!binding.etAmplification.text.isNullOrEmpty()) {
+                    binding.etAmplification.text.toString().toIntOrNull()?.let {
+                        pdmsDevice?.setAmplificationCompletable(it)
+                            ?.observeOn(AndroidSchedulers.mainThread())
+                            ?.doOnSuccess {
+                                Log.d(TAG, "doOnSuccess = ${it}")
+                            }
+                            ?.doOnTerminate {
+                                Log.d(TAG, "terminated")
+                            }
+                            ?.subscribe({
+                                binding.tvAmplificationValue.text = "$it"
+                                Log.d(TAG, "onSuccess = ${it}")
+                            }, {
+                                Log.d(TAG, it.toString())
+                            })
+                    }
+                }
+            }
+
+            btnSensitivity.setOnClickListener {
+                Log.d(TAG, "${binding.etSensitivity.text.toString()}")
+                if (!binding.etSensitivity.text.isNullOrEmpty()) {
+                    binding.etSensitivity.text.toString().toIntOrNull()?.let {
+                        pdmsDevice?.setSensitivityCompletable(it)
+                            ?.observeOn(AndroidSchedulers.mainThread())
+                            ?.doOnSuccess {
+                                Log.d(TAG, "doOnSuccess = ${it}")
+                            }
+                            ?.doOnTerminate {
+                                Log.d(TAG, "terminated")
+                            }
+                            ?.subscribe({
+                                binding.tvSensitivityValue.text = "$it"
+                                Log.d(TAG, "onSuccess = ${it}")
+                            }, {
+                                Log.d(TAG, it.toString())
+                            })
+                    }
                 }
             }
         }
 
-        binding.btnAmplification.setOnClickListener {
-            if (!binding.etAmplification.text.isNullOrEmpty()) {
-                binding.etAmplification.text.toString().toIntOrNull()?.let {
-                    pdmsDevice?.setAmplificationCompletable(it)
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.doOnSuccess {
-                            Log.d(TAG, "doOnSuccess = ${it}")
-                        }
-                        ?.doOnTerminate {
-                            Log.d(TAG, "terminated")
-                        }
-                        ?.subscribe({
-                            binding.tvAmplificationValue.text = "$it"
-                            Log.d(TAG, "onSuccess = ${it}")
-                        }, {
-                            Log.d(TAG, it.toString())
-                        })
-                }
-            }
-        }
-
-        binding.btnSensitivity.setOnClickListener {
-            Log.d(TAG, "${binding.etSensitivity.text.toString()}")
-            if (!binding.etSensitivity.text.isNullOrEmpty()) {
-                binding.etSensitivity.text.toString().toIntOrNull()?.let {
-                    pdmsDevice?.setSensitivityCompletable(it)
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.doOnSuccess {
-                            Log.d(TAG, "doOnSuccess = ${it}")
-                        }
-                        ?.doOnTerminate {
-                            Log.d(TAG, "terminated")
-                        }
-                        ?.subscribe({
-                            binding.tvSensitivityValue.text = "$it"
-                            Log.d(TAG, "onSuccess = ${it}")
-                        }, {
-                            Log.d(TAG, it.toString())
-                        })
-                }
-            }
-        }
     }
 
     private fun initDevice(macAddress: String) {
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
-            binding.clCenterDisconnected.isInvisible = true
-            binding.clCenterConnected.isInvisible = false
+            binding.clCenterPgS01S02.isInvisible = true
+            binding.clCenterPgS03S04.isInvisible = false
 
             binding.tvIntervalValue.isInvisible = false
             binding.tvAmplificationValue.isInvisible = false
@@ -196,41 +205,44 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             binding.tvAmplificationValue.text = "${getAmplification()}"
             binding.tvSensitivityValue.text = "${getSensitivity()}"
 
-            pdmsDisposable = sendDataOn()
-                ?.doFinally {
-                    pdmsDisposable = null
-                }
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({
-                    with(binding) {
-                        if(it[0] != 0) {
-                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round_on)
-                        } else {
-                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round)
-                        }
-                        if(it[1] != 0) {
-                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round_on)
-                        } else {
-                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round)
-                        }
-                        if(it[2] != 0) {
-                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round_on)
-                        } else {
-                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round)
-                        }
-                        if(it[3] != 0) {
-                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round_on)
-                        } else {
-                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round)
-                        }
-                        tvSensorConnectedLeftTop.text = "${it[0]}"
-                        tvSensorConnectedRightTop.text = "${it[1]}"
-                        tvSensorConnectedLeftBottom.text = "${it[2]}"
-                        tvSensorConnectedRightBottom.text = "${it[3]}"
+            if(pdmsDisposable == null) {
+                pdmsDisposable = sendDataOn()
+                    ?.doFinally {
+                        pdmsDisposable = null
                     }
-                }, {
-                    Log.d(TAG, it.toString())
-                })
+                    ?.observeOn(AndroidSchedulers.mainThread())
+                    ?.subscribe({
+                        with(binding) {
+                            if(it[0] != 0) {
+                                ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if(it[1] != 0) {
+                                ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if(it[2] != 0) {
+                                ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if(it[3] != 0) {
+                                ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            tvSensorPgS03S04LeftTop.text = "${it[0]}"
+                            tvSensorPgS03S04RightTop.text = "${it[1]}"
+                            tvSensorPgS03S04LeftBottom.text = "${it[2]}"
+                            tvSensorPgS03S04RightBottom.text = "${it[3]}"
+                        }
+                    }, {
+                        Log.d(TAG, it.toString())
+                    })
+            }
+
 
             // test Log
             Log.d(TAG, getSensingIntervalMillis().toString())
@@ -241,7 +253,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private fun expandCollapseIntervalView(expand: Boolean) {
         val duration = 200L
-
         if (expand) {
             binding.ivIntervalArrow.setImageResource(R.drawable.ic_up_arrow)
         } else {
@@ -253,7 +264,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         })
         binding.ivIntervalArrow.isActivated = expand
         binding.group1.isVisible = expand
-
     }
 
     private fun expandCollapseAmplificationView(expand: Boolean) {
@@ -263,7 +273,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         } else {
             binding.ivAmplificationArrow.setImageResource(R.drawable.ic_down_arrow)
         }
-
         TransitionManager.beginDelayedTransition(binding.clAmplification, AutoTransition().apply {
             addTransition(ChangeBounds())
             this.duration = duration
@@ -274,14 +283,11 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private fun expandCollapseSensitivityView(expand: Boolean) {
         val duration = 200L
-
-
         if (expand) {
             binding.ivSensitivityArrow.setImageResource(R.drawable.ic_up_arrow)
         } else {
             binding.ivSensitivityArrow.setImageResource(R.drawable.ic_down_arrow)
         }
-
         TransitionManager.beginDelayedTransition(binding.clSensitivity, AutoTransition().apply {
             addTransition(ChangeBounds())
             this.duration = duration
