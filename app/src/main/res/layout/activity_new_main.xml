@@ -136,11 +136,10 @@
                 android:id="@+id/cl_center_disconnected"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/cl_center_connected"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cl_center_connected"
-                app:layout_constraintBottom_toBottomOf="@id/cl_center_connected"
-                >
+                app:layout_constraintTop_toTopOf="@id/cl_center_connected">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/sensor_disconnected"
@@ -169,38 +168,87 @@
                 app:layout_constraintTop_toBottomOf="@id/iv_info">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/sensor_connected_left_top"
+                    android:id="@+id/iv_sensor_connected_left_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/sensor_round"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensor_connected_left_top"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/pressure_go_white"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_left_top"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_left_top"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_left_top"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_left_top" />
+
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/sensor_connected_right_top"
+                    android:id="@+id/iv_sensor_connected_right_top"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/sensor_round"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensor_connected_right_top"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/pressure_go_white"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_right_top"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_right_top"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_right_top"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_right_top" />
+
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/sensor_connected_left_bottom"
+                    android:id="@+id/iv_sensor_connected_left_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:src="@drawable/sensor_round"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sensor_connected_left_top" />
+                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_connected_left_top" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensor_connected_left_bottom"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/pressure_go_white"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_left_bottom"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_left_bottom"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_left_bottom"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_left_bottom" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/sensor_connected_right_bottom"
+                    android:id="@+id/iv_sensor_connected_right_bottom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:src="@drawable/sensor_round"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sensor_connected_right_top" />
+                    app:layout_constraintTop_toBottomOf="@id/iv_sensor_connected_right_top" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_sensor_connected_right_bottom"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/pressure_go_white"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_sensor_connected_right_bottom"
+                    app:layout_constraintEnd_toEndOf="@id/iv_sensor_connected_right_bottom"
+                    app:layout_constraintStart_toStartOf="@id/iv_sensor_connected_right_bottom"
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_connected_right_bottom" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 

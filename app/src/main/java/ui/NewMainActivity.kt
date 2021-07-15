@@ -13,11 +13,13 @@ import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 
-class NewMainActivity: AppCompatActivity(), MyDevicesDialog.Callback {
+class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private lateinit var binding: ActivityNewMainBinding
     private var pdmsDevice: RxPDMSDevice? = null
+    private var pdmsDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,55 @@ class NewMainActivity: AppCompatActivity(), MyDevicesDialog.Callback {
             initDevice(it)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        pdmsDisposable?.let {
+            pdmsDisposable = BleManager.getInstance().getConnectedDevices()
+                .mapNotNull { it as? RxPDMSDevice }[0].sendDataOn()
+                ?.doFinally {
+                    pdmsDisposable = null
+                }
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({
+                    with(binding) {
+                        if(it[0] != 0) {
+                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[1] != 0) {
+                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[2] != 0) {
+                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[3] != 0) {
+                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round)
+                        }
+                        tvSensorConnectedLeftTop.text = "${it[0]}"
+                        tvSensorConnectedRightTop.text = "${it[1]}"
+                        tvSensorConnectedLeftBottom.text = "${it[2]}"
+                        tvSensorConnectedRightBottom.text = "${it[3]}"
+                    }
+                }, {
+                    Log.d(TAG, it.toString())
+                })
+
+        }
+    }
+
+    override fun onPause() {
+        pdmsDisposable?.dispose()
+        super.onPause()
+    }
+
 
     private fun initView() {
         binding.newMainMyDevices.setOnClickListener {
@@ -79,7 +130,7 @@ class NewMainActivity: AppCompatActivity(), MyDevicesDialog.Callback {
                         }
                         ?.subscribe({
                             binding.tvIntervalMessage.text = "$it"
-                                    Log.d(TAG, "onSuccess = ${it}")
+                            Log.d(TAG, "onSuccess = ${it}")
                         }, {
                             Log.d(TAG, it.toString())
                         })
@@ -144,6 +195,42 @@ class NewMainActivity: AppCompatActivity(), MyDevicesDialog.Callback {
             binding.tvIntervalValue.text = "${getSensingIntervalMillis()}ms"
             binding.tvAmplificationValue.text = "${getAmplification()}"
             binding.tvSensitivityValue.text = "${getSensitivity()}"
+
+            pdmsDisposable = sendDataOn()
+                ?.doFinally {
+                    pdmsDisposable = null
+                }
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({
+                    with(binding) {
+                        if(it[0] != 0) {
+                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedLeftTop.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[1] != 0) {
+                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedRightTop.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[2] != 0) {
+                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedLeftBottom.setImageResource(R.drawable.sensor_round)
+                        }
+                        if(it[3] != 0) {
+                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round_on)
+                        } else {
+                            ivSensorConnectedRightBottom.setImageResource(R.drawable.sensor_round)
+                        }
+                        tvSensorConnectedLeftTop.text = "${it[0]}"
+                        tvSensorConnectedRightTop.text = "${it[1]}"
+                        tvSensorConnectedLeftBottom.text = "${it[2]}"
+                        tvSensorConnectedRightBottom.text = "${it[3]}"
+                    }
+                }, {
+                    Log.d(TAG, it.toString())
+                })
 
             // test Log
             Log.d(TAG, getSensingIntervalMillis().toString())
