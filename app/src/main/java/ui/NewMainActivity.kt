@@ -88,6 +88,10 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private fun initView() {
         with(binding) {
+            btnInterval.isEnabled = false
+            btnAmplification.isEnabled = false
+            btnSensitivity.isEnabled = false
+
             newMainMyDevices.setOnClickListener {
                 MyDevicesDialog().apply {
                     show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
@@ -344,12 +348,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         Log.d(TAG, it.toString())
                     })
             }
-
-
-            // test Log
-            Log.d(TAG, getSensingIntervalMillis().toString())
-            Log.d(TAG, getAmplification().toString())
-            Log.d(TAG, getSensitivity().toString())
         }
     }
 
