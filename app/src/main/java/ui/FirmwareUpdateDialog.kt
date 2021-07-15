@@ -111,11 +111,13 @@ class FirmwareUpdateDialog : BottomSheetDialogFragment() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
+                isCancelable = false
                 progressBar.progress = 0
                 progressBar.visibility = View.VISIBLE
                 startButton.text = "Cancel update"
             }
             .doFinally {
+                isCancelable = true
                 progressBar.visibility = View.GONE
                 startButton.text = "Start update"
             }
