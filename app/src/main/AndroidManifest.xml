@@ -23,7 +23,9 @@
         <activity android:name=".BasicPDMSDeviceActivity" />
         <activity android:name=".RxActivity" />
         <activity android:name=".BasicActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity" >
+
+        </activity>
 
         <service
             android:name=".DfuService"

@@ -21,8 +21,7 @@
         <item name="colorControlHighlight">@color/white</item> <!--Focused underline color -->
 
         <item name="android:textAllCaps">false</item>
-<!--        <item name="android:editTextStyle">@style/MainEditTextStyle</item>-->
-<!--        <item name="editTextStyle">@style/MainEditTextStyle</item>-->
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
     </style>
 
 

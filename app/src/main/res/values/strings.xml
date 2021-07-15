@@ -15,5 +15,6 @@
     <string name="main_amplification_title">Amplification</string>
     <string name="main_sensitivity_title">Sensitivity</string>
     <string name="main_amplification_warning">Please set a value to 254</string>
+    <string name="set">Set</string>
 
 </resources>

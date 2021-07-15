@@ -1,6 +1,8 @@
 package ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
@@ -8,6 +10,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
@@ -123,68 +126,167 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 expandCollapseSensitivityView(it.isActivated.not())
             }
 
-//        binding.btnInterval.setOnClickListener {
-//            if (!binding.etInterval.text.isNullOrEmpty()) {
-//                binding.etInterval.text.toString().toIntOrNull()?.let {
-//                    Log.d(TAG, binding.etInterval.text.toString())
-//                    pdmsDevice?.setSensingIntervalMillisCompletable(it)
-//                        ?.observeOn(AndroidSchedulers.mainThread())
-//                        ?.doOnSuccess {
-//                            Log.d(TAG, "doOnSuccess = ${it}")
-//                        }
-//                        ?.doOnTerminate {
-//                            Log.d(TAG, "terminated")
-//                        }
-//                        ?.subscribe({
-//                            binding.tvIntervalMessage.text = "$it"
-//                                    Log.d(TAG, "onSuccess = ${it}")
-//                        }, {
-//                            Log.d(TAG, it.toString())
-//                        })
-//                }
-//            }
-//        }
+            etInterval.addTextChangedListener(object: TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+
+                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    if(s.toString().isEmpty()) {
+                        tilInterval.error = null
+                        btnInterval.isEnabled = false
+                    } else {
+                        s.toString().toIntOrNull()?.let {
+                            if(it % 25 != 0) {
+                                tilInterval.error = resources.getString(R.string.main_interval_warning)
+                                btnInterval.isEnabled = false
+                            } else {
+                                tilInterval.error = null
+                                btnInterval.isEnabled = true
+                            }
+                        } ?: run {
+                            tilInterval.error = resources.getString(R.string.main_interval_warning)
+                            btnInterval.isEnabled = false
+                        }
+                    }
+                }
+            })
+
+            etAmplification.addTextChangedListener(object: TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+
+                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    if(s.toString().isEmpty()) {
+                        tilAmplification.error = null
+                        btnAmplification.isEnabled = false
+                    } else {
+                        s.toString().toIntOrNull()?.let {
+                            if(it > 254) {
+                                tilAmplification.error = resources.getString(R.string.main_amplification_warning)
+                                btnAmplification.isEnabled = false
+                            } else {
+                                tilAmplification.error = null
+                                btnAmplification.isEnabled = true
+                            }
+                        } ?: run {
+                            tilAmplification.error = resources.getString(R.string.main_amplification_warning)
+                            btnAmplification.isEnabled = false
+                        }
+                    }
+                }
+            })
+
+            etSensitivity.addTextChangedListener(object: TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+
+                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    if(s.toString().isEmpty()) {
+                        tilSensitivity.error = null
+                        btnSensitivity.isEnabled = false
+                    } else {
+                        s.toString().toIntOrNull()?.let {
+                            if(it > 254) {
+                                tilSensitivity.error = resources.getString(R.string.main_amplification_warning)
+                                btnSensitivity.isEnabled = false
+                            } else {
+                                tilSensitivity.error = null
+                                btnSensitivity.isEnabled = true
+                            }
+                        } ?: run {
+                            tilSensitivity.error = resources.getString(R.string.main_amplification_warning)
+                            btnSensitivity.isEnabled = false
+                        }
+                    }
+                }
+            })
+
+        btnInterval.setOnClickListener {
+            if (!etInterval.text.isNullOrEmpty()) {
+                etInterval.text.toString().toIntOrNull()?.let {
+                    Log.d(TAG, binding.etInterval.text.toString())
+                    pdmsDevice?.setSensingIntervalMillisCompletable(it)
+                        ?.observeOn(AndroidSchedulers.mainThread())
+                        ?.doOnSuccess {
+                            Log.d(TAG, "doOnSuccess = ${it}")
+                        }
+                        ?.doOnTerminate {
+                            Log.d(TAG, "terminated")
+                        }
+                        ?.subscribe({
+                            tvIntervalValue.text = "$it"
+                                    Log.d(TAG, "onSuccess = ${it}")
+                        }, {
+                            Log.d(TAG, it.toString())
+                        })
+                }
+            }
+        }
 
             btnAmplification.setOnClickListener {
-                if (!binding.etAmplification.text.isNullOrEmpty()) {
-                    binding.etAmplification.text.toString().toIntOrNull()?.let {
-                        pdmsDevice?.setAmplificationCompletable(it)
-                            ?.observeOn(AndroidSchedulers.mainThread())
-                            ?.doOnSuccess {
-                                Log.d(TAG, "doOnSuccess = ${it}")
-                            }
-                            ?.doOnTerminate {
-                                Log.d(TAG, "terminated")
-                            }
-                            ?.subscribe({
-                                binding.tvAmplificationValue.text = "$it"
-                                Log.d(TAG, "onSuccess = ${it}")
-                            }, {
-                                Log.d(TAG, it.toString())
-                            })
+                if (!etAmplification.text.isNullOrEmpty()) {
+                    etAmplification.text.toString().toIntOrNull()?.let {
+                            pdmsDevice?.setAmplificationCompletable(it)
+                                ?.observeOn(AndroidSchedulers.mainThread())
+                                ?.doOnSuccess {
+                                    Log.d(TAG, "doOnSuccess = ${it}")
+                                }
+                                ?.doOnTerminate {
+                                    Log.d(TAG, "terminated")
+                                }
+                                ?.subscribe({
+                                    binding.tvAmplificationValue.text = "$it"
+                                    Log.d(TAG, "onSuccess = ${it}")
+                                }, {
+                                    Log.d(TAG, it.toString())
+                                })
                     }
                 }
             }
 
             btnSensitivity.setOnClickListener {
                 Log.d(TAG, "${binding.etSensitivity.text.toString()}")
-                if (!binding.etSensitivity.text.isNullOrEmpty()) {
-                    binding.etSensitivity.text.toString().toIntOrNull()?.let {
-                        pdmsDevice?.setSensitivityCompletable(it)
-                            ?.observeOn(AndroidSchedulers.mainThread())
-                            ?.doOnSuccess {
-                                Log.d(TAG, "doOnSuccess = ${it}")
-                            }
-                            ?.doOnTerminate {
-                                Log.d(TAG, "terminated")
-                            }
-                            ?.subscribe({
-                                binding.tvSensitivityValue.text = "$it"
-                                Log.d(TAG, "onSuccess = ${it}")
-                            }, {
-                                Log.d(TAG, it.toString())
-                            })
-                    }
+                if (!etSensitivity.text.isNullOrEmpty()) {
+                        etSensitivity.text.toString().toIntOrNull()?.let {
+                            pdmsDevice?.setSensitivityCompletable(it)
+                                ?.observeOn(AndroidSchedulers.mainThread())
+                                ?.doOnSuccess {
+                                    Log.d(TAG, "doOnSuccess = ${it}")
+                                }
+                                ?.doOnTerminate {
+                                    Log.d(TAG, "terminated")
+                                }
+                                ?.subscribe({
+                                    tvSensitivityValue.text = "$it"
+                                    Log.d(TAG, "onSuccess = ${it}")
+                                }, {
+                                    Log.d(TAG, it.toString())
+                                })
+                        }
                 }
             }
         }
