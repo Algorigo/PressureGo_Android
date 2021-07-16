@@ -82,7 +82,7 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     private fun onData(byteArray: ByteArray) {
-//        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
+        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
         when (byteArray[0]) {
             0x02.toByte() -> {
                 relayMap.remove(byteArray[1])?.accept(byteArray)
@@ -258,13 +258,16 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSubscribe {
                 if (relayMap[code.byte] != null) {
                     relay = relayMap[code.byte]
+                    Log.d(LOG_TAG, "true")
                 } else {
                     relay = PublishRelay.create<ByteArray>().also {
                         relayMap[code.byte] = it
                     }
+                    Log.d(LOG_TAG, "false")
                 }
             }
             ?.flatMap {
+                Log.d(LOG_TAG, UUID.fromString(PDMSUtil.UUID_COMMUNICATION).toString())
                 relay!!.firstOrError()
             }
             ?.map {

@@ -7,6 +7,7 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -28,7 +29,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
-
         intent.getStringExtra(MAC_ADDRESS_KEY)?.let {
             initDevice(it)
         } ?: run {
@@ -54,8 +54,10 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                             }
                             if (it[1] != 0) {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                             } else {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                             }
                             if (it[2] != 0) {
                                 ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
@@ -67,6 +69,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                             } else {
                                 ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                             }
+                            tvSensorPgS0102.text = "${it[1]}"
                             tvSensorPgS03S04LeftTop.text = "${it[0]}"
                             tvSensorPgS03S04RightTop.text = "${it[1]}"
                             tvSensorPgS03S04LeftBottom.text = "${it[2]}"
@@ -278,11 +281,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun initDevice(macAddress: String) {
-        onBtnS0304Click()
+        onBtnS0102Click()
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
-            binding.clCenterPgS01S02.isInvisible = true
-            binding.clCenterPgS03S04.isInvisible = false
 
             binding.tvIntervalValue.isInvisible = false
             binding.tvAmplificationValue.isInvisible = false
@@ -307,8 +308,10 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                             }
                             if (it[1] != 0) {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                             } else {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                             }
                             if (it[2] != 0) {
                                 ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
@@ -320,6 +323,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                             } else {
                                 ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                             }
+                            tvSensorPgS0102.text = "${it[1]}"
                             tvSensorPgS03S04LeftTop.text = "${it[0]}"
                             tvSensorPgS03S04RightTop.text = "${it[1]}"
                             tvSensorPgS03S04LeftBottom.text = "${it[2]}"
