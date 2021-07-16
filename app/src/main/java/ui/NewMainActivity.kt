@@ -7,6 +7,7 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -28,56 +29,58 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.btnPgS03S04.isSelected = true
         initView()
 
         intent.getStringExtra(MAC_ADDRESS_KEY)?.let {
             initDevice(it)
+        } ?: run {
+            onBtnS0102Click()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if(pdmsDisposable == null) {
-            pdmsDisposable = BleManager.getInstance().getConnectedDevices()
-                .mapNotNull { it as? RxPDMSDevice }
-                .getOrNull(0)?.sendDataOn()
-                ?.doFinally {
-                    pdmsDisposable = null
-                }
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({
-                    with(binding) {
-                        if(it[0] != 0) {
-                            ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
-                        } else {
-                            ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
-                        }
-                        if(it[1] != 0) {
-                            ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
-                        } else {
-                            ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
-                        }
-                        if(it[2] != 0) {
-                            ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
-                        } else {
-                            ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304)
-                        }
-                        if(it[3] != 0) {
-                            ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304_on)
-                        } else {
-                            ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
-                        }
-                        tvSensorPgS03S04LeftTop.text = "${it[0]}"
-                        tvSensorPgS03S04RightTop.text = "${it[1]}"
-                        tvSensorPgS03S04LeftBottom.text = "${it[2]}"
-                        tvSensorPgS03S04RightBottom.text = "${it[3]}"
+        if (pdmsDisposable == null) {
+            if (pdmsDevice != null) {
+                pdmsDisposable = pdmsDevice?.sendDataOn()
+                    ?.doFinally {
+                        pdmsDisposable = null
                     }
-                }, {
-                    Log.d(TAG, it.toString())
-                })
-
+                    ?.observeOn(AndroidSchedulers.mainThread())
+                    ?.subscribe({
+                        with(binding) {
+                            if (it[0] != 0) {
+                                ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if (it[1] != 0) {
+                                ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if (it[2] != 0) {
+                                ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            if (it[3] != 0) {
+                                ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304_on)
+                            } else {
+                                ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
+                            }
+                            tvSensorPgS03S04LeftTop.text = "${it[0]}"
+                            tvSensorPgS03S04RightTop.text = "${it[1]}"
+                            tvSensorPgS03S04LeftBottom.text = "${it[2]}"
+                            tvSensorPgS03S04RightBottom.text = "${it[3]}"
+                        }
+                    }, {
+                        Log.d(TAG, it.toString())
+                    })
+            }
         }
+
+
     }
 
     override fun onPause() {
@@ -99,23 +102,11 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
 
             btnPgS01S02.setOnClickListener {
-                Log.d(TAG, it.isSelected.toString())
-                if (!it.isSelected) {
-                    it.isSelected = !it.isSelected
-                    clCenterPgS01S02.isInvisible = false
-                    clCenterPgS03S04.isInvisible = true
-                    btnPgS03S04.isSelected = false
-                }
+                onBtnS0102Click()
             }
 
             btnPgS03S04.setOnClickListener {
-                Log.d(TAG, it.isSelected.toString())
-                if (!it.isSelected) {
-                    it.isSelected = !it.isSelected
-                    clCenterPgS01S02.isInvisible = true
-                    clCenterPgS03S04.isInvisible = false
-                    btnPgS01S02.isSelected = false
-                }
+                onBtnS0304Click()
             }
 
             ivIntervalArrow.setOnClickListener {
@@ -130,7 +121,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 expandCollapseSensitivityView(it.isActivated.not())
             }
 
-            etInterval.addTextChangedListener(object: TextWatcher {
+            etInterval.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -139,17 +130,19 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 ) {
 
                 }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    if(s.toString().isEmpty()) {
+                    if (s.toString().isEmpty()) {
                         tilInterval.error = null
                         btnInterval.isEnabled = false
                     } else {
                         s.toString().toIntOrNull()?.let {
-                            if(it % 25 != 0) {
-                                tilInterval.error = resources.getString(R.string.main_interval_warning)
+                            if (it % 25 != 0) {
+                                tilInterval.error =
+                                    resources.getString(R.string.main_interval_warning)
                                 btnInterval.isEnabled = false
                             } else {
                                 tilInterval.error = null
@@ -163,7 +156,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 }
             })
 
-            etAmplification.addTextChangedListener(object: TextWatcher {
+            etAmplification.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -172,31 +165,34 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 ) {
 
                 }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    if(s.toString().isEmpty()) {
+                    if (s.toString().isEmpty()) {
                         tilAmplification.error = null
                         btnAmplification.isEnabled = false
                     } else {
                         s.toString().toIntOrNull()?.let {
-                            if(it > 254) {
-                                tilAmplification.error = resources.getString(R.string.main_amplification_warning)
+                            if (it > 254) {
+                                tilAmplification.error =
+                                    resources.getString(R.string.main_amplification_warning)
                                 btnAmplification.isEnabled = false
                             } else {
                                 tilAmplification.error = null
                                 btnAmplification.isEnabled = true
                             }
                         } ?: run {
-                            tilAmplification.error = resources.getString(R.string.main_amplification_warning)
+                            tilAmplification.error =
+                                resources.getString(R.string.main_amplification_warning)
                             btnAmplification.isEnabled = false
                         }
                     }
                 }
             })
 
-            etSensitivity.addTextChangedListener(object: TextWatcher {
+            etSensitivity.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -205,69 +201,72 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 ) {
 
                 }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 }
 
                 override fun afterTextChanged(s: Editable?) {
-                    if(s.toString().isEmpty()) {
+                    if (s.toString().isEmpty()) {
                         tilSensitivity.error = null
                         btnSensitivity.isEnabled = false
                     } else {
                         s.toString().toIntOrNull()?.let {
-                            if(it > 254) {
-                                tilSensitivity.error = resources.getString(R.string.main_amplification_warning)
+                            if (it > 254) {
+                                tilSensitivity.error =
+                                    resources.getString(R.string.main_amplification_warning)
                                 btnSensitivity.isEnabled = false
                             } else {
                                 tilSensitivity.error = null
                                 btnSensitivity.isEnabled = true
                             }
                         } ?: run {
-                            tilSensitivity.error = resources.getString(R.string.main_amplification_warning)
+                            tilSensitivity.error =
+                                resources.getString(R.string.main_amplification_warning)
                             btnSensitivity.isEnabled = false
                         }
                     }
                 }
             })
 
-        btnInterval.setOnClickListener {
-            if (!etInterval.text.isNullOrEmpty()) {
-                etInterval.text.toString().toIntOrNull()?.let {
-                    Log.d(TAG, binding.etInterval.text.toString())
-                    pdmsDevice?.setSensingIntervalMillisCompletable(it)
-                        ?.observeOn(AndroidSchedulers.mainThread())
-                        ?.doOnSuccess {
-                            Log.d(TAG, "doOnSuccess = ${it}")
-                        }
-                        ?.doOnTerminate {
-                            Log.d(TAG, "terminated")
-                        }
-                        ?.subscribe({
-                            tvIntervalValue.text = "$it"
-                                    Log.d(TAG, "onSuccess = ${it}")
-                        }, {
-                            Log.d(TAG, it.toString())
-                        })
+            btnInterval.setOnClickListener {
+                if (!etInterval.text.isNullOrEmpty()) {
+                    etInterval.text.toString().toIntOrNull()?.let {
+                        Log.d(TAG, binding.etInterval.text.toString())
+                        pdmsDevice?.setSensingIntervalMillisCompletable(it)
+                            ?.observeOn(AndroidSchedulers.mainThread())
+                            ?.doOnSuccess {
+                                Log.d(TAG, "doOnSuccess = ${it}")
+                            }
+                            ?.doOnTerminate {
+                                Log.d(TAG, "terminated")
+                            }
+                            ?.subscribe({
+                                tvIntervalValue.text = "$it"
+                                Log.d(TAG, "onSuccess = ${it}")
+                            }, {
+                                Log.d(TAG, it.toString())
+                            })
+                    }
                 }
             }
-        }
 
             btnAmplification.setOnClickListener {
                 if (!etAmplification.text.isNullOrEmpty()) {
                     etAmplification.text.toString().toIntOrNull()?.let {
-                            pdmsDevice?.setAmplificationCompletable(it)
-                                ?.observeOn(AndroidSchedulers.mainThread())
-                                ?.doOnSuccess {
-                                    Log.d(TAG, "doOnSuccess = ${it}")
-                                }
-                                ?.doOnTerminate {
-                                    Log.d(TAG, "terminated")
-                                }
-                                ?.subscribe({
-                                    binding.tvAmplificationValue.text = "$it"
-                                    Log.d(TAG, "onSuccess = ${it}")
-                                }, {
-                                    Log.d(TAG, it.toString())
-                                })
+                        pdmsDevice?.setAmplificationCompletable(it)
+                            ?.observeOn(AndroidSchedulers.mainThread())
+                            ?.doOnSuccess {
+                                Log.d(TAG, "doOnSuccess = ${it}")
+                            }
+                            ?.doOnTerminate {
+                                Log.d(TAG, "terminated")
+                            }
+                            ?.subscribe({
+                                binding.tvAmplificationValue.text = "$it"
+                                Log.d(TAG, "onSuccess = ${it}")
+                            }, {
+                                Log.d(TAG, it.toString())
+                            })
                     }
                 }
             }
@@ -275,22 +274,22 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnSensitivity.setOnClickListener {
                 Log.d(TAG, "${binding.etSensitivity.text.toString()}")
                 if (!etSensitivity.text.isNullOrEmpty()) {
-                        etSensitivity.text.toString().toIntOrNull()?.let {
-                            pdmsDevice?.setSensitivityCompletable(it)
-                                ?.observeOn(AndroidSchedulers.mainThread())
-                                ?.doOnSuccess {
-                                    Log.d(TAG, "doOnSuccess = ${it}")
-                                }
-                                ?.doOnTerminate {
-                                    Log.d(TAG, "terminated")
-                                }
-                                ?.subscribe({
-                                    tvSensitivityValue.text = "$it"
-                                    Log.d(TAG, "onSuccess = ${it}")
-                                }, {
-                                    Log.d(TAG, it.toString())
-                                })
-                        }
+                    etSensitivity.text.toString().toIntOrNull()?.let {
+                        pdmsDevice?.setSensitivityCompletable(it)
+                            ?.observeOn(AndroidSchedulers.mainThread())
+                            ?.doOnSuccess {
+                                Log.d(TAG, "doOnSuccess = ${it}")
+                            }
+                            ?.doOnTerminate {
+                                Log.d(TAG, "terminated")
+                            }
+                            ?.subscribe({
+                                tvSensitivityValue.text = "$it"
+                                Log.d(TAG, "onSuccess = ${it}")
+                            }, {
+                                Log.d(TAG, it.toString())
+                            })
+                    }
                 }
             }
         }
@@ -298,6 +297,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun initDevice(macAddress: String) {
+        onBtnS0304Click()
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
             binding.clCenterPgS01S02.isInvisible = true
@@ -311,7 +311,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             binding.tvAmplificationValue.text = "${getAmplification()}"
             binding.tvSensitivityValue.text = "${getSensitivity()}"
 
-            if(pdmsDisposable == null) {
+            if (pdmsDisposable == null) {
                 pdmsDisposable = sendDataOn()
                     ?.doFinally {
                         pdmsDisposable = null
@@ -319,22 +319,22 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     ?.observeOn(AndroidSchedulers.mainThread())
                     ?.subscribe({
                         with(binding) {
-                            if(it[0] != 0) {
+                            if (it[0] != 0) {
                                 ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
                             } else {
                                 ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
                             }
-                            if(it[1] != 0) {
+                            if (it[1] != 0) {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
                             } else {
                                 ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
                             }
-                            if(it[2] != 0) {
+                            if (it[2] != 0) {
                                 ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
                             } else {
                                 ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304)
                             }
-                            if(it[3] != 0) {
+                            if (it[3] != 0) {
                                 ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304_on)
                             } else {
                                 ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
@@ -398,6 +398,28 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     override fun onDeviceSelected(macAddress: String) {
         initDevice(macAddress)
+    }
+
+    private fun onBtnS0102Click() {
+        with(binding) {
+            if (!btnPgS01S02.isSelected) {
+                btnPgS01S02.isSelected = !btnPgS01S02.isSelected
+                clCenterPgS01S02.isInvisible = false
+                clCenterPgS03S04.isInvisible = true
+                btnPgS03S04.isSelected = false
+            }
+        }
+    }
+
+    private fun onBtnS0304Click() {
+        with(binding) {
+            if (!btnPgS03S04.isSelected) {
+                btnPgS03S04.isSelected = !btnPgS03S04.isSelected
+                clCenterPgS01S02.isInvisible = true
+                clCenterPgS03S04.isInvisible = false
+                btnPgS01S02.isSelected = false
+            }
+        }
     }
 
     companion object {
