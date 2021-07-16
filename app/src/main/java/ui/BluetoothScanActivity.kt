@@ -94,6 +94,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
         Intent(this, NewMainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(NewMainActivity.MAC_ADDRESS_KEY, device.macAddress)
         }.also {
             startActivity(it)

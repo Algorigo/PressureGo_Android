@@ -197,12 +197,12 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
     }
 
-    fun setSensingIntervalMillisCompletable(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
+    fun setSensingIntervalMillisSingle(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
         val sensingIntervalValue = PDMSUtil.intervalMillisToValue(sensingIntervalMillis)
-        return setSensingIntervalCompletable(sensingIntervalValue)
+        return setSensingIntervalSingle(sensingIntervalValue)
     }
 
-    private fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
+    private fun setSensingIntervalSingle(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
         return setSingle(code, sensingIntervalValue.toByte())
             ?.map {
@@ -224,7 +224,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { amp = it }
     }
 
-    fun setAmplificationCompletable(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
+    fun setAmplificationSingle(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
         return setSingle(code, amplification.toByte())
             ?.doOnSuccess {
@@ -243,7 +243,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sens = it }
     }
 
-    fun setSensitivityCompletable(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
+    fun setSensitivitySingle(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         return setSingle(code, sensitivity.toByte())
             ?.doOnSuccess {
@@ -284,9 +284,6 @@ class RxPDMSDevice : InitializableBleDevice() {
                         relayMap[code.byte] = it
                     }
                 }
-            }
-            ?.flatMap {
-                relay!!.firstOrError()
             }
             ?.map {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")

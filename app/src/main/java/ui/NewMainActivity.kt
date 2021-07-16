@@ -7,11 +7,9 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
@@ -231,18 +229,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnInterval.setOnClickListener {
                 if (!etInterval.text.isNullOrEmpty()) {
                     etInterval.text.toString().toIntOrNull()?.let {
-                        Log.d(TAG, binding.etInterval.text.toString())
-                        pdmsDevice?.setSensingIntervalMillisCompletable(it)
+                        pdmsDevice?.setSensingIntervalMillisSingle(it)
                             ?.observeOn(AndroidSchedulers.mainThread())
                             ?.doOnSuccess {
-                                Log.d(TAG, "doOnSuccess = ${it}")
-                            }
-                            ?.doOnTerminate {
-                                Log.d(TAG, "terminated")
+                                tvIntervalValue.text = "${it}ms"
                             }
                             ?.subscribe({
-                                tvIntervalValue.text = "$it"
-                                Log.d(TAG, "onSuccess = ${it}")
                             }, {
                                 Log.d(TAG, it.toString())
                             })
@@ -253,17 +245,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnAmplification.setOnClickListener {
                 if (!etAmplification.text.isNullOrEmpty()) {
                     etAmplification.text.toString().toIntOrNull()?.let {
-                        pdmsDevice?.setAmplificationCompletable(it)
+                        pdmsDevice?.setAmplificationSingle(it)
                             ?.observeOn(AndroidSchedulers.mainThread())
                             ?.doOnSuccess {
-                                Log.d(TAG, "doOnSuccess = ${it}")
-                            }
-                            ?.doOnTerminate {
-                                Log.d(TAG, "terminated")
+                                tvAmplificationValue.text = "$it"
                             }
                             ?.subscribe({
-                                binding.tvAmplificationValue.text = "$it"
-                                Log.d(TAG, "onSuccess = ${it}")
                             }, {
                                 Log.d(TAG, it.toString())
                             })
@@ -272,20 +259,14 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
 
             btnSensitivity.setOnClickListener {
-                Log.d(TAG, "${binding.etSensitivity.text.toString()}")
                 if (!etSensitivity.text.isNullOrEmpty()) {
                     etSensitivity.text.toString().toIntOrNull()?.let {
-                        pdmsDevice?.setSensitivityCompletable(it)
+                        pdmsDevice?.setSensitivitySingle(it)
                             ?.observeOn(AndroidSchedulers.mainThread())
                             ?.doOnSuccess {
-                                Log.d(TAG, "doOnSuccess = ${it}")
-                            }
-                            ?.doOnTerminate {
-                                Log.d(TAG, "terminated")
+                                tvSensitivityValue.text = "$it"
                             }
                             ?.subscribe({
-                                tvSensitivityValue.text = "$it"
-                                Log.d(TAG, "onSuccess = ${it}")
                             }, {
                                 Log.d(TAG, it.toString())
                             })
