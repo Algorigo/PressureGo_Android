@@ -53,7 +53,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnAmplification.isEnabled = false
             btnSensitivity.isEnabled = false
 
-            newMainMyDevices.setOnClickListener {
+            tvMyDevices.setOnClickListener {
                 MyDevicesDialog().apply {
                     show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
                 }
@@ -300,9 +300,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     private fun expandCollapseIntervalView(expand: Boolean) {
         val duration = 200L
         if (expand) {
-            binding.ivIntervalArrow.setImageResource(R.drawable.ic_up_arrow)
+            binding.ivIntervalArrow.animate().setDuration(200).rotation(180f)
         } else {
-            binding.ivIntervalArrow.setImageResource(R.drawable.ic_down_arrow)
+            binding.ivIntervalArrow.animate().setDuration(duration).rotation(0f)
         }
         TransitionManager.beginDelayedTransition(binding.clInterval, AutoTransition().apply {
             addTransition(ChangeBounds())
@@ -315,9 +315,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     private fun expandCollapseAmplificationView(expand: Boolean) {
         val duration = 200L
         if (expand) {
-            binding.ivAmplificationArrow.setImageResource(R.drawable.ic_up_arrow)
+            binding.ivAmplificationArrow.animate().setDuration(200).rotation(180f)
         } else {
-            binding.ivAmplificationArrow.setImageResource(R.drawable.ic_down_arrow)
+            binding.ivAmplificationArrow.animate().setDuration(duration).rotation(0f)
         }
         TransitionManager.beginDelayedTransition(binding.clAmplification, AutoTransition().apply {
             addTransition(ChangeBounds())
@@ -330,9 +330,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     private fun expandCollapseSensitivityView(expand: Boolean) {
         val duration = 200L
         if (expand) {
-            binding.ivSensitivityArrow.setImageResource(R.drawable.ic_up_arrow)
+            binding.ivSensitivityArrow.animate().setDuration(200).rotation(180f)
         } else {
-            binding.ivSensitivityArrow.setImageResource(R.drawable.ic_down_arrow)
+            binding.ivSensitivityArrow.animate().setDuration(duration).rotation(0f)
         }
         TransitionManager.beginDelayedTransition(binding.clSensitivity, AutoTransition().apply {
             addTransition(ChangeBounds())

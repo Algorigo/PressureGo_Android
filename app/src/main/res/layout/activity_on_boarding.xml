@@ -9,51 +9,46 @@
 
     <TextView
         android:id="@+id/on_boarding_title"
+        style="@style/NotoSansKrMediumStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="62dp"
+        android:lineHeight="36sp"
         android:text="Make sure your devices is available to connect"
-        android:textColor="#fcfcfc"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/on_boarding_description"
+        style="@style/NotoSansKrRegularStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Connecting for the first time, please charge the device refering to the following images. "
-        android:textColor="#8e8d94"
+        android:lineHeight="21sp"
+        android:text="Connecting for the first time,\nplease charge the device\nrefering to the following images. "
+        android:textColor="@color/blue_grey"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@+id/on_boarding_title" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/on_boarding_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/on_boarding_button_layout"
-        app:layout_constraintTop_toBottomOf="@+id/on_boarding_description">
+        android:layout_height="0dp"
+        android:layout_marginTop="36dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toTopOf="@id/on_boarding_view_pager_tab"
+        app:layout_constraintTop_toBottomOf="@id/on_boarding_description" />
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/on_boarding_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/on_boarding_view_pager_tab"
-            app:layout_constraintDimensionRatio="W,328:365"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/on_boarding_view_pager_tab"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tabBackground="@drawable/selector_tab_indicator"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/on_boarding_view_pager_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/on_boarding_button_layout"
+        app:tabBackground="@drawable/selector_tab_indicator"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp" />
 
     <LinearLayout
         android:id="@+id/on_boarding_button_layout"

@@ -12,19 +12,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
+import com.algorigo.pressuregoapp.databinding.DialogMyDevicesBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MyDevicesDialog : BottomSheetDialogFragment(),
     ConnectedRecyclerAdapter.ConnectedRecyclerDelegate {
+
+    private lateinit var binding: DialogMyDevicesBinding
 
     interface Callback {
         fun onDeviceSelected(macAddress: String)
     }
 
     private var callback: Callback? = null
-    private lateinit var bluetoothConnectedRecycler: RecyclerView
-    private lateinit var noDeviceLabel: TextView
-    private val connectedRecyclerAdapter = ConnectedRecyclerAdapter(this)
+    private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
+        ConnectedRecyclerAdapter(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,27 +38,31 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_my_devices, container, false)
+    ): View {
+        binding = DialogMyDevicesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bluetoothConnectedRecycler = view.findViewById(R.id.my_devices_connected_device)
-        bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
-        noDeviceLabel = view.findViewById(R.id.bluetooth_scan_no_device)
-        BleManager.getInstance()
-            .getConnectedDevices()
-            .mapNotNull { it as? RxPDMSDevice }
-            .count()
-            .also {
-                if (it == 0) {
-                    noDeviceLabel.visibility = View.VISIBLE
-                }
-            }
+        with(binding) {
 
-        view.findViewById<Button>(R.id.my_devices_add_device_button).setOnClickListener {
-            onAddDeviceClick()
+            rvDevicesConnected.adapter = connectedRecyclerAdapter
+            myDevicesAddDeviceButton.setOnClickListener {
+                onAddDeviceClick()
+            }
+            BleManager.getInstance()
+                .getConnectedDevices()
+                .mapNotNull { it as? RxPDMSDevice }
+                .let {
+                    if(it.isEmpty()) {
+                        clEmpty.visibility = View.VISIBLE
+                        rvDevicesConnected.visibility = View.INVISIBLE
+                    } else {
+                        clEmpty.visibility = View.INVISIBLE
+                        rvDevicesConnected.visibility = View.VISIBLE
+                    }
+                }
         }
     }
 

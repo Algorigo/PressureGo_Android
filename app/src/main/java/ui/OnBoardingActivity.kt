@@ -29,7 +29,8 @@ class OnBoardingActivity : AppCompatActivity() {
 
                 override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder{
                     return ImageView(parent.context).apply {
-                        this.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                        scaleType = ImageView.ScaleType.FIT_XY
                     }.let {
                         ImageViewHolder(it)
                     }
@@ -37,7 +38,9 @@ class OnBoardingActivity : AppCompatActivity() {
 
                 override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
                     when (position) {
-                        0 -> holder.imageView.setImageResource(R.drawable.mask_group)
+                        0 -> {
+                            holder.imageView.setImageResource(R.drawable.mask_group)
+                        }
                         1 -> holder.imageView.setImageResource(R.drawable.mask_group2)
                         else -> throw IllegalArgumentException("viewPager adapter position should be less than 2 : $position")
                     }

@@ -267,7 +267,6 @@ class RxPDMSDevice : InitializableBleDevice() {
                 }
             }
             ?.flatMap {
-                Log.d(LOG_TAG, UUID.fromString(PDMSUtil.UUID_COMMUNICATION).toString())
                 relay!!.firstOrError()
             }
             ?.map {

@@ -41,7 +41,7 @@
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.TextInputLayout</item>
         <!--        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>-->
 
-<!--EditText의 Hint-->
+        <!--EditText의 Hint-->
         <item name="android:textColorHint">@color/blue_grey</item>
         <!--상단의 Hint-->
         <item name="hintTextColor">@color/blue_grey</item>

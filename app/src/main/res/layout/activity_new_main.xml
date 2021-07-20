@@ -20,9 +20,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="52dp"
-                android:layout_marginBottom="28dp"
-                android:src="@drawable/ic_pressure_go" />
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="9dp"
+                android:src="@drawable/main_pressure_go" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -60,16 +60,36 @@
                 app:layout_constraintStart_toEndOf="@id/iv_sensor"
                 app:layout_constraintTop_toTopOf="@id/iv_sensor" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/csv_record_stop"
+                app:layout_constraintBottom_toBottomOf="@id/tv_record"
+                app:layout_constraintEnd_toStartOf="@id/tv_record"
+                app:layout_constraintTop_toTopOf="@id/tv_record" />
+
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/new_main_my_devices"
+                android:id="@+id/tv_record"
+                style="@style/NotoSansKrMediumStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop"
+                android:textColor="@color/orangey_red"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_sensing_data"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_my_devices"
                 style="@style/NotoSansKrMediumStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="2dp"
                 android:text="@string/main_my_devices"
-                android:textSize="16sp"
-                app:layout_constraintBaseline_toBaselineOf="@id/tv_sensing_data"
+                android:textSize="12sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_sensor_settings"
                 app:layout_constraintEnd_toStartOf="@id/iv_my_devices_arrow" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -77,11 +97,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_right_arrow"
-                app:layout_constraintBottom_toBottomOf="@id/iv_sensor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iv_sensor" />
+                app:layout_constraintBottom_toBottomOf="@id/tv_my_devices"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_pg_s01_s02"
                 style="@style/NotoSansKrMediumStyle"
                 android:layout_width="wrap_content"
@@ -95,7 +114,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_sensor" />
 
-            <androidx.appcompat.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_pg_s03_s04"
                 style="@style/NotoSansKrMediumStyle"
                 android:layout_width="wrap_content"
@@ -148,21 +167,20 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_sensor_pg_s01_02"
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    android:text="0"
                     app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s01_s02"
                     app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s01_s02"
                     app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s01_s02"
-                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s01_s02"
-                    />
+                    app:layout_constraintTop_toTopOf="@id/iv_sensor_pg_s01_s02" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -190,9 +208,9 @@
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    android:text="0"
                     app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_left_top"
                     app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_left_top"
                     app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_left_top"
@@ -211,9 +229,9 @@
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    android:text="0"
                     app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_right_top"
                     app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_right_top"
                     app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_right_top"
@@ -233,9 +251,9 @@
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    android:text="0"
                     app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_left_bottom"
                     app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_left_bottom"
                     app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_left_bottom"
@@ -255,9 +273,9 @@
                     style="@style/NotoSansKrMediumStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0"
                     android:textColor="@color/pressure_go_white"
                     android:textSize="20sp"
-                    android:text="0"
                     app:layout_constraintBottom_toBottomOf="@id/iv_sensor_pg_s03_s04_right_bottom"
                     app:layout_constraintEnd_toEndOf="@id/iv_sensor_pg_s03_s04_right_bottom"
                     app:layout_constraintStart_toStartOf="@id/iv_sensor_pg_s03_s04_right_bottom"
@@ -276,6 +294,7 @@
                 app:layout_constraintTop_toBottomOf="@id/cl_center_pg_s03_s04" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_sensor_settings"
                 style="@style/NotoSansKrMediumStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -316,11 +335,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:lineSpacingExtra="8sp"
+                    android:text="0ms"
                     android:textColor="@color/blue_grey"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_interval_title"
-                    tools:text="100ms" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_interval_title" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_interval_arrow"
@@ -331,21 +350,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_interval_title" />
 
-                                <com.google.android.material.textfield.TextInputLayout
-                                    android:id="@+id/til_interval"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
-                                    android:theme="@style/DarActionBarTheme"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_interval_value">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_interval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:theme="@style/DarActionBarTheme"
+                    app:layout_constraintTop_toBottomOf="@id/tv_interval_value">
 
-                                    <com.google.android.material.textfield.TextInputEditText
-                                        android:id="@+id/et_interval"
-                                        android:layout_width="match_parent"
-                                        style="@style/TextInputEditTextStyle"
-                                        android:layout_height="wrap_content"
-                                        android:hint="@string/main_interval_title" />
-                                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_interval"
+                        style="@style/TextInputEditTextStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/main_interval_title" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_interval"
@@ -373,7 +392,7 @@
                 android:id="@+id/cl_amplification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_round_charcoal_grey_radius_8"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
@@ -398,11 +417,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:lineSpacingExtra="8sp"
+                    android:text="0"
                     android:textColor="@color/blue_grey"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_amplification_title"
-                    tools:text="100" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_amplification_title" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_amplification_arrow"
@@ -423,8 +442,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_amplification"
-                        android:layout_width="match_parent"
                         style="@style/TextInputEditTextStyle"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/main_amplification_title" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -455,7 +474,7 @@
                 android:id="@+id/cl_sensitivity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_round_charcoal_grey_radius_8"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
@@ -480,11 +499,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:lineSpacingExtra="8sp"
+                    android:text="0"
                     android:textColor="@color/blue_grey"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_sensitivity_title"
-                    tools:text="100" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_sensitivity_title" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_sensitivity_arrow"
@@ -505,8 +524,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_sensitivity"
-                        android:layout_width="match_parent"
                         style="@style/TextInputEditTextStyle"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/main_sensitivity_title" />
                 </com.google.android.material.textfield.TextInputLayout>

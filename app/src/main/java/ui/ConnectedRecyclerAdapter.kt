@@ -6,33 +6,46 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
+import com.algorigo.pressuregoapp.databinding.ItemBluetoothScanConnectedDeviceBinding
 
-class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate): RecyclerView.Adapter<ConnectedRecyclerAdapter.ConnectedRecyclerViewHolder>() {
+class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate) :
+    RecyclerView.Adapter<ConnectedRecyclerAdapter.ConnectedRecyclerViewHolder>() {
+
 
     interface ConnectedRecyclerDelegate {
         fun onConnectedDeviceSelected(device: RxPDMSDevice)
         fun onConnectedMoreSelected(device: RxPDMSDevice)
     }
 
-    inner class ConnectedRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ConnectedRecyclerViewHolder(binding: ViewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        private val itemBleConnectedBinding = binding as ItemBluetoothScanConnectedDeviceBinding
 
         fun setDevice(device: RxPDMSDevice) {
-            itemView.setOnClickListener {
-                delegate.onConnectedDeviceSelected(device)
-            }
-            itemView.findViewById<TextView>(R.id.device_name).text = device.getDisplayName()
-            itemView.findViewById<TextView>(R.id.mac_address_view).text = device.macAddress
-            itemView.findViewById<ImageButton>(R.id.device_more_button).setOnClickListener {
-                delegate.onConnectedMoreSelected(device)
+            with(itemBleConnectedBinding) {
+                root.setOnClickListener {
+                    delegate.onConnectedDeviceSelected(device)
+                }
+                deviceName.text = device.getDisplayName()
+                macAddressView.text = device.macAddress
+                deviceMoreButton.setOnClickListener {
+                    delegate.onConnectedMoreSelected(device)
+                }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConnectedRecyclerViewHolder {
-        return LayoutInflater.from(parent.context).inflate(R.layout.item_bluetooth_scan_connected_device, parent, false).let {
+        return ItemBluetoothScanConnectedDeviceBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ).let {
             ConnectedRecyclerViewHolder(it)
         }
     }
@@ -47,9 +60,7 @@ class ConnectedRecyclerAdapter(private val delegate: ConnectedRecyclerDelegate):
     }
 
     override fun getItemCount(): Int {
-        return BleManager.getInstance()
-            .getConnectedDevices()
-            .mapNotNull { it as? RxPDMSDevice }
-            .count()
+        return BleManager.getInstance().getConnectedDevices().mapNotNull { it as? RxPDMSDevice }.count()
     }
+
 }

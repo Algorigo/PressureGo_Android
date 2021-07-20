@@ -12,6 +12,7 @@ import com.algorigo.algorigoble.BleManager
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
+import com.algorigo.pressuregoapp.databinding.ActivityBluetoothScanBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -20,6 +21,8 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     ConnectedRecyclerAdapter.ConnectedRecyclerDelegate,
     ScanRecyclerAdapter.ScanRecyclerDelegate {
 
+    private lateinit var binding: ActivityBluetoothScanBinding
+
     private var connectionStateDisposable: Disposable? = null
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
@@ -27,18 +30,17 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private lateinit var connectedDeviceLayout: ConstraintLayout
     private lateinit var bluetoothConnectedRecycler: RecyclerView
     private val connectedRecyclerAdapter = ConnectedRecyclerAdapter(this)
-    private lateinit var scanProgressBar: ProgressBar
     private lateinit var bluetoothScanScannedRecycler: RecyclerView
     private var scanRecyclerAdapter = ScanRecyclerAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bluetooth_scan)
+        binding = ActivityBluetoothScanBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         connectedDeviceLayout = findViewById(R.id.bluetooth_scan_connected_device)
         bluetoothConnectedRecycler = findViewById(R.id.bluetooth_scan_connected_recycler)
         bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
-        scanProgressBar = findViewById(R.id.bluetooth_scan_scan_progress)
         bluetoothScanScannedRecycler = findViewById(R.id.bluetooth_scan_scanned_recycler)
         bluetoothScanScannedRecycler.adapter = scanRecyclerAdapter
 
@@ -67,23 +69,25 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     private fun startScan() {
-        scanDisposable = requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-            .andThen(BleManager.getInstance().scanObservable(5000).subscribeOn(Schedulers.io()))
-            .map { it.mapNotNull { it as? RxPDMSDevice } }
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                scanProgressBar.visibility = View.VISIBLE
-            }
-            .doFinally {
-                scanDisposable = null
-                scanProgressBar.visibility = View.GONE
-            }
-            .subscribe({
-                devices = it
-                adjustRecycler()
-            }, {
-                Log.e(LOG_TAG, "", it)
-            })
+        with(binding) {
+            scanDisposable = requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+                .andThen(BleManager.getInstance().scanObservable(5000).subscribeOn(Schedulers.io()))
+                .map { it.mapNotNull { it as? RxPDMSDevice } }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    bluetoothScanScanProgress.visibility = View.VISIBLE
+                }
+                .doFinally {
+                    scanDisposable = null
+                    bluetoothScanScanProgress.visibility = View.GONE
+                }
+                .subscribe({
+                    devices = it
+                    adjustRecycler()
+                }, {
+                    Log.e(LOG_TAG, "", it)
+                })
+        }
     }
 
     private fun stopScan() {
@@ -91,15 +95,17 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     private fun adjustRecycler() {
-        BleManager.getInstance()
-            .getConnectedDevices()
-            .mapNotNull { it as? RxPDMSDevice }
-            .count()
-            .also {
-                connectedDeviceLayout.visibility = if (it > 0) View.VISIBLE else View.GONE
-            }
-        bluetoothConnectedRecycler.adapter?.notifyDataSetChanged()
-        scanRecyclerAdapter.notifyDataSetChanged()
+        with(binding) {
+            BleManager.getInstance()
+                .getConnectedDevices()
+                .mapNotNull { it as? RxPDMSDevice }
+                .count()
+                .also {
+                    bluetoothScanConnectedDevice.visibility = if (it > 0) View.VISIBLE else View.GONE
+                }
+            bluetoothScanConnectedRecycler.adapter?.notifyDataSetChanged()
+            scanRecyclerAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {

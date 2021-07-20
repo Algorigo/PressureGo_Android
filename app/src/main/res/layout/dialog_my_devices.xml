@@ -11,6 +11,7 @@
 
     <TextView
         android:id="@+id/my_devices_title"
+        style="@style/NotoSansKrMediumStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="19dp"
@@ -19,12 +20,45 @@
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/my_devices_connected_device"
+        app:layout_constraintBottom_toTopOf="@+id/rv_devices_connected"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/my_devices_add_device_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_devices_title">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_info"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/NotoSansKrRegularStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/connected_devices_empty"
+            android:textColor="@color/blue_grey"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_info"
+            app:layout_constraintStart_toEndOf="@id/iv_info"
+            app:layout_constraintTop_toTopOf="@id/iv_info" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_devices_connected_device"
+        android:id="@+id/rv_devices_connected"
         android:layout_width="match_parent"
         android:layout_height="198dp"
         android:layout_marginTop="16dp"
@@ -33,29 +67,16 @@
         app:layout_constraintTop_toBottomOf="@+id/my_devices_title"
         tools:listitem="@layout/item_bluetooth_scan_connected_device" />
 
-    <TextView
-        android:id="@+id/bluetooth_scan_no_device"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/group_1721"
-        android:drawablePadding="4dp"
-        android:text="There is no device connected"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/my_devices_connected_device"
-        app:layout_constraintEnd_toEndOf="@+id/my_devices_connected_device"
-        app:layout_constraintStart_toStartOf="@+id/my_devices_connected_device"
-        app:layout_constraintTop_toTopOf="@+id/my_devices_connected_device"
-        tools:visibility="visible" />
 
     <Button
         android:id="@+id/my_devices_add_device_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="30dp"
-        android:background="@drawable/btn_round_bg_main"
+        android:background="@drawable/selector_btn_main_settings"
         android:text="Add devices"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_devices_connected_device"
+        app:layout_constraintTop_toBottomOf="@+id/rv_devices_connected"
         app:layout_goneMarginTop="0px" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
