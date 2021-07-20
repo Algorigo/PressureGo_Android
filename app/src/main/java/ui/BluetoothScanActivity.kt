@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
@@ -23,6 +24,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
 
+    private lateinit var connectedDeviceLayout: ConstraintLayout
     private lateinit var bluetoothConnectedRecycler: RecyclerView
     private val connectedRecyclerAdapter = ConnectedRecyclerAdapter(this)
     private lateinit var scanProgressBar: ProgressBar
@@ -33,6 +35,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bluetooth_scan)
 
+        connectedDeviceLayout = findViewById(R.id.bluetooth_scan_connected_device)
         bluetoothConnectedRecycler = findViewById(R.id.bluetooth_scan_connected_recycler)
         bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
         scanProgressBar = findViewById(R.id.bluetooth_scan_scan_progress)
@@ -88,6 +91,13 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     private fun adjustRecycler() {
+        BleManager.getInstance()
+            .getConnectedDevices()
+            .mapNotNull { it as? RxPDMSDevice }
+            .count()
+            .also {
+                connectedDeviceLayout.visibility = if (it > 0) View.VISIBLE else View.GONE
+            }
         bluetoothConnectedRecycler.adapter?.notifyDataSetChanged()
         scanRecyclerAdapter.notifyDataSetChanged()
     }
