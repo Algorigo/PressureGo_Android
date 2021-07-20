@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -21,6 +23,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
 
     private var callback: Callback? = null
     private lateinit var bluetoothConnectedRecycler: RecyclerView
+    private lateinit var noDeviceLabel: TextView
     private val connectedRecyclerAdapter = ConnectedRecyclerAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +43,16 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
         super.onViewCreated(view, savedInstanceState)
         bluetoothConnectedRecycler = view.findViewById(R.id.my_devices_connected_device)
         bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
+        noDeviceLabel = view.findViewById(R.id.bluetooth_scan_no_device)
+        BleManager.getInstance()
+            .getConnectedDevices()
+            .mapNotNull { it as? RxPDMSDevice }
+            .count()
+            .also {
+                if (it == 0) {
+                    noDeviceLabel.visibility = View.VISIBLE
+                }
+            }
 
         view.findViewById<Button>(R.id.my_devices_add_device_button).setOnClickListener {
             onAddDeviceClick()
