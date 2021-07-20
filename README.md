@@ -70,8 +70,8 @@ Received Data will be like below.
     [0x02, CODE, VALUE, 0x03]
 
     //Pressure Data
-    [0x01, BYTE_LOWER_1, BYTE_UPPER_1, BYTE_LOWER_2, BYTE_UPPER_2, BYTE_LOWER_3, BYTE_UPPER_3, BYTE_LOWER_4, BYTE_UPPER_4, 0x03]
-    pressureValue[i] = (BYTE_LOWER[i] shl 8) + BYTE_UPPER[i]
+    [0x01, 0x00, BYTE_LOWER_1, BYTE_UPPER_1, BYTE_LOWER_2, BYTE_UPPER_2, BYTE_LOWER_3, BYTE_UPPER_3, BYTE_LOWER_4, BYTE_UPPER_4, 0x03]
+    pressureValue[i] = (BYTE_UPPER[i] shl 8) + BYTE_LOWER[i]
 ```
 
 ## Sample Code
