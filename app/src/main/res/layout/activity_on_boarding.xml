@@ -11,7 +11,7 @@
         android:id="@+id/on_boarding_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="62dp"
         android:text="Make sure your devices is available to connect"
         android:textColor="#fcfcfc"
         android:textSize="24sp"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Connecting for the first time, please charge the device refering to the following images. "
-        android:textColor="#fcfcfc"
+        android:textColor="#8e8d94"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@+id/on_boarding_title" />
 
@@ -42,15 +42,13 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/on_boarding_view_pager_tab"
             app:layout_constraintDimensionRatio="W,328:365"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/on_boarding_view_pager_tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/on_boarding_view_pager"
             app:tabBackground="@drawable/selector_tab_indicator"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp" />
@@ -61,7 +59,7 @@
         android:id="@+id/on_boarding_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button

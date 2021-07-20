@@ -7,7 +7,7 @@
     android:background="@drawable/bg_device_info_dialog"
     android:paddingHorizontal="16dp"
     android:paddingTop="28dp"
-    android:paddingBottom="30dp">
+    android:paddingBottom="16dp">
 
     <TextView
         android:id="@+id/firmware_update_title"
