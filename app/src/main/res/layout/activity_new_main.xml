@@ -389,7 +389,7 @@
                     android:background="@drawable/selector_bg_slate_grey_ripple_radius_8"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
-                    android:text="@string/set"
+                    android:text="@string/main_set"
                     android:textColor="@drawable/selector_enabled_text_color_white_blue_grey"
                     app:layout_constraintTop_toBottomOf="@id/til_interval" />
 

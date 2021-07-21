@@ -74,7 +74,7 @@ class ConfirmDialog: DialogFragment() {
         const val KEY_TITLE = "KEY_TITLE"
         const val KEY_CONTENT = "KEY_CONTENT"
 
-        fun newInstance(title: String, content: String, callback: (() -> Unit)?) = ConfirmDialog().apply {
+        fun newInstance(title: String, content: String, callback: (() -> Unit)? = null) = ConfirmDialog().apply {
             arguments = Bundle().apply {
                 putString(KEY_TITLE, title)
                 putString(KEY_CONTENT, content)

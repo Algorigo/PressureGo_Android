@@ -28,6 +28,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     private lateinit var binding: ActivityNewMainBinding
     private var pdmsDevice: RxPDMSDevice? = null
     private var pdmsDisposable: Disposable? = null
+    private var service: CSVRecordService? = null
 
     private var serviceDisposable: Disposable? = null
 
@@ -252,6 +253,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                                     this@NewMainActivity,
                                     Intent(this@NewMainActivity, CSVRecordService::class.java)
                                 )
+                                    .doOnDispose {
+
+                                    }
                                     .doFinally {
                                         serviceDisposable = null
                                     }
@@ -266,15 +270,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                                     })
                         }).show(supportFragmentManager, TAG)
                 } else {
-                    Log.d(TAG, "it not null")
-                    serviceDisposable?.dispose()
                     ConfirmDialog.newInstance(
                         title = "CSV Export",
                         content = "Do you want to download CSV\nrecorded so far?",
                         callback = {
-                            serviceDisposable = null
+                            Log.d(TAG, "stopService")
                             serviceDisposable?.dispose()
-                            stopService(Intent(this@NewMainActivity, CSVRecordService::class.java))
                             ivRecord.setImageResource(R.drawable.csv_record_on)
                             tvRecord.text = "CSV Record"
                             tvRecord.setTextColor(ContextCompat.getColor(this@NewMainActivity, R.color.soft_green))

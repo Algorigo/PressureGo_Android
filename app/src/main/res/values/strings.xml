@@ -15,7 +15,13 @@
     <string name="main_amplification_title">Amplification</string>
     <string name="main_sensitivity_title">Sensitivity</string>
     <string name="main_amplification_warning">Please set a value to 254</string>
-    <string name="set">Set</string>
+    <string name="main_set">Set</string>
+
     <string name="connected_devices_empty">There is no device connected</string>
+
+    <string name="csv_record_channel_id">CSVRecord</string>
+    <string name="csv_record_channel_name">CsvRecord</string>
+    <string name="csv_record_recording_text">Recording…</string>
+
 
 </resources>
