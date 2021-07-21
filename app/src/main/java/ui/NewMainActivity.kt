@@ -1,5 +1,7 @@
 package ui
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,20 +11,25 @@ import android.transition.TransitionManager
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.algorigo.algorigoble.BleManager
+import com.algorigo.library.rx.Rx2ServiceBindingFactory
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
+import service.CSVRecordService
 
 class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private lateinit var binding: ActivityNewMainBinding
     private var pdmsDevice: RxPDMSDevice? = null
     private var pdmsDisposable: Disposable? = null
+
+    private var serviceDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -233,8 +240,48 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     }
                 }
             }
-        }
+            clCsvRecord.setOnClickListener {
+                if (serviceDisposable == null) {
+                    Log.d(TAG, "it == null")
+                    ConfirmDialog.newInstance(
+                        title = "CSV Record",
+                        content = "Shall we start recording\nsensing data to export CSV?",
+                        callback = {
+                            serviceDisposable =
+                                Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
+                                    this@NewMainActivity,
+                                    Intent(this@NewMainActivity, CSVRecordService::class.java)
+                                )
+                                    .doFinally {
+                                        serviceDisposable = null
+                                    }
+                                    .map { it.getService() }
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({
+                                        ivRecord.setImageResource(R.drawable.csv_record_stop)
+                                        tvRecord.text = "Stop"
+                                        tvRecord.setTextColor(ContextCompat.getColor(this@NewMainActivity, R.color.orangey_red))
+                                    }, {
 
+                                    })
+                        }).show(supportFragmentManager, TAG)
+                } else {
+                    Log.d(TAG, "it not null")
+                    serviceDisposable?.dispose()
+                    ConfirmDialog.newInstance(
+                        title = "CSV Export",
+                        content = "Do you want to download CSV\nrecorded so far?",
+                        callback = {
+                            serviceDisposable = null
+                            serviceDisposable?.dispose()
+                            stopService(Intent(this@NewMainActivity, CSVRecordService::class.java))
+                            ivRecord.setImageResource(R.drawable.csv_record_on)
+                            tvRecord.text = "CSV Record"
+                            tvRecord.setTextColor(ContextCompat.getColor(this@NewMainActivity, R.color.soft_green))
+                        }).show(supportFragmentManager, TAG)
+                }
+            }
+        }
     }
 
     private fun initDevice(macAddress: String) {

@@ -60,25 +60,39 @@
                 app:layout_constraintStart_toEndOf="@id/iv_sensor"
                 app:layout_constraintTop_toTopOf="@id/iv_sensor" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_record"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_csv_record"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/csv_record_stop"
-                app:layout_constraintBottom_toBottomOf="@id/tv_record"
-                app:layout_constraintEnd_toStartOf="@id/tv_record"
-                app:layout_constraintTop_toTopOf="@id/tv_record" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_record"
-                style="@style/NotoSansKrMediumStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stop"
-                android:textColor="@color/orangey_red"
+                android:foreground="?attr/selectableItemBackground"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBaseline_toBaselineOf="@id/tv_sensing_data"
-                app:layout_constraintEnd_toEndOf="parent" />
+                >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/csv_record_on"
+                    app:layout_constraintEnd_toStartOf="@id/tv_record"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_record"
+                    style="@style/NotoSansKrMediumStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CSV Record"
+                    android:textColor="@color/soft_green"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_my_devices"
@@ -106,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/selector_btn_main_sensor"
+                android:background="@drawable/selector_bg_slate_grey_slate_grey_35_radius_34"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="PG_S01/S02"
@@ -121,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="14dp"
-                android:background="@drawable/selector_btn_main_sensor"
+                android:background="@drawable/selector_bg_slate_grey_slate_grey_35_radius_34"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp"
                 android:text="PG_S03/S04"
@@ -372,11 +386,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/selector_btn_main_settings"
+                    android:background="@drawable/selector_bg_slate_grey_ripple_radius_8"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="@string/set"
-                    android:textColor="@drawable/selector_btn_main_settings_text_color"
+                    android:textColor="@drawable/selector_enabled_text_color_white_blue_grey"
                     app:layout_constraintTop_toBottomOf="@id/til_interval" />
 
                 <androidx.constraintlayout.widget.Group
@@ -454,11 +468,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/selector_btn_main_settings"
+                    android:background="@drawable/selector_bg_slate_grey_ripple_radius_8"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="Set"
-                    android:textColor="@drawable/selector_btn_main_settings_text_color"
+                    android:textColor="@drawable/selector_enabled_text_color_white_blue_grey"
                     app:layout_constraintTop_toBottomOf="@id/til_amplification" />
 
                 <androidx.constraintlayout.widget.Group
@@ -536,11 +550,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/selector_btn_main_settings"
+                    android:background="@drawable/selector_bg_slate_grey_ripple_radius_8"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="14dp"
                     android:text="Set"
-                    android:textColor="@drawable/selector_btn_main_settings_text_color"
+                    android:textColor="@drawable/selector_enabled_text_color_white_blue_grey"
                     app:layout_constraintTop_toBottomOf="@id/til_sensitivity" />
 
                 <androidx.constraintlayout.widget.Group

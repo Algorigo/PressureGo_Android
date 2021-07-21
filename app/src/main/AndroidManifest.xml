@@ -31,6 +31,10 @@
             android:name=".DfuService"
             android:exported="true" />
 
+        <service android:name="service.CSVRecordService"
+            android:exported="true"
+            />
+
         <activity android:name=".NotificationActivity" />
     </application>
 
