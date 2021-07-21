@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
 
+    private lateinit var backButton: ImageButton
     private lateinit var connectedDeviceLayout: ConstraintLayout
     private lateinit var bluetoothConnectedRecycler: RecyclerView
     private val connectedRecyclerAdapter = ConnectedRecyclerAdapter(this)
@@ -38,11 +40,21 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         binding = ActivityBluetoothScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        backButton = findViewById(R.id.bluetooth_scan_back_button)
         connectedDeviceLayout = findViewById(R.id.bluetooth_scan_connected_device)
         bluetoothConnectedRecycler = findViewById(R.id.bluetooth_scan_connected_recycler)
         bluetoothConnectedRecycler.adapter = connectedRecyclerAdapter
         bluetoothScanScannedRecycler = findViewById(R.id.bluetooth_scan_scanned_recycler)
         bluetoothScanScannedRecycler.adapter = scanRecyclerAdapter
+
+        if (intent.getBooleanExtra(FIRST_KEY, false)) {
+            backButton.visibility = View.GONE
+        } else {
+            backButton.visibility = View.VISIBLE
+            backButton.setOnClickListener {
+                finish()
+            }
+        }
 
         connectionStateDisposable = BleManager.getInstance().getConnectionStateObservable()
             .observeOn(AndroidSchedulers.mainThread())
@@ -147,5 +159,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
 
     companion object {
         private val LOG_TAG = BluetoothScanActivity::class.java.simpleName
+
+        const val FIRST_KEY = "FIRST_KEY"
     }
 }

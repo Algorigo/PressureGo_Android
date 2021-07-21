@@ -70,7 +70,11 @@ class OnBoardingActivity : AppCompatActivity() {
     }
 
     private fun moveToBluetoothScan() {
-        startActivity(Intent(this, BluetoothScanActivity::class.java))
+        Intent(this, BluetoothScanActivity::class.java).apply {
+            putExtra(BluetoothScanActivity.FIRST_KEY, true)
+        }.also {
+            startActivity(it)
+        }
         finish()
     }
 }
