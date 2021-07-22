@@ -43,6 +43,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
             initDevice(it)
             bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
+            Log.d(TAG, it)
         } ?: run {
             onBtnS0102Click()
         }

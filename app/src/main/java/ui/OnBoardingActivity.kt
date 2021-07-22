@@ -75,6 +75,5 @@ class OnBoardingActivity : AppCompatActivity() {
         }.also {
             startActivity(it)
         }
-        finish()
     }
 }
