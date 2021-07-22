@@ -6,6 +6,7 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Completable
 import org.joda.time.DateTime
 import service.CSVRecordService
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
@@ -18,11 +19,14 @@ object FileUtil {
             context.getExternalFilesDir(null)?.absolutePath,
             "pressurego${File.separator}${date.toString("yyyyMMdd")}"
         )
+        val file = File(directory, "${macAddress}.csv")
         if (!directory.exists()) {
             directory.mkdirs()
+            val fileOutputStream = FileOutputStream(file, true)
+            fileOutputStream.write("MacAdrress, DeviceName, DateTime, amp, sens, array[0], array[1], array[2], array[3]".toByteArray())
+            fileOutputStream.close()
         }
-        Log.d("seunghwan", File(directory, "${macAddress}-${date.toString("hhmmss")}.csv").absolutePath)
-        return File(directory, "${macAddress}.csv")
+        return file
     }
 
     @JvmStatic

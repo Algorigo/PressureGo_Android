@@ -10,10 +10,10 @@ import android.util.Log
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.ReplaySubject
 import io.reactivex.rxjava3.subjects.Subject
@@ -30,11 +30,13 @@ class CSVRecordService : Service() {
     private val csvBinder: IBinder = LocalBinder()
 
     private val deviceMap = mutableMapOf<String, RxPDMSDevice>()
-
     private val dataDisposableMap = mutableMapOf<String, Disposable>()
     private val dataSubjectMap = mutableMapOf<String, Subject<IntArray>>()
 
     private val devicesSubject = ReplaySubject.create<RxPDMSDevice>()
+    private val streamingSubject = PublishSubject.create<Unit>()
+
+    private var streamingDisposable: Disposable? = null
 
 
     class NoDataException : IllegalStateException("No Data")
@@ -56,8 +58,8 @@ class CSVRecordService : Service() {
         dateTime = DateTime.now()
         bleManager = BleManager.getInstance()
         startForegroundNotification()
-        initConnectedDevice()
-        onData()
+        startStreaming()
+//        initConnectedDevice()
     }
 
 
@@ -103,8 +105,8 @@ class CSVRecordService : Service() {
         }
     }
 
-    private fun onDataCompletable() {
-        initConnectedDevicesSingle()
+    private fun startStreaming() {
+        streamingDisposable = initConnectedDevicesSingle()
             .doOnSuccess {
                 it.forEach { device ->
                     deviceMap[device.macAddress] = device
@@ -112,31 +114,45 @@ class CSVRecordService : Service() {
                     devicesSubject.onNext(device)
                 }
             }
+            .flatMapCompletable {
+                devicesStreamingCompletable()
+            }.subscribe({
+                        Log.d(TAG, "completed")
+            }, {
+                Log.e(TAG, it.toString())
+            })
     }
 
-    private fun startStreaming() {
-        devicesSubject
-            .filter { it != null}
-            .subscribe({
-
-        }, {
-
-        })
+    private fun devicesStreamingCompletable(): Completable {
+        return streamingSubject.toSerialized().ignoreElements()
+            .subscribeOn(Schedulers.io())
+            .doFinally {
+                deviceMap.keys.forEach {
+                    dataDisposableMap[it]?.dispose()
+                }
+            }
+            .doOnSubscribe {
+                Log.d(TAG, "doOnSubscribe")
+                onDataInner()
+            }
     }
 
-    private fun onData() {
-        Log.d(TAG, "onData, ${deviceMap.size}")
+
+    private fun onDataInner() {
+        Log.d(TAG, "deviceMapSize == ${deviceMap.size}")
         deviceMap.keys.forEach { key ->
+            Log.d(TAG, "key == $key")
             if (!dataDisposableMap.keys.contains(key)) {
+                Log.d(TAG, "containskey == ${deviceMap[key]}")
                 deviceMap[key]?.sendDataOn()
                     ?.doOnNext {
-                        Log.d(TAG, "${it[1]}")
+                        Log.d(TAG, "doOnNext == ${it[1]}")
                         val file = FileUtil.getFile(this@CSVRecordService, key)
                         FileUtil.saveStringToFile(file, writeCsvLine(deviceMap[key]!!, it))
                             .subscribe({
 
                             }, {
-
+                                Log.d(TAG, "saveStringToFile error = $it")
                             })
                     }
                     ?.doFinally {
@@ -146,7 +162,7 @@ class CSVRecordService : Service() {
                     ?.subscribe({
                         dataSubjectMap[key]?.onNext(it)
                     }, {
-
+                        Log.d(TAG, it.toString())
                     })?.also {
                         dataDisposableMap[key] = it
                     }
@@ -156,11 +172,13 @@ class CSVRecordService : Service() {
 
     private fun writeCsvLine(device: RxPDMSDevice, intArray: IntArray): String {
         val builder = StringBuilder()
-        builder.append("${device.macAddress},${device.getDeviceName()}, ${DateTime.now().toString("yyyy-MM-dd-hh:mm:ss")},${device.getAmplification()},${device.getSensitivity()},${intArray[0]},${intArray[0]},${intArray[0]},${intArray[0]}\n")
+        builder.append(
+            "${device.macAddress},${device.getDeviceName()}, ${
+                DateTime.now().toString("yyyy-MM-dd-hh:mm:ss")
+            },${device.getAmplification()},${device.getSensitivity()},${intArray.contentToString().let{ it.substring(1, it.length - 2)}}\n"
+        )
         return builder.toString()
     }
-
-
 
 
     override fun onDestroy() {
@@ -170,6 +188,7 @@ class CSVRecordService : Service() {
             dataSubjectMap.remove(it)
             deviceMap.remove(it)
         }
+        streamingDisposable?.dispose()
         Log.d(TAG, "onDestroy")
         super.onDestroy()
     }

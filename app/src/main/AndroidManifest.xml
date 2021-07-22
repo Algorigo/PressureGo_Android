@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.PressureGoApp">
-        <activity android:name="ui.BluetoothScanActivity"></activity>
+        <activity android:name="ui.BluetoothScanActivity" />
         <activity android:name="ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
