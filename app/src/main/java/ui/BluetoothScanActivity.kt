@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
-import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.algorigoble.BleManager
@@ -123,7 +122,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
         Intent(this, NewMainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(NewMainActivity.MAC_ADDRESS_KEY, device.macAddress)
+            putExtra(NewMainActivity.KEY_MAC_ADDRESS, device.macAddress)
         }.also {
             startActivity(it)
         }

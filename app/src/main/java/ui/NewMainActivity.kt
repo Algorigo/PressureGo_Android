@@ -1,7 +1,6 @@
 package ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +8,6 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -19,6 +17,7 @@ import com.algorigo.library.rx.Rx2ServiceBindingFactory
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
+import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import service.CSVRecordService
@@ -26,10 +25,14 @@ import service.CSVRecordService
 class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private lateinit var binding: ActivityNewMainBinding
+
+    private val bleDevicePreferencesHelper: BleDevicePreferencesHelper by lazy {
+        BleDevicePreferencesHelper(this@NewMainActivity)
+    }
+
     private var pdmsDevice: RxPDMSDevice? = null
     private var pdmsDisposable: Disposable? = null
     private var csvService: CSVRecordService? = null
-
     private var serviceDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,8 +40,9 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
-        intent.getStringExtra(MAC_ADDRESS_KEY)?.let {
+        intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
             initDevice(it)
+            bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
         } ?: run {
             onBtnS0102Click()
         }
@@ -443,6 +447,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     companion object {
         val TAG: String = NewMainActivity::class.java.simpleName
 
-        const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"
+        const val KEY_MAC_ADDRESS = "MAC_ADDRESS_KEY"
     }
 }

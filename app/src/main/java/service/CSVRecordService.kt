@@ -10,6 +10,7 @@ import android.util.Log
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
+import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
@@ -27,6 +28,7 @@ class CSVRecordService : Service() {
 
     private lateinit var bleManager: BleManager
     private lateinit var startStreamingTime: DateTime
+    private lateinit var bleDevicePreferencesHelper: BleDevicePreferencesHelper
 
     private val csvBinder: IBinder = LocalBinder()
 
@@ -58,6 +60,7 @@ class CSVRecordService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        bleDevicePreferencesHelper = BleDevicePreferencesHelper(this@CSVRecordService)
         bleManager = BleManager.getInstance()
         startForegroundNotification()
         startStreaming()
@@ -66,7 +69,11 @@ class CSVRecordService : Service() {
 
     private fun startForegroundNotification() {
         val pendingIntent: PendingIntent =
-            Intent(this, NewMainActivity::class.java).let { notificationIntent ->
+            Intent(this, NewMainActivity::class.java).apply {
+                bleDevicePreferencesHelper.latestShowDeviceMacAddress?.let {
+                    putExtra(NewMainActivity.KEY_MAC_ADDRESS, it)
+                }
+            }.let { notificationIntent ->
                 PendingIntent.getActivity(this, 0, notificationIntent, 0)
             }
 
