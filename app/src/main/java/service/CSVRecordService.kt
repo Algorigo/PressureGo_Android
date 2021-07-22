@@ -21,11 +21,12 @@ import notification.NotificationUtil
 import org.joda.time.DateTime
 import ui.NewMainActivity
 import util.FileUtil
+import java.io.File
 
 class CSVRecordService : Service() {
 
     private lateinit var bleManager: BleManager
-    private lateinit var dateTime: DateTime
+    private lateinit var startStreamingTime: DateTime
 
     private val csvBinder: IBinder = LocalBinder()
 
@@ -37,6 +38,8 @@ class CSVRecordService : Service() {
     private val streamingSubject = PublishSubject.create<Unit>()
 
     private var streamingDisposable: Disposable? = null
+
+    private var file: File? = null
 
 
     class NoDataException : IllegalStateException("No Data")
@@ -55,7 +58,6 @@ class CSVRecordService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        dateTime = DateTime.now()
         bleManager = BleManager.getInstance()
         startForegroundNotification()
         startStreaming()
@@ -133,6 +135,7 @@ class CSVRecordService : Service() {
             }
             .doOnSubscribe {
                 Log.d(TAG, "doOnSubscribe")
+                startStreamingTime = DateTime.now()
                 onDataInner()
             }
     }
@@ -147,7 +150,7 @@ class CSVRecordService : Service() {
                 deviceMap[key]?.sendDataOn()
                     ?.doOnNext {
                         Log.d(TAG, "doOnNext == ${it[1]}")
-                        val file = FileUtil.getFile(this@CSVRecordService, key)
+                        val file = FileUtil.getFile(this@CSVRecordService, key, startStreamingTime)
                         FileUtil.saveStringToFile(file, writeCsvLine(deviceMap[key]!!, it))
                             .subscribe({
 

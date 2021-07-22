@@ -1,25 +1,22 @@
 package util
 
 import android.content.Context
-import android.os.Environment
 import android.util.Log
 import io.reactivex.rxjava3.core.Completable
 import org.joda.time.DateTime
 import service.CSVRecordService
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
 object FileUtil {
 
     @JvmStatic
-    fun getFile(context: Context, macAddress: String): File {
-        val date = DateTime.now()
+    fun getFile(context: Context, macAddress: String, dateTime: DateTime): File {
         val directory = File(
             context.getExternalFilesDir(null)?.absolutePath,
-            "pressurego${File.separator}${date.toString("yyyyMMdd")}"
+            "pressurego${File.separator}${dateTime.toString("yyyyMMdd")}"
         )
-        val file = File(directory, "${macAddress}.csv")
+        val file = File(directory, "${macAddress}-${dateTime.toString("hh-mm-ss")}.csv")
         if (!directory.exists()) {
             directory.mkdirs()
             val fileOutputStream = FileOutputStream(file, true)
