@@ -61,6 +61,7 @@
             android:id="@+id/cl_ble_connected"
             android:layout_width="match_parent"
             android:layout_height="0px"
+            android:visibility="gone"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/bluetooth_scan_scanned_device"
             app:layout_constraintTop_toBottomOf="@+id/bluetooth_scan_title"

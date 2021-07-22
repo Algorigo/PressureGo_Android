@@ -121,10 +121,10 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
                 .getConnectedDevices()
                 .mapNotNull { it as? RxPDMSDevice }
                 .count()
-//                .also {
-//                    clBleConnected.visibility =
-//                        if (it > 0) View.VISIBLE else View.GONE
-//                }
+                .also {
+                    clBleConnected.visibility =
+                        if (it > 0) View.VISIBLE else View.GONE
+                }
             rvBleConnected.adapter?.notifyDataSetChanged()
             rvBleScanned.adapter?.notifyDataSetChanged()
         }

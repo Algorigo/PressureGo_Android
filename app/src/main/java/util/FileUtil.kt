@@ -18,7 +18,7 @@ object FileUtil {
             context.getExternalFilesDir(null)?.absolutePath,
             "pressurego${File.separator}${dateTime.toString("yyyyMMdd")}"
         )
-        val file = File(directory, "${macAddress}_${dateTime.toString("hh:mm:ss")}.csv")
+        val file = File(directory, "${dateTime.toString("hh:mm:ss")}.csv")
         if (!directory.exists()) {
             directory.mkdirs()
         }

@@ -20,7 +20,10 @@ import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import service.CSVRecordService
+import util.FileUtil
+import java.io.File
 
 class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
@@ -46,6 +49,24 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             Log.d(TAG, it)
         } ?: run {
             onBtnS0102Click()
+        }
+        bleDevicePreferencesHelper.csvFileName?.let {
+            AlertDialog.newInstance(title = "CSV Export",
+                content = "저장하시던 파일이 있습니다.\n저장하시겠습니까?",
+                yesCallback = {
+                    bleDevicePreferencesHelper.csvFileName = null
+                },
+                noCallback = {
+                    FileUtil.deleteFileCompletable(File(it))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe({
+
+                        }, {
+
+                        })
+                    bleDevicePreferencesHelper.csvFileName = null
+                },
+            ).show(supportFragmentManager, TAG)
         }
     }
 

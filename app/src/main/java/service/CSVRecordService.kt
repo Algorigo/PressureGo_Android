@@ -207,6 +207,24 @@ class CSVRecordService : Service() {
         super.onDestroy()
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        file?.let {
+            Log.d(TAG, file!!.absolutePath)
+            bleDevicePreferencesHelper.csvFileName = file!!.absolutePath
+        }
+        bleDevicePreferencesHelper.setCsvFileNameSingle(file!!.absolutePath)
+            .doFinally {
+                stopSelf()
+            }
+            .subscribe({
+
+            }, {
+
+            })
+        Log.d(TAG, "taskRemoved")
+    }
+
 
     companion object {
         val TAG: String = CSVRecordService::class.java.simpleName
