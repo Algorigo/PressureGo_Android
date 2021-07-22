@@ -117,7 +117,7 @@ class CSVRecordService : Service() {
             .flatMapCompletable {
                 devicesStreamingCompletable()
             }.subscribe({
-                        Log.d(TAG, "completed")
+                Log.d(TAG, "completed")
             }, {
                 Log.e(TAG, it.toString())
             })
@@ -175,11 +175,12 @@ class CSVRecordService : Service() {
         builder.append(
             "${device.macAddress},${device.getDeviceName()}, ${
                 DateTime.now().toString("yyyy-MM-dd-hh:mm:ss")
-            },${device.getAmplification()},${device.getSensitivity()},${intArray.contentToString().let{ it.substring(1, it.length - 2)}}\n"
+            },${device.getAmplification()},${device.getSensitivity()},${
+                intArray.contentToString().let { it.substring(1, it.length - 2) }
+            }\n"
         )
         return builder.toString()
     }
-
 
     override fun onDestroy() {
         deviceMap.keys.forEach {
@@ -196,6 +197,5 @@ class CSVRecordService : Service() {
 
     companion object {
         val TAG: String = CSVRecordService::class.java.simpleName
-
     }
 }

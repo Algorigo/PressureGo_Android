@@ -28,7 +28,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     private lateinit var binding: ActivityNewMainBinding
     private var pdmsDevice: RxPDMSDevice? = null
     private var pdmsDisposable: Disposable? = null
-    private var service: CSVRecordService? = null
+    private var csvService: CSVRecordService? = null
 
     private var serviceDisposable: Disposable? = null
 
@@ -248,13 +248,14 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         title = "CSV Record",
                         content = "Shall we start recording\nsensing data to export CSV?",
                         callback = {
+                            startService(Intent(this@NewMainActivity, CSVRecordService::class.java))
                             serviceDisposable =
                                 Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
                                     this@NewMainActivity,
                                     Intent(this@NewMainActivity, CSVRecordService::class.java)
                                 )
-                                    .doOnDispose {
-
+                                    .doOnNext {
+                                        csvService = it.getService()
                                     }
                                     .doFinally {
                                         serviceDisposable = null
@@ -275,6 +276,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         content = "Do you want to download CSV\nrecorded so far?",
                         callback = {
                             Log.d(TAG, "stopService")
+                            csvService?.stopSelf()
                             serviceDisposable?.dispose()
                             ivRecord.setImageResource(R.drawable.csv_record_on)
                             tvRecord.text = "CSV Record"
