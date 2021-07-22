@@ -5,10 +5,12 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Completable
 import org.joda.time.DateTime
 import service.CSVRecordService
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
+import java.util.*
 
 object FileUtil {
+
+    val TAG: String = FileUtil::class.java.simpleName
 
     @JvmStatic
     fun getFile(context: Context, macAddress: String, dateTime: DateTime): File {
@@ -16,12 +18,9 @@ object FileUtil {
             context.getExternalFilesDir(null)?.absolutePath,
             "pressurego${File.separator}${dateTime.toString("yyyyMMdd")}"
         )
-        val file = File(directory, "${macAddress}-${dateTime.toString("hh-mm-ss")}.csv")
+        val file = File(directory, "${macAddress}_${dateTime.toString("hh:mm:ss")}.csv")
         if (!directory.exists()) {
             directory.mkdirs()
-            val fileOutputStream = FileOutputStream(file, true)
-            fileOutputStream.write("MacAdrress, DeviceName, DateTime, amp, sens, array[0], array[1], array[2], array[3]".toByteArray())
-            fileOutputStream.close()
         }
         return file
     }
@@ -37,6 +36,9 @@ object FileUtil {
                 }
             }
             val fileOutputStream = FileOutputStream(file, true)
+            if (getLastLineNumber(file) == 0) {
+                fileOutputStream.write("MacAdrress, DeviceName, DateTime, amp, sens, array[0], array[1], array[2], array[3]".toByteArray())
+            }
             Log.d(CSVRecordService.TAG, "string == $string")
             fileOutputStream.write(string.toByteArray())
             fileOutputStream.close()
@@ -44,4 +46,45 @@ object FileUtil {
         }
     }
 
+    @JvmStatic
+    fun getLastLineNumber(file: File): Int {
+        val lines = mutableListOf<String>()
+        val reader = Scanner(FileInputStream(file), "UTF-8")
+        try {
+            while (reader.hasNextLine()) {
+                lines.add(reader.nextLine())
+            }
+            reader.close()
+        } catch (e: FileNotFoundException) {
+            Log.e(TAG, "${e.printStackTrace()}")
+        } catch (e: IOException) {
+            Log.e(TAG, "${e.printStackTrace()}")
+        }
+        return lines.size
+    }
+
+    @Throws(IOException::class)
+    fun getLinesNumber(file: File): Int {
+        val br = BufferedReader(FileReader(file) as Reader)
+
+        var lineCount = 0
+        var line: String = ""
+        while (br.readLine()?.also { line = it } != null) {
+            if (line.length > 0) {
+                lineCount++;
+            }
+        }
+        return lineCount
+    }
+
+    @JvmStatic
+    fun deleteFileCompletable(file: File): Completable {
+        return Completable.create {
+            if (!file.exists()) {
+                it.onError(IllegalStateException("file not existed"))
+            }
+            file.delete()
+            it.onComplete()
+        }
+    }
 }

@@ -61,7 +61,6 @@ class CSVRecordService : Service() {
         bleManager = BleManager.getInstance()
         startForegroundNotification()
         startStreaming()
-//        initConnectedDevice()
     }
 
 
@@ -83,16 +82,6 @@ class CSVRecordService : Service() {
         )
 
         startForeground(1, notification)
-    }
-
-    private fun initConnectedDevice() {
-        bleManager.getConnectedDevices()
-            .mapNotNull { it as? RxPDMSDevice }
-            .forEach {
-                deviceMap[it.macAddress] = it
-                dataSubjectMap[it.macAddress] = PublishSubject.create()
-                devicesSubject.onNext(it)
-            }
     }
 
     private fun initConnectedDevicesSingle(): Single<List<RxPDMSDevice>> {
@@ -148,15 +137,17 @@ class CSVRecordService : Service() {
             if (!dataDisposableMap.keys.contains(key)) {
                 Log.d(TAG, "containskey == ${deviceMap[key]}")
                 deviceMap[key]?.sendDataOn()
-                    ?.doOnNext {
-                        Log.d(TAG, "doOnNext == ${it[1]}")
-                        val file = FileUtil.getFile(this@CSVRecordService, key, startStreamingTime)
-                        FileUtil.saveStringToFile(file, writeCsvLine(deviceMap[key]!!, it))
-                            .subscribe({
+                    ?.doOnNext { intArray ->
+                        Log.d(TAG, "doOnNext == ${intArray[1]}")
+                        file = FileUtil.getFile(this@CSVRecordService, key, startStreamingTime)
+                        file?.let {
+                            FileUtil.saveStringToFile(it, writeCsvLine(deviceMap[key]!!, intArray))
+                                .subscribe({
 
-                            }, {
-                                Log.d(TAG, "saveStringToFile error = $it")
-                            })
+                                }, {
+                                    Log.d(TAG, "saveStringToFile error = $it")
+                                })
+                        }
                     }
                     ?.doFinally {
                         dataDisposableMap[key]?.dispose()
@@ -170,6 +161,20 @@ class CSVRecordService : Service() {
                         dataDisposableMap[key] = it
                     }
             }
+        }
+    }
+
+    fun noRecordStopSelf() {
+        file?.let {
+            FileUtil.deleteFileCompletable(it)
+                .doFinally {
+                    stopSelf()
+                }
+                .subscribe({
+
+                }, {
+                    Log.d(TAG, it.toString())
+                })
         }
     }
 

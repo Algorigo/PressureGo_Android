@@ -265,23 +265,45 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                                     .subscribe({
                                         ivRecord.setImageResource(R.drawable.csv_record_stop)
                                         tvRecord.text = "Stop"
-                                        tvRecord.setTextColor(ContextCompat.getColor(this@NewMainActivity, R.color.orangey_red))
+                                        tvRecord.setTextColor(
+                                            ContextCompat.getColor(
+                                                this@NewMainActivity,
+                                                R.color.orangey_red
+                                            )
+                                        )
                                     }, {
 
                                     })
                         }).show(supportFragmentManager, TAG)
                 } else {
-                    ConfirmDialog.newInstance(
+                    AlertDialog.newInstance(
                         title = "CSV Export",
                         content = "Do you want to download CSV\nrecorded so far?",
-                        callback = {
-                            Log.d(TAG, "stopService")
+                        yesCallback = {
                             csvService?.stopSelf()
                             serviceDisposable?.dispose()
                             ivRecord.setImageResource(R.drawable.csv_record_on)
                             tvRecord.text = "CSV Record"
-                            tvRecord.setTextColor(ContextCompat.getColor(this@NewMainActivity, R.color.soft_green))
-                        }).show(supportFragmentManager, TAG)
+                            tvRecord.setTextColor(
+                                ContextCompat.getColor(
+                                    this@NewMainActivity,
+                                    R.color.soft_green
+                                )
+                            )
+                        },
+                        noCallback = {
+                            csvService?.noRecordStopSelf()
+                            serviceDisposable?.dispose()
+                            ivRecord.setImageResource(R.drawable.csv_record_on)
+                            tvRecord.text = "CSV Record"
+                            tvRecord.setTextColor(
+                                ContextCompat.getColor(
+                                    this@NewMainActivity,
+                                    R.color.soft_green
+                                )
+                            )
+                        }
+                    ).show(supportFragmentManager, TAG)
                 }
             }
         }
