@@ -1,5 +1,6 @@
 package ui
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -23,7 +24,9 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import service.CSVRecordService
 import util.FileUtil
+import util.ServiceUtil
 import java.io.File
+
 
 class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
@@ -51,7 +54,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             onBtnS0102Click()
         }
         bleDevicePreferencesHelper.csvFileName?.let {
-            AlertDialog.newInstance(title = "CSV Export",
+            AlertDialog.newInstance(
+                title = "CSV Export",
                 content = "저장하시던 파일이 있습니다.\n저장하시겠습니까?",
                 yesCallback = {
                     bleDevicePreferencesHelper.csvFileName = null
@@ -83,6 +87,41 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private fun initView() {
         with(binding) {
+
+            if (ServiceUtil.isMyServiceRunning(
+                    this@NewMainActivity,
+                    CSVRecordService::class.java
+                )
+            ) {
+                if (serviceDisposable == null) {
+                    serviceDisposable =
+                        Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
+                            this@NewMainActivity,
+                            Intent(this@NewMainActivity, CSVRecordService::class.java)
+                        )
+                            .doOnNext {
+                                csvService = it.getService()
+                            }
+                            .doFinally {
+                                serviceDisposable = null
+                            }
+                            .map { it.getService() }
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                ivRecord.setImageResource(R.drawable.csv_record_stop)
+                                tvRecord.text = "Stop"
+                                tvRecord.setTextColor(
+                                    ContextCompat.getColor(
+                                        this@NewMainActivity,
+                                        R.color.orangey_red
+                                    )
+                                )
+                            }, {
+
+                            })
+                }
+            }
+
             btnInterval.isEnabled = false
             btnAmplification.isEnabled = false
             btnSensitivity.isEnabled = false
@@ -483,6 +522,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
         }
     }
+
 
     companion object {
         val TAG: String = NewMainActivity::class.java.simpleName
