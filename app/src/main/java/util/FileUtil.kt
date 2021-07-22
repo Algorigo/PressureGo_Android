@@ -78,12 +78,12 @@ object FileUtil {
     }
 
     @JvmStatic
-    fun deleteFileCompletable(file: File): Completable {
+    fun deleteFileCompletable(file: File?): Completable {
         return Completable.create {
-            if (!file.exists()) {
+            if(file == null || !file.exists()) {
                 it.onError(IllegalStateException("file not existed"))
             }
-            file.delete()
+            file?.delete()
             it.onComplete()
         }
     }

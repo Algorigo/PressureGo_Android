@@ -172,17 +172,15 @@ class CSVRecordService : Service() {
     }
 
     fun noRecordStopSelf() {
-        file?.let {
-            FileUtil.deleteFileCompletable(it)
-                .doFinally {
-                    stopSelf()
-                }
-                .subscribe({
+        FileUtil.deleteFileCompletable(file)
+            .doFinally {
+                stopSelf()
+            }
+            .subscribe({
 
-                }, {
-                    Log.d(TAG, it.toString())
-                })
-        }
+            }, {
+                Log.d(TAG, it.toString())
+            })
     }
 
     private fun writeCsvLine(device: RxPDMSDevice, intArray: IntArray): String {
