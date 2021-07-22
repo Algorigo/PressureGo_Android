@@ -181,10 +181,10 @@ class CSVRecordService : Service() {
     private fun writeCsvLine(device: RxPDMSDevice, intArray: IntArray): String {
         val builder = StringBuilder()
         builder.append(
-            "${device.macAddress},${device.getDeviceName()}, ${
-                DateTime.now().toString("yyyy-MM-dd-hh:mm:ss")
+            "${device.macAddress},${
+                System.currentTimeMillis()
             },${device.getAmplification()},${device.getSensitivity()},${
-                intArray.contentToString().let { it.substring(1, it.length - 2) }
+                intArray.contentToString().let { it.substring(1, it.length - 1).replace(" ", "") }
             }\n"
         )
         return builder.toString()

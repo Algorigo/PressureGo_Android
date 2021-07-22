@@ -10,7 +10,7 @@ import java.util.*
 
 object FileUtil {
 
-    val TAG: String = FileUtil::class.java.simpleName
+    private val TAG: String = FileUtil::class.java.simpleName
 
     @JvmStatic
     fun getFile(context: Context, macAddress: String, dateTime: DateTime): File {
@@ -37,7 +37,7 @@ object FileUtil {
             }
             val fileOutputStream = FileOutputStream(file, true)
             if (getLastLineNumber(file) == 0) {
-                fileOutputStream.write("MacAdrress, DeviceName, DateTime, amp, sens, array[0], array[1], array[2], array[3]".toByteArray())
+                fileOutputStream.write("MacAddress,TimeStamp,Amp,Sens,array[0],array[1],array[2],array[3]\n".toByteArray())
             }
             Log.d(CSVRecordService.TAG, "string == $string")
             fileOutputStream.write(string.toByteArray())
