@@ -101,12 +101,30 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 onBtnS0304Click()
             }
 
+            clInterval.setOnClickListener {
+                if (ivIntervalArrow.isActivated.not()) {
+                    expandCollapseIntervalView(true)
+                }
+            }
+
             ivIntervalArrow.setOnClickListener {
                 expandCollapseIntervalView(it.isActivated.not())
             }
 
+            clAmplification.setOnClickListener {
+                if (ivAmplificationArrow.isActivated.not()) {
+                    expandCollapseAmplificationView(true)
+                }
+            }
+
             ivAmplificationArrow.setOnClickListener {
                 expandCollapseAmplificationView(it.isActivated.not())
+            }
+
+            clSensitivity.setOnClickListener {
+                if (ivSensitivityArrow.isActivated.not()) {
+                    expandCollapseSensitivityView(true)
+                }
             }
 
             ivSensitivityArrow.setOnClickListener {
