@@ -13,11 +13,11 @@ import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.ReplaySubject
 import io.reactivex.rxjava3.subjects.Subject
 import notification.NotificationUtil
 import org.joda.time.DateTime
@@ -40,11 +40,11 @@ class CSVRecordService : Service() {
     private val dataSubjectMap = mutableMapOf<String, Subject<IntArray>>()
 
     private val devicesConnectionSubject =
-        ReplaySubject.create<Pair<String, Pair<RxPDMSDevice, BleDevice.ConnectionState>>>()
+        PublishSubject.create<Pair<String, Pair<RxPDMSDevice, BleDevice.ConnectionState>>>()
     private val streamingSubject = PublishSubject.create<Unit>()
 
     private var streamingDisposable: Disposable? = null
-    private var connectionObserveDisposable: Disposable? = null
+    private var connectionStateDisposable: Disposable? = null
 
     private var file: File? = null
 
@@ -68,13 +68,13 @@ class CSVRecordService : Service() {
         bleDevicePreferencesHelper = BleDevicePreferencesHelper(this@CSVRecordService)
         startForegroundNotification()
         startStreaming()
-        devicesConnectionObserve()
+//        observeDeviceConnection()
     }
 
-    private fun devicesConnectionObserve() {
-        connectionObserveDisposable = BleManager.getInstance().getConnectionStateObservable()
+    private fun observeDeviceConnection() {
+        connectionStateDisposable = BleManager.getInstance().getConnectionStateObservable()
             .doFinally {
-                connectionObserveDisposable = null
+                connectionStateDisposable = null
             }
             .subscribe({
                 val list =
@@ -102,6 +102,10 @@ class CSVRecordService : Service() {
                     dataSubjectMap.remove(it.first.macAddress)
                 }
 
+                deviceMap.entries.forEach {
+                    Log.d(TAG, "device == ${it.value.first}, connection == ${it.value.second}")
+                }
+
             }, {
                 Log.d(TAG, it.toString())
             })
@@ -120,7 +124,7 @@ class CSVRecordService : Service() {
 
         NotificationUtil.createCSVRecordChannel(this@CSVRecordService)
 
-        val notification: Notification = NotificationUtil.getNotificationChannel(
+        val notification: Notification = NotificationUtil.getNotification(
             this@CSVRecordService,
             type = NotificationUtil.NotificationType.CSVRecordChannel,
             titleRes = R.string.app_name,
@@ -144,18 +148,13 @@ class CSVRecordService : Service() {
         }
     }
 
+
     private fun startStreaming() {
         streamingDisposable = initConnectedDevicesSingle()
             .doOnSuccess {
                 it.forEach { device ->
                     deviceMap[device.macAddress] = Pair(device, device.connectionState)
                     dataSubjectMap[device.macAddress] = PublishSubject.create()
-                    devicesConnectionSubject.onNext(
-                        Pair(
-                            device.macAddress,
-                            Pair(device, device.connectionState)
-                        )
-                    )
                 }
             }
             .flatMapCompletable {
@@ -165,6 +164,10 @@ class CSVRecordService : Service() {
             }, {
                 Log.e(TAG, it.toString())
             })
+    }
+
+    private fun deviceConnectionObservable(): Observable<Pair<String, Pair<RxPDMSDevice, BleDevice.ConnectionState>>> {
+        return devicesConnectionSubject.distinctUntilChanged()
     }
 
     private fun devicesStreamingCompletable(): Completable {
@@ -212,8 +215,8 @@ class CSVRecordService : Service() {
                 }
             }
             ?.doFinally {
-                dataDisposableMap[macAddress]?.dispose()
-                dataDisposableMap.remove(macAddress)
+//                dataDisposableMap[macAddress]?.dispose()
+//                dataDisposableMap.remove(macAddress)
             }
             ?.subscribe({
                 dataSubjectMap[macAddress]?.onNext(it)
@@ -249,30 +252,60 @@ class CSVRecordService : Service() {
     }
 
     override fun onDestroy() {
-        deviceMap.keys.forEach {
-            dataDisposableMap[it]?.dispose()
-            dataDisposableMap.remove(it)
-            dataSubjectMap.remove(it)
-            deviceMap.remove(it)
-        }
+        disposeMap()
         streamingDisposable?.dispose()
-        connectionObserveDisposable?.dispose()
+        connectionStateDisposable?.dispose()
         Log.d(TAG, "onDestroy")
         super.onDestroy()
     }
 
+    private fun disposeMap() {
+        val deviceIterator = deviceMap.iterator()
+        while(deviceIterator.hasNext()) {
+            val item = deviceIterator.next()
+            Log.d(TAG, "devcie item == ${item}")
+            deviceIterator.remove()
+        }
+        val dataDisposableIterator = dataDisposableMap.iterator()
+        while(dataDisposableIterator.hasNext()) {
+            val item = dataDisposableIterator.next()
+            Log.d(TAG, "data Item == ${item}")
+            item.value.dispose()
+            dataDisposableIterator.remove()
+        }
+        Log.d(TAG, "deviceMap size = ${deviceMap.size}, deviceMap size = ${dataDisposableMap.size}")
+    }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        bleDevicePreferencesHelper.setCsvFileNameSingle(file!!.absolutePath)
-            .doFinally {
-                stopSelf()
-            }
-            .subscribe({
+        file?.let {
+            bleDevicePreferencesHelper.setCsvFileNameSingle(file!!.absolutePath)
+                .doFinally {
+                    stopSelf()
+                }
+                .subscribe({
 
-            }, {
+                }, {
 
-            })
+                })
+        } ?: run {
+            stopSelf()
+        }
+
         Log.d(TAG, "taskRemoved")
+    }
+
+    private fun disconnectDevices(): Completable {
+        val subject = PublishSubject.create<Unit>()
+        return subject.ignoreElements()
+            .doOnSubscribe {
+                deviceMap.entries.forEach {
+                    Log.d(TAG, "device == ${it.value.first}, connection == ${it.value.second}")
+                    if(it.value.second == BleDevice.ConnectionState.CONNECTED) {
+                        it.value.first.disconnect()
+                    }
+                }
+            }
     }
 
 

@@ -57,7 +57,7 @@ class RxPDMSDevice : InitializableBleDevice() {
                         onData(it)
                     }, {
                         Log.e(LOG_TAG, "enableSensor error", Exception(it))
-                        dataSubject.onError(it)
+//                        dataSubject.onError(it)
                         dataSubject = PublishSubject.create<IntArray>().toSerialized()
                         if (!emitter.isDisposed) {
                             emitter.onError(it)

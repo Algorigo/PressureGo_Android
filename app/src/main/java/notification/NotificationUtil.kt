@@ -38,7 +38,7 @@ object NotificationUtil {
     }
 
     @JvmStatic
-    fun getNotificationChannel(context: Context, type: NotificationType, @StringRes titleRes: Int, @StringRes contentRes: Int, @DrawableRes iconRes: Int, pendingIntent: PendingIntent): Notification {
+    fun getNotification(context: Context, type: NotificationType, @StringRes titleRes: Int, @StringRes contentRes: Int, @DrawableRes iconRes: Int, pendingIntent: PendingIntent): Notification {
         return NotificationCompat.Builder(context,
             context.getString(type.channelId))
             .setContentTitle(context.getString(titleRes))
