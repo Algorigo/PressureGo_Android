@@ -6,6 +6,7 @@ import io.reactivex.rxjava3.core.Completable
 import org.joda.time.DateTime
 import service.CSVRecordService
 import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 object FileUtil {
@@ -18,7 +19,7 @@ object FileUtil {
             context.getExternalFilesDir(null)?.absolutePath,
             "pressurego${File.separator}${dateTime.toString("yyyyMMdd")}"
         )
-        val file = File(directory, "${dateTime.toString("hh:mm:ss")}.csv")
+        val file = File(directory, "${dateTime.toString("HH:mm:ss")}.csv")
         if (!directory.exists()) {
             directory.mkdirs()
         }
