@@ -498,6 +498,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     override fun onDeviceSelected(macAddress: String) {
+        pdmsDisposable?.dispose()
         initDevice(macAddress)
     }
 
