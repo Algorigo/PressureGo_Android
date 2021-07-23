@@ -19,10 +19,21 @@ android {
         setProperty("archivesBaseName", "PressureGo_" + versionName)
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'Algorigo'
+            keyPassword project.property("keyPassword")
+            storeFile file(project.property("storeFile"))
+            storePassword project.property("storePassword")
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

@@ -23,6 +23,7 @@ jobs:
           mkdir -p ~/.gradle
           curl $GRADLE_PROPERTY_PATH --output ~/.gradle/gradle.properties
           curl $SECRET_KEY_RING_PATH --output pressurego/secret-keys.gpg
+          curl $KEYSTORE_PATH --output app/Algorigo.keystore
     - run:
         command: |
           ./gradlew build
@@ -43,6 +44,12 @@ jobs:
         destination: reports
     - store_test_results:
         path: pressurego/build/test-results
+    - store_artifacts:
+        path: app/build/outputs/apk/release
+        destination: apk
+    - store_artifacts:
+        path: app/build/outputs/mapping/release
+        destination: mapping
     - persist_to_workspace:
         root: .
         paths:
