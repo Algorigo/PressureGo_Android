@@ -22,9 +22,9 @@ android {
     signingConfigs {
         release {
             keyAlias 'Algorigo'
-            keyPassword project.property("keyPassword")
-            storeFile file(project.property("storeFile"))
-            storePassword project.property("storePassword")
+            keyPassword project.property("keyPassword21")
+            storeFile file(project.property("storeFile21"))
+            storePassword project.property("storePassword21")
         }
     }
 

@@ -23,7 +23,7 @@ jobs:
           mkdir -p ~/.gradle
           curl $GRADLE_PROPERTY_PATH --output ~/.gradle/gradle.properties
           curl $SECRET_KEY_RING_PATH --output pressurego/secret-keys.gpg
-          curl $KEYSTORE_PATH --output app/Algorigo.keystore
+          curl $KEYSTORE_PATH --output app/Algorigo210723.keystore
     - run:
         command: |
           ./gradlew build
