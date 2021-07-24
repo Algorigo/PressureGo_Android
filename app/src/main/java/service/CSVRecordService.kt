@@ -65,48 +65,38 @@ class CSVRecordService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "onCreate()")
         bleDevicePreferencesHelper = BleDevicePreferencesHelper(this@CSVRecordService)
         startForegroundNotification()
         startStreaming()
-//        observeDeviceConnection()
+        observeDeviceConnection()
     }
 
     private fun observeDeviceConnection() {
-        connectionStateDisposable = BleManager.getInstance().getConnectionStateObservable()
+        connectionStateDisposable = initConnectedDevicesSingle()
+            .doOnSuccess {
+                it.forEach { device ->
+                    deviceMap[device.macAddress] = Pair(device, device.connectionState)
+                    devicesConnectionSubject.onNext(
+                        Pair(
+                            device.macAddress,
+                            Pair(device, device.connectionState)
+                        )
+                    )
+                }
+            }.flatMapObservable { BleManager.getInstance().getConnectionStateObservable() }
+            .doOnNext {
+                devicesConnectionSubject.onNext(
+                    Pair(
+                        it.bleDevice.macAddress,
+                        Pair(it.bleDevice as RxPDMSDevice, it.bleDevice.connectionState)
+                    )
+                )
+            }
             .doFinally {
                 connectionStateDisposable = null
             }
-            .subscribe({
-                val list =
-                    mutableListOf<Pair<RxPDMSDevice, BleDevice.ConnectionState>>() // ConnectedDevices MacAddress
-                BleManager.getInstance().getConnectedDevices()
-                    .forEach { device ->
-                        // connected
-                        if (!deviceMap.keys.contains(device.macAddress)) {
-                            deviceMap[device.macAddress] =
-                                Pair(device as RxPDMSDevice, device.connectionState)
-                            deviceSendDataOn(device.macAddress)
-                            Log.d(TAG, "${device.macAddress} connected")
-                        }
-                        list.add(Pair(device as RxPDMSDevice, device.connectionState))
-                    }
-
-                // disconnected
-                val disConnectedDevicesPair = deviceMap.values - list
-                disConnectedDevicesPair.forEach {
-                    Log.d(TAG, "${it.first.macAddress} disconnected")
-                    deviceMap[it.first.macAddress] =
-                        Pair(it.first, BleDevice.ConnectionState.DISCONNECTED)
-                    dataDisposableMap[it.first.macAddress]?.dispose()
-                    dataDisposableMap.remove(it.first.macAddress)
-                    dataSubjectMap.remove(it.first.macAddress)
-                }
-
-                deviceMap.entries.forEach {
-                    Log.d(TAG, "device == ${it.value.first}, connection == ${it.value.second}")
-                }
-
-            }, {
+            .subscribe({}, {
                 Log.d(TAG, it.toString())
             })
     }
@@ -148,13 +138,13 @@ class CSVRecordService : Service() {
         }
     }
 
-
     private fun startStreaming() {
-        streamingDisposable = initConnectedDevicesSingle()
-            .doOnSuccess {
-                it.forEach { device ->
-                    deviceMap[device.macAddress] = Pair(device, device.connectionState)
-                    dataSubjectMap[device.macAddress] = PublishSubject.create()
+        streamingDisposable = devicesConnectionObservable()
+            .doOnNext {
+                deviceMap[it.first] = Pair(it.second.first, it.second.second)
+                Log.d(TAG, "deviceMapSize == ${deviceMap.size}")
+                deviceMap.forEach {
+                    Log.d(TAG, "${it.key} == ${it.value.first}, ${it.value.second}")
                 }
             }
             .flatMapCompletable {
@@ -166,7 +156,7 @@ class CSVRecordService : Service() {
             })
     }
 
-    private fun deviceConnectionObservable(): Observable<Pair<String, Pair<RxPDMSDevice, BleDevice.ConnectionState>>> {
+    private fun devicesConnectionObservable(): Observable<Pair<String, Pair<RxPDMSDevice, BleDevice.ConnectionState>>> {
         return devicesConnectionSubject.distinctUntilChanged()
     }
 
@@ -185,14 +175,16 @@ class CSVRecordService : Service() {
             }
     }
 
-
     private fun onDataInner() {
-        Log.d(TAG, "deviceMapSize == ${deviceMap.size}")
-        deviceMap.keys.forEach { key ->
-            Log.d(TAG, "key == $key")
-            if (!dataDisposableMap.keys.contains(key)) {
-                Log.d(TAG, "devicePair == ${deviceMap[key]}")
-                deviceSendDataOn(macAddress = key)
+        deviceMap.entries.forEach {
+            if (it.value.second == BleDevice.ConnectionState.DISCONNECTED) {
+                if (dataDisposableMap.keys.contains(it.key)) {
+                    dataDisposableMap[it.key]?.dispose()
+                }
+            } else if (it.value.second == BleDevice.ConnectionState.CONNECTED) {
+                if (!dataDisposableMap.keys.contains(it.key)) {
+                    deviceSendDataOn(macAddress = it.key)
+                }
             }
         }
     }
@@ -215,8 +207,8 @@ class CSVRecordService : Service() {
                 }
             }
             ?.doFinally {
-//                dataDisposableMap[macAddress]?.dispose()
-//                dataDisposableMap.remove(macAddress)
+                dataDisposableMap[macAddress]?.dispose()
+                dataDisposableMap.remove(macAddress)
             }
             ?.subscribe({
                 dataSubjectMap[macAddress]?.onNext(it)
@@ -261,17 +253,14 @@ class CSVRecordService : Service() {
 
     private fun disposeMap() {
         val deviceIterator = deviceMap.iterator()
-        while(deviceIterator.hasNext()) {
-            val item = deviceIterator.next()
-            Log.d(TAG, "devcie item == ${item}")
+        while (deviceIterator.hasNext()) {
+            deviceIterator.next()
             deviceIterator.remove()
         }
         val dataDisposableIterator = dataDisposableMap.iterator()
-        while(dataDisposableIterator.hasNext()) {
+        while (dataDisposableIterator.hasNext()) {
             val item = dataDisposableIterator.next()
-            Log.d(TAG, "data Item == ${item}")
             item.value.dispose()
-            dataDisposableIterator.remove()
         }
         Log.d(TAG, "deviceMap size = ${deviceMap.size}, deviceMap size = ${dataDisposableMap.size}")
     }
@@ -301,7 +290,7 @@ class CSVRecordService : Service() {
             .doOnSubscribe {
                 deviceMap.entries.forEach {
                     Log.d(TAG, "device == ${it.value.first}, connection == ${it.value.second}")
-                    if(it.value.second == BleDevice.ConnectionState.CONNECTED) {
+                    if (it.value.second == BleDevice.ConnectionState.CONNECTED) {
                         it.value.first.disconnect()
                     }
                 }
