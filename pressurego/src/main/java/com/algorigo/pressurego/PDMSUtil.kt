@@ -41,8 +41,8 @@ object PDMSUtil {
     internal const val UUID_BATTERY_LEVEL =             "00002A19-0000-1000-8000-00805F9B34FB"
 
     internal const val UUID_SERVICE_DATA =              "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
-    internal const val UUID_COMMUNICATION =             "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
-    internal const val UUID_DATA_NOTIFICATION =         "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+    internal const val UUID_COMMUNICATION =             "6E400002-B5A3-F393-E0A9-E50E24DCCA9E" // write만 되
+    internal const val UUID_DATA_NOTIFICATION =         "6E400003-B5A3-F393-E0A9-E50E24DCCA9E" // notify만 되는
     internal const val UUID_DATA_DESCRIPTOR =           "00002902-0000-1000-8000-00805f9b34fb"
 
     private const val FIRMWARE_JSON_URL = "https://pressure-go.s3.ap-northeast-2.amazonaws.com/firmware/firmware.json"

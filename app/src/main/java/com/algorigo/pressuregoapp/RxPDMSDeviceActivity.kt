@@ -48,7 +48,7 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setInterval(interval: Int) {
-        pdmsDevice?.setSensingIntervalMillisCompletable(interval)
+        pdmsDevice?.setSensingIntervalMillisSingle(interval)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
             }, {
@@ -61,7 +61,7 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setAmplification(amplification: Int) {
-        pdmsDevice?.setAmplificationCompletable(amplification)
+        pdmsDevice?.setAmplificationSingle(amplification)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
             }, {
@@ -74,7 +74,7 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun setSensitivity(sensitivity: Int) {
-        pdmsDevice?.setSensitivityCompletable(sensitivity)
+        pdmsDevice?.setSensitivitySingle(sensitivity)
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
             }, {

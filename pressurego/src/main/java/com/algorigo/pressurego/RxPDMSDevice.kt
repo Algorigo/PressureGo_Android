@@ -57,7 +57,7 @@ class RxPDMSDevice : InitializableBleDevice() {
                         onData(it)
                     }, {
                         Log.e(LOG_TAG, "enableSensor error", Exception(it))
-                        dataSubject.onError(it)
+//                        dataSubject.onError(it)
                         dataSubject = PublishSubject.create<IntArray>().toSerialized()
                         if (!emitter.isDisposed) {
                             emitter.onError(it)
@@ -82,7 +82,7 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     private fun onData(byteArray: ByteArray) {
-//        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
+        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
         when (byteArray[0]) {
             0x02.toByte() -> {
                 relayMap.remove(byteArray[1])?.accept(byteArray)
@@ -106,6 +106,10 @@ class RxPDMSDevice : InitializableBleDevice() {
             }, {
                 Log.e(LOG_TAG, "heartBeatRead error", Exception(it))
             })
+    }
+
+    fun getDisplayName(): String {
+        return "PRESSUREGO"
     }
 
     fun getDeviceName(): String {
@@ -193,12 +197,12 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
     }
 
-    fun setSensingIntervalMillisCompletable(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
+    fun setSensingIntervalMillisSingle(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
         val sensingIntervalValue = PDMSUtil.intervalMillisToValue(sensingIntervalMillis)
-        return setSensingIntervalCompletable(sensingIntervalValue)
+        return setSensingIntervalSingle(sensingIntervalValue)
     }
 
-    private fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
+    private fun setSensingIntervalSingle(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
         return setSingle(code, sensingIntervalValue.toByte())
             ?.map {
@@ -220,7 +224,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { amp = it }
     }
 
-    fun setAmplificationCompletable(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
+    fun setAmplificationSingle(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
         return setSingle(code, amplification.toByte())
             ?.doOnSuccess {
@@ -239,7 +243,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sens = it }
     }
 
-    fun setSensitivityCompletable(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
+    fun setSensitivitySingle(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         return setSingle(code, sensitivity.toByte())
             ?.doOnSuccess {
@@ -254,10 +258,12 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSubscribe {
                 if (relayMap[code.byte] != null) {
                     relay = relayMap[code.byte]
+                    Log.d(LOG_TAG, "true")
                 } else {
                     relay = PublishRelay.create<ByteArray>().also {
                         relayMap[code.byte] = it
                     }
+                    Log.d(LOG_TAG, "false")
                 }
             }
             ?.flatMap {
@@ -280,9 +286,6 @@ class RxPDMSDevice : InitializableBleDevice() {
                         relayMap[code.byte] = it
                     }
                 }
-            }
-            ?.flatMap {
-                relay!!.firstOrError()
             }
             ?.map {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")

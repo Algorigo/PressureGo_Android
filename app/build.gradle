@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -11,17 +12,28 @@ android {
         applicationId "com.algorigo.pressuregoapp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 2
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "PressureGo_" + versionName)
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'Algorigo'
+            keyPassword project.property("keyPassword21")
+            storeFile file(project.property("storeFile21"))
+            storePassword project.property("storePassword21")
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -30,6 +42,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures{
+        viewBinding = true
     }
 }
 

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_device_info_dialog"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="30dp">
+
+    <TextView
+        android:id="@+id/device_info_display_name_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="19dp"
+        android:lineSpacingExtra="5sp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@+id/device_info_mac_address_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="PRESSUREGO" />
+
+    <ui.BatteryView
+        android:id="@+id/device_info_battery_view"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/device_info_mac_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/device_info_hardware_version_layout">
+
+        <TextView
+            android:id="@+id/device_info_mac_address_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="6sp"
+            android:text="MAC Address"
+            android:textColor="#8e8d94"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toTopOf="@+id/device_info_mac_address_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_info_mac_address_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="5sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/device_info_mac_address_label"
+            app:layout_constraintTop_toBottomOf="@+id/device_info_mac_address_label"
+            tools:text="AA:BF:B3:02:5E:2A" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#505053"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/device_info_hardware_version_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/device_info_firmware_version_layout">
+
+        <TextView
+            android:id="@+id/device_info_hardware_version_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="6sp"
+            android:text="Hardware Ver."
+            android:textColor="#8e8d94"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toTopOf="@+id/device_info_hardware_version_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_info_hardware_version_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="5sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/device_info_hardware_version_label"
+            app:layout_constraintTop_toBottomOf="@+id/device_info_hardware_version_label"
+            tools:text="V.1.0.1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#505053"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/device_info_firmware_version_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/device_info_add_device_button">
+
+        <TextView
+            android:id="@+id/device_info_firmware_version_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="6sp"
+            android:text="Firmware Ver."
+            android:textColor="#8e8d94"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toTopOf="@+id/device_info_firmware_version_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/device_info_firmware_update_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:lineSpacingExtra="9sp"
+            android:text="Update"
+            android:textColor="#8e8d94"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBaseline_toBaselineOf="@+id/device_info_firmware_version_label"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/device_info_firmware_version_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:lineSpacingExtra="5sp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/device_info_firmware_version_label"
+            app:layout_constraintTop_toBottomOf="@+id/device_info_firmware_version_label"
+            tools:text="V.1.0.1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#505053"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/device_info_add_device_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_round_bg_main"
+        android:text="Add devices"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_goneMarginTop="0px" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

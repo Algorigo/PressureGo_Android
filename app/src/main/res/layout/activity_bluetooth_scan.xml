@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ui.BluetoothScanActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/group_658" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                style="@style/NotoSansKrMediumStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Bluetooth"
+                android:textSize="16sp" />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/bluetooth_scan_title"
+            style="@style/NotoSansKrMediumStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineHeight="36sp"
+            android:layout_marginStart="16dp"
+            android:lineSpacingExtra="12sp"
+            android:text="Please select\na device to pair."
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_ble_connected"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/bluetooth_scan_scanned_device"
+            app:layout_constraintTop_toBottomOf="@+id/bluetooth_scan_title"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tv_ble_connected_title"
+                style="@style/NotoSansKrMediumStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="7sp"
+                android:text="Connected devices"
+                android:textColor="#8e8d94"
+                android:layout_marginStart="16dp"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ble_connected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tv_ble_connected_title"
+                tools:listitem="@layout/item_bluetooth_scan_connected_device" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bluetooth_scan_scanned_device"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_ble_connected">
+
+            <TextView
+                android:id="@+id/bluetooth_scan_scanned_label"
+                style="@style/NotoSansKrRegularStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="7sp"
+                android:layout_marginStart="16dp"
+                android:text="Scanned devices"
+                android:textColor="#8e8d94"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progress_ble_scan"
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/bluetooth_scan_scanned_label"
+                app:layout_constraintStart_toEndOf="@+id/bluetooth_scan_scanned_label"
+                app:layout_constraintTop_toTopOf="@+id/bluetooth_scan_scanned_label"
+                tools:visibility="visible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ble_scanned"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/bluetooth_scan_scanned_label"
+                tools:listitem="@layout/item_bluetooth_scan_scanned_device" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
