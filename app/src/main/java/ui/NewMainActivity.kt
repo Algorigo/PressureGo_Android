@@ -325,38 +325,82 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
             clCsvRecord.setOnClickListener {
                 if (serviceDisposable == null) {
-                    Log.d(TAG, "it == null")
-                    ConfirmDialog.newInstance(
-                        title = "CSV Record",
-                        content = "Shall we start recording\nsensing data to export CSV?",
-                        callback = {
-                            startService(Intent(this@NewMainActivity, CSVRecordService::class.java))
-                            serviceDisposable =
-                                Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
-                                    this@NewMainActivity,
-                                    Intent(this@NewMainActivity, CSVRecordService::class.java)
+                    if (pdmsDevice != null) {
+                        ConfirmDialog.newInstance(
+                            title = resources.getString(R.string.csv_record_no_device_connected_title),
+                            content = resources.getString(R.string.csv_record_no_device_connected_content),
+                            callback = {
+                                startService(
+                                    Intent(
+                                        this@NewMainActivity,
+                                        CSVRecordService::class.java
+                                    )
                                 )
-                                    .doOnNext {
-                                        csvService = it.getService()
-                                    }
-                                    .doFinally {
-                                        serviceDisposable = null
-                                    }
-                                    .map { it.getService() }
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({
-                                        ivRecord.setImageResource(R.drawable.csv_record_stop)
-                                        tvRecord.text = "Stop"
-                                        tvRecord.setTextColor(
-                                            ContextCompat.getColor(
-                                                this@NewMainActivity,
-                                                R.color.orangey_red
+                                serviceDisposable =
+                                    Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
+                                        this@NewMainActivity,
+                                        Intent(this@NewMainActivity, CSVRecordService::class.java)
+                                    )
+                                        .doOnNext {
+                                            csvService = it.getService()
+                                        }
+                                        .doFinally {
+                                            serviceDisposable = null
+                                        }
+                                        .map { it.getService() }
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({
+                                            ivRecord.setImageResource(R.drawable.csv_record_stop)
+                                            tvRecord.text = "Stop"
+                                            tvRecord.setTextColor(
+                                                ContextCompat.getColor(
+                                                    this@NewMainActivity,
+                                                    R.color.orangey_red
+                                                )
                                             )
-                                        )
-                                    }, {
+                                        }, {
 
-                                    })
-                        }).show(supportFragmentManager, TAG)
+                                        })
+                            }).show(supportFragmentManager, TAG)
+                    } else {
+                        ConfirmDialog.newInstance(
+                            title = "CSV Record",
+                            content = "Shall we start recording\nsensing data to export CSV?",
+                            callback = {
+                                startService(
+                                    Intent(
+                                        this@NewMainActivity,
+                                        CSVRecordService::class.java
+                                    )
+                                )
+                                serviceDisposable =
+                                    Rx2ServiceBindingFactory.bind<CSVRecordService.LocalBinder>(
+                                        this@NewMainActivity,
+                                        Intent(this@NewMainActivity, CSVRecordService::class.java)
+                                    )
+                                        .doOnNext {
+                                            csvService = it.getService()
+                                        }
+                                        .doFinally {
+                                            serviceDisposable = null
+                                        }
+                                        .map { it.getService() }
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({
+                                            ivRecord.setImageResource(R.drawable.csv_record_stop)
+                                            tvRecord.text = "Stop"
+                                            tvRecord.setTextColor(
+                                                ContextCompat.getColor(
+                                                    this@NewMainActivity,
+                                                    R.color.orangey_red
+                                                )
+                                            )
+                                        }, {
+
+                                        })
+                            }).show(supportFragmentManager, TAG)
+                    }
+
                 } else {
                     AlertDialog.newInstance(
                         title = "CSV Export",
