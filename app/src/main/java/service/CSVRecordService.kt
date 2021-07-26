@@ -130,11 +130,7 @@ class CSVRecordService : Service() {
         return Single.create { emitter ->
             val devices = bleManager.getConnectedDevices()
                 .mapNotNull { it as? RxPDMSDevice }
-            if (devices.isNotEmpty()) {
-                emitter.onSuccess(devices)
-            } else {
-                emitter.onError(NoDataException())
-            }
+            emitter.onSuccess(devices)
         }
     }
 
@@ -169,7 +165,6 @@ class CSVRecordService : Service() {
                 }
             }
             .doOnSubscribe {
-                Log.d(TAG, "doOnSubscribe")
                 startStreamingTime = DateTime.now()
                 onDataInner()
             }
@@ -221,6 +216,7 @@ class CSVRecordService : Service() {
 
     fun noRecordStopSelf() {
         FileUtil.deleteFileCompletable(file)
+            .subscribeOn(Schedulers.io())
             .doFinally {
                 stopSelf()
             }
