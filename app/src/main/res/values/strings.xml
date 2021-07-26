@@ -22,6 +22,8 @@
     <string name="csv_record_channel_id">CSVRecord</string>
     <string name="csv_record_channel_name">CsvRecord</string>
     <string name="csv_record_recording_text">Recording…</string>
+    <string name="csv_record_export">CSV Export</string>
+    <string name="csv_record_re_download_recorded">We have a previous sensing data recorded. Do you want to download it?</string>
 
 
 </resources>

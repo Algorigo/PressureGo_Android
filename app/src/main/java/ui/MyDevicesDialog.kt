@@ -24,7 +24,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
 
     private var callback: Callback? = null
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
-        ConnectedRecyclerAdapter(this, macAddress)
+        ConnectedRecyclerAdapter(this, macAddress, true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -12,7 +12,8 @@ import com.algorigo.pressuregoapp.databinding.ItemBluetoothScanConnectedDeviceBi
 
 class ConnectedRecyclerAdapter(
     private val delegate: ConnectedRecyclerDelegate,
-    private val selectedMacAddress: String? = null
+    private val selectedMacAddress: String? = null,
+    private val isMyDeviceInfo: Boolean = false
 ) :
     RecyclerView.Adapter<ConnectedRecyclerAdapter.ConnectedRecyclerViewHolder>() {
 
@@ -36,6 +37,12 @@ class ConnectedRecyclerAdapter(
                 macAddressView.text = device.macAddress
                 selectedMacAddress?.let {
                     clConnectedDevice.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.pressure_go_white_opacity_7))
+                }
+                if(isMyDeviceInfo) {
+                    deviceMoreButton.setImageResource(R.drawable.ic_more)
+                    deviceMoreButton.setOnClickListener {
+                        delegate.onConnectedMoreSelected(device)
+                    }
                 }
             }
         }

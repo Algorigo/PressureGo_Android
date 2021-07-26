@@ -94,25 +94,6 @@
 
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_my_devices"
-                style="@style/NotoSansKrMediumStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="2dp"
-                android:text="@string/main_my_devices"
-                android:textSize="12sp"
-                app:layout_constraintBaseline_toBaselineOf="@id/tv_sensor_settings"
-                app:layout_constraintEnd_toStartOf="@id/iv_my_devices_arrow" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_my_devices_arrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_right_arrow"
-                app:layout_constraintBottom_toBottomOf="@id/tv_my_devices"
-                app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btn_pg_s01_s02"
@@ -331,6 +312,27 @@
                 app:layout_constraintBottom_toBottomOf="@id/iv_settings"
                 app:layout_constraintStart_toEndOf="@id/iv_settings"
                 app:layout_constraintTop_toTopOf="@id/iv_settings" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_my_devices"
+                style="@style/NotoSansKrMediumStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="2dp"
+                android:text="@string/main_my_devices"
+                android:textSize="12sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/tv_sensor_settings"
+                app:layout_constraintEnd_toStartOf="@id/iv_my_devices_arrow" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_my_devices_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_right_arrow_main"
+                android:scaleType="center"
+                app:layout_constraintBottom_toBottomOf="@id/tv_my_devices"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_interval"

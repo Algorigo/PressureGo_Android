@@ -54,8 +54,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         }
         bleDevicePreferencesHelper.csvFileName?.let {
             AlertDialog.newInstance(
-                title = "CSV Export",
-                content = "저장하시던 파일이 있습니다.\n저장하시겠습니까?",
+                title = resources.getString(R.string.csv_record_export),
+                content = resources.getString(R.string.csv_record_re_download_recorded),
                 yesCallback = {
                     bleDevicePreferencesHelper.csvFileName = null
                 },
