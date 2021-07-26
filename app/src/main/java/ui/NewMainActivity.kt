@@ -325,7 +325,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
             clCsvRecord.setOnClickListener {
                 if (serviceDisposable == null) {
-                    if (pdmsDevice != null) {
+                    if (BleManager.getInstance().getConnectedDevices().isEmpty()) {
                         ConfirmDialog.newInstance(
                             title = resources.getString(R.string.csv_record_no_device_connected_title),
                             content = resources.getString(R.string.csv_record_no_device_connected_content),
@@ -402,34 +402,47 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     }
 
                 } else {
-                    AlertDialog.newInstance(
-                        title = "CSV Export",
-                        content = "Do you want to download CSV\nrecorded so far?",
-                        yesCallback = {
-                            csvService?.stopSelf()
-                            serviceDisposable?.dispose()
-                            ivRecord.setImageResource(R.drawable.csv_record_on)
-                            tvRecord.text = "CSV Record"
-                            tvRecord.setTextColor(
-                                ContextCompat.getColor(
-                                    this@NewMainActivity,
-                                    R.color.soft_green
+                    if(csvService?.getFile() != null) {
+                        AlertDialog.newInstance(
+                            title = "CSV Export",
+                            content = "Do you want to download CSV\nrecorded so far?",
+                            yesCallback = {
+                                csvService?.stopSelf()
+                                serviceDisposable?.dispose()
+                                ivRecord.setImageResource(R.drawable.csv_record_on)
+                                tvRecord.text = "CSV Record"
+                                tvRecord.setTextColor(
+                                    ContextCompat.getColor(
+                                        this@NewMainActivity,
+                                        R.color.soft_green
+                                    )
                                 )
-                            )
-                        },
-                        noCallback = {
-                            csvService?.noRecordStopSelf()
-                            serviceDisposable?.dispose()
-                            ivRecord.setImageResource(R.drawable.csv_record_on)
-                            tvRecord.text = "CSV Record"
-                            tvRecord.setTextColor(
-                                ContextCompat.getColor(
-                                    this@NewMainActivity,
-                                    R.color.soft_green
+                            },
+                            noCallback = {
+                                csvService?.noRecordStopSelf()
+                                serviceDisposable?.dispose()
+                                ivRecord.setImageResource(R.drawable.csv_record_on)
+                                tvRecord.text = "CSV Record"
+                                tvRecord.setTextColor(
+                                    ContextCompat.getColor(
+                                        this@NewMainActivity,
+                                        R.color.soft_green
+                                    )
                                 )
+                            }
+                        ).show(supportFragmentManager, TAG)
+                    } else {
+                        csvService?.stopSelf()
+                        serviceDisposable?.dispose()
+                        ivRecord.setImageResource(R.drawable.csv_record_on)
+                        tvRecord.text = "CSV Record"
+                        tvRecord.setTextColor(
+                            ContextCompat.getColor(
+                                this@NewMainActivity,
+                                R.color.soft_green
                             )
-                        }
-                    ).show(supportFragmentManager, TAG)
+                        )
+                    }
                 }
             }
         }
