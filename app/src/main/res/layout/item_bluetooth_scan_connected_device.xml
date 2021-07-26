@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_connected_device"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp">
+
+    <LinearLayout
+        android:id="@+id/device_info_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/device_name"
+            style="@style/NotoSansKrRegularStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="PRESSUREGO" />
+
+        <TextView
+            android:id="@+id/mac_address_view"
+            style="@style/NotoSansKrRegularStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="9sp"
+            android:textColor="#8e8d94"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            tools:text="BH:BF:A3:13:5E:1G" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/device_status_view"
+        style="@style/NotoSansKrMediumStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="end"
+        android:lineSpacingExtra="7sp"
+        android:text="Connected"
+        android:textColor="#61cf7c"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/device_more_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/device_more_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_right_arrow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0px"
+        android:layout_height="1dp"
+        android:background="#505053"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/device_info_layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,29 @@
 <resources>
-    <string name="app_name">PressureGoApp</string>
+    <string name="app_name">PRESSUREGO</string>
 
     <string name="start_scan">Start Scan</string>
     <string name="stop_scan">Stop Scan</string>
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnnect</string>
+
+    <string name="main_sensing_data">Sensing Data</string>
+    <string name="main_my_devices">My devices</string>
+    <string name="main_select_info">Select the model of sensor to use</string>
+    <string name="main_sensor_settings">Sensor Settings</string>
+    <string name="main_interval_title">Interval</string>
+    <string name="main_interval_warning">Set a value in 25 multiples</string>
+    <string name="main_amplification_title">Amplification</string>
+    <string name="main_sensitivity_title">Sensitivity</string>
+    <string name="main_amplification_warning">Please set a value to 254</string>
+    <string name="main_set">Set</string>
+
+    <string name="connected_devices_empty">There is no device connected</string>
+
+    <string name="csv_record_channel_id">CSVRecord</string>
+    <string name="csv_record_channel_name">CsvRecord</string>
+    <string name="csv_record_recording_text">Recording…</string>
+    <string name="csv_record_export">CSV Export</string>
+    <string name="csv_record_re_download_recorded">We have a previous sensing data recorded. Do you want to download it?</string>
+
 
 </resources>

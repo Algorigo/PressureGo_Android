@@ -1,5 +1,8 @@
 package com.algorigo.pressuregoapp
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -34,6 +37,14 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
     protected lateinit var batteryTextView: TextView
     private lateinit var lowBatteryBtn: Button
     protected lateinit var lowBatteryTextView: TextView
+    private lateinit var checkFirmwareExist: Button
+    private lateinit var getFirmwareBtn: Button
+    protected lateinit var firmwarePathTextView: TextView
+    private lateinit var updateFirmwareBtn: Button
+    protected lateinit var firmwareUpdateResultTextView: TextView
+
+    protected var firmwareRemotePath: String? = null
+    protected var firmwarePath: Uri? = null
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +81,11 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         batteryTextView = findViewById(R.id.battery_textview)
         lowBatteryBtn = findViewById(R.id.low_battery_btn)
         lowBatteryTextView = findViewById(R.id.low_battery_textview)
+        checkFirmwareExist = findViewById(R.id.check_firmware_exist)
+        getFirmwareBtn = findViewById(R.id.get_firmware_btn)
+        firmwarePathTextView = findViewById(R.id.firmware_path_textview)
+        updateFirmwareBtn = findViewById(R.id.update_firmware_btn)
+        firmwareUpdateResultTextView = findViewById(R.id.firmware_update_result_textview)
 
         deviceNameBtn.setOnClickListener {
             getDeviceName()
@@ -116,6 +132,28 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
         lowBatteryBtn.setOnClickListener {
             lowBattery()
         }
+        checkFirmwareExist.setOnClickListener {
+            checkFirmwareExist()
+        }
+        getFirmwareBtn.setOnClickListener {
+            getFirmwarePath()
+        }
+        updateFirmwareBtn.setOnClickListener {
+            updateFirmware()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            GET_PATH_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    firmwareRemotePath = null
+                    firmwarePath = data?.data
+                    firmwarePathTextView.text = firmwarePath?.toString()
+                }
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     protected abstract fun initDevice(macAddress: String)
@@ -146,6 +184,18 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
 
     protected abstract fun lowBattery()
 
+    protected abstract fun checkFirmwareExist()
+
+    private fun getFirmwarePath() {
+        Intent(Intent.ACTION_GET_CONTENT).apply {
+            setType("application/zip")
+        }.also {
+            startActivityForResult(it, GET_PATH_REQUEST_CODE)
+        }
+    }
+
+    protected abstract fun updateFirmware()
+
     protected fun setData(intArray: IntArray) {
         dataTextView1.text = intArray[3].toString()
         dataTextView2.text = intArray[2].toString()
@@ -155,5 +205,7 @@ abstract class PDMSDeviceActivity : AppCompatActivity() {
 
     companion object {
         const val MAC_ADDRESS_KEY = "MAC_ADDRESS_KEY"
+
+        private const val GET_PATH_REQUEST_CODE = 0x01
     }
 }

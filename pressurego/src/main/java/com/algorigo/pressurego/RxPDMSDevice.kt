@@ -1,19 +1,26 @@
 package com.algorigo.pressurego
 
 import android.bluetooth.BluetoothDevice
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.annotation.IntRange
+import androidx.annotation.RawRes
 import com.algorigo.algorigoble.*
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
-import io.reactivex.rxjava3.annotations.NonNull
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import no.nordicsemi.android.dfu.DfuBaseService
+import no.nordicsemi.android.dfu.DfuServiceController
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.NoSuchElementException
 
 class RxPDMSDevice : InitializableBleDevice() {
 
@@ -50,7 +57,7 @@ class RxPDMSDevice : InitializableBleDevice() {
                         onData(it)
                     }, {
                         Log.e(LOG_TAG, "enableSensor error", Exception(it))
-                        dataSubject.onError(it)
+//                        dataSubject.onError(it)
                         dataSubject = PublishSubject.create<IntArray>().toSerialized()
                         if (!emitter.isDisposed) {
                             emitter.onError(it)
@@ -75,7 +82,7 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     private fun onData(byteArray: ByteArray) {
-//        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
+        Log.i(LOG_TAG, "onData:${byteArray.contentToString()}")
         when (byteArray[0]) {
             0x02.toByte() -> {
                 relayMap.remove(byteArray[1])?.accept(byteArray)
@@ -99,6 +106,10 @@ class RxPDMSDevice : InitializableBleDevice() {
             }, {
                 Log.e(LOG_TAG, "heartBeatRead error", Exception(it))
             })
+    }
+
+    fun getDisplayName(): String {
+        return "PRESSUREGO"
     }
 
     fun getDeviceName(): String {
@@ -186,12 +197,12 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
     }
 
-    fun setSensingIntervalMillisCompletable(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
+    fun setSensingIntervalMillisSingle(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
         val sensingIntervalValue = PDMSUtil.intervalMillisToValue(sensingIntervalMillis)
-        return setSensingIntervalCompletable(sensingIntervalValue)
+        return setSensingIntervalSingle(sensingIntervalValue)
     }
 
-    private fun setSensingIntervalCompletable(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
+    private fun setSensingIntervalSingle(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
         return setSingle(code, sensingIntervalValue.toByte())
             ?.map {
@@ -213,7 +224,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { amp = it }
     }
 
-    fun setAmplificationCompletable(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
+    fun setAmplificationSingle(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
         return setSingle(code, amplification.toByte())
             ?.doOnSuccess {
@@ -232,7 +243,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSuccess { sens = it }
     }
 
-    fun setSensitivityCompletable(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
+    fun setSensitivitySingle(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         return setSingle(code, sensitivity.toByte())
             ?.doOnSuccess {
@@ -247,10 +258,12 @@ class RxPDMSDevice : InitializableBleDevice() {
             ?.doOnSubscribe {
                 if (relayMap[code.byte] != null) {
                     relay = relayMap[code.byte]
+                    Log.d(LOG_TAG, "true")
                 } else {
                     relay = PublishRelay.create<ByteArray>().also {
                         relayMap[code.byte] = it
                     }
+                    Log.d(LOG_TAG, "false")
                 }
             }
             ?.flatMap {
@@ -274,12 +287,84 @@ class RxPDMSDevice : InitializableBleDevice() {
                     }
                 }
             }
-            ?.flatMap {
-                relay!!.firstOrError()
-            }
             ?.map {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it[2].toUByte().toInt()
+            }
+    }
+
+    fun checkUpdateExist(): Maybe<String> {
+        return Single.create<List<Pair<String, String>>> {
+            val result = PDMSUtil.firmwareList()
+            if (result != null) {
+                it.onSuccess(result)
+            } else {
+                it.onError(NoSuchElementException())
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapMaybe {
+                PDMSUtil.latestFirmware(it, firmwareVersion)?.let {
+                    Maybe.just(it)
+                } ?: Maybe.empty()
+            }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, uri).let {
+            update(clazz, it)
+        }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, path: String): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, path).let {
+            update(clazz, it)
+        }
+    }
+
+    fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, @RawRes resRawId: Int): Observable<Int> {
+        return DfuAdapter(context, macAddress, deviceName, resRawId).let {
+            update(clazz, it)
+        }
+    }
+
+    private fun <T : DfuBaseService> update(clazz: Class<T>, adapter: DfuAdapter): Observable<Int> {
+        if (!connected) {
+            return Observable.error(IllegalStateException("Disconnected"))
+        }
+
+        var controller: DfuServiceController? = null
+
+        return Observable.create<Int> {
+            val callback = object : DfuAdapter.Callback(adapter.address) {
+                override fun onProgress(percent: Int) {
+                    it.onNext(percent)
+                }
+
+                override fun onCompleted() {
+                    it.onComplete()
+                }
+
+                override fun onAborted() {
+                    if (!it.isDisposed) {
+                        it.onError(IllegalStateException("Aborted"))
+                    }
+                }
+
+                override fun onError(error: Exception) {
+                    if (!it.isDisposed) {
+                        it.onError(error)
+                    }
+                }
+            }
+
+            controller = adapter.start(clazz, callback)
+        }
+            .doOnDispose {
+                controller?.abort()
+            }
+            .doFinally {
+                controller = null
             }
     }
 

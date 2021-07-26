@@ -3,9 +3,7 @@ package com.algorigo.pressuregoapp
 import android.Manifest
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,7 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.algorigo.pressurego.PDMSDevice
-import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.*
 
 class BasicActivity : AppCompatActivity(), PDMSDevice.Callback {
