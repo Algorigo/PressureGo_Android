@@ -164,6 +164,18 @@
                 app:layout_constraintStart_toEndOf="@id/iv_info"
                 app:layout_constraintTop_toTopOf="@id/iv_info" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_mac_address"
+                style="@style/NotoSansKrRegularStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue_grey"
+                android:textSize="10sp"
+                tools:text="BH:BF:A3:13:5E:1G"
+                app:layout_constraintBottom_toBottomOf="@id/iv_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/iv_info" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_center_pg_s01_s02"
                 android:layout_width="match_parent"

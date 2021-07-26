@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#E6E6E6</color>
     <color name="pressure_go_white">#fcfcfc</color>
+    <color name="pressure_go_white_opacity_7">#12fcfcfc</color>
     <color name="dark">#131315</color>
     <color name="black_30">#4c000000</color>
     <color name="slate_grey_35">#59505053</color>

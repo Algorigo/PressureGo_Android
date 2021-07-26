@@ -16,6 +16,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
     ConnectedRecyclerAdapter.ConnectedRecyclerDelegate {
 
     private lateinit var binding: DialogMyDevicesBinding
+    private var macAddress: String? = null
 
     interface Callback {
         fun onDeviceSelected(macAddress: String)
@@ -23,7 +24,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
 
     private var callback: Callback? = null
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
-        ConnectedRecyclerAdapter(this)
+        ConnectedRecyclerAdapter(this, macAddress)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +92,17 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
         dismiss()
         context?.apply {
             startActivity(Intent(this, BluetoothScanActivity::class.java))
+        }
+    }
+
+    companion object {
+        const val KEY_MAC_ADDRESS: String = "KEY_MAC_ADDRESS"
+
+        fun newInstance(macAddress: String? = null) = MyDevicesDialog().apply {
+            arguments = Bundle().apply {
+                putString(KEY_MAC_ADDRESS, macAddress)
+            }
+            this.macAddress = macAddress
         }
     }
 }

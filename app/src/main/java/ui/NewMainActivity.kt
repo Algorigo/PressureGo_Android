@@ -1,6 +1,5 @@
 package ui
 
-import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -127,7 +126,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnSensitivity.isEnabled = false
 
             tvMyDevices.setOnClickListener {
-                MyDevicesDialog().apply {
+                MyDevicesDialog.newInstance(pdmsDevice?.macAddress).apply {
                     show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
                 }
             }
@@ -404,6 +403,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             binding.tvIntervalValue.text = "${getSensingIntervalMillis()}ms"
             binding.tvAmplificationValue.text = "${getAmplification()}"
             binding.tvSensitivityValue.text = "${getSensitivity()}"
+
+            binding.tvMacAddress.text = "${macAddress}"
 
             subscribeDevice(this)
         }

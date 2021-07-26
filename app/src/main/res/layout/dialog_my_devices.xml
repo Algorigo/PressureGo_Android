@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_device_info_dialog"
-    android:paddingHorizontal="16dp"
     android:paddingTop="28dp"
     android:paddingBottom="16dp">
 
@@ -14,6 +13,7 @@
         style="@style/NotoSansKrMediumStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="19dp"
         android:lineSpacingExtra="5sp"
         android:text="Connected devices"
@@ -72,6 +72,7 @@
         android:id="@+id/my_devices_add_device_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/selector_bg_slate_grey_ripple_radius_8"
         android:text="Add devices"
