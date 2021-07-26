@@ -35,15 +35,10 @@ jobs:
         - ~/.gradle/caches
         - ~/.gradle/wrapper
     - save_cache:
-        key: gradle-properties-${CIRCLE_WORKFLOW_ID}
+        key: gradle-properties-${CIRCLE_WORKFLOW_ID}_21
         name: Save gradle properties
         paths:
           - ~/.gradle/gradle.properties
-    - save_cache:
-        key: keystore
-        name: Save Keysotre
-        paths:
-          - app/Algorigo210723.keystore
     - store_artifacts:
         path: pressurego/build/reports
         destination: reports
@@ -71,10 +66,7 @@ jobs:
           key: gradle-v1a-{{ arch }}-{{ checksum "./tmp_gradle_cache_seed" }}
           name: Restore gradle cache
       - restore_cache:
-          key: gradle-properties-${CIRCLE_WORKFLOW_ID}
-          name: Restore gradle properties
-      - restore_cache:
-          key: keystore
+          key: gradle-properties-${CIRCLE_WORKFLOW_ID}_21
           name: Restore gradle properties
       - run:
           name: Upload Maven Central
