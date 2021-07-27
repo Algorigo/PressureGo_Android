@@ -293,6 +293,7 @@ class CSVRecordService : Service() {
             }
     }
 
+    fun getFile(): File? = file
 
     companion object {
         val TAG: String = CSVRecordService::class.java.simpleName

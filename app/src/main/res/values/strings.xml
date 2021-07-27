@@ -24,6 +24,7 @@
     <string name="csv_record_recording_text">Recording…</string>
     <string name="csv_record_export">CSV Export</string>
     <string name="csv_record_re_download_recorded">We have a previous sensing data recorded. Do you want to download it?</string>
-
+    <string name="csv_record_no_device_connected_title">No Device connected</string>
+    <string name="csv_record_no_device_connected_content">There is no any device paired.\nFor record, please connect a device.</string>
 
 </resources>
