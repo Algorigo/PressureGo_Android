@@ -27,4 +27,5 @@
     <string name="csv_record_no_device_connected_title">No Device connected</string>
     <string name="csv_record_no_device_connected_content">There is no any device paired.\nFor record, please connect a device.</string>
 
+    <string name="toast_back_press">Press back again to exit.</string>
 </resources>
