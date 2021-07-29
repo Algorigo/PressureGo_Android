@@ -8,6 +8,7 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -20,10 +21,13 @@ import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import service.CSVRecordService
 import util.FileUtil
 import util.ServiceUtil
+import util.ToastUtil
 import java.io.File
 
 
@@ -36,21 +40,28 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private var pdmsDevice: RxPDMSDevice? = null
-    private var pdmsDisposable: Disposable? = null
     private var csvService: CSVRecordService? = null
+
+    private val backPressSubject = BehaviorSubject.createDefault(0L)
+
+    private var pdmsDisposable: Disposable? = null
     private var serviceDisposable: Disposable? = null
+    private var backPressDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
+        if (bleDevicePreferencesHelper.latestSelectedMainButton) {
+            onBtnS0102Click()
+        } else {
+            onBtnS0304Click()
+        }
         intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
             initDevice(it)
             bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
             Log.d(TAG, it)
-        } ?: run {
-            onBtnS0102Click()
         }
         bleDevicePreferencesHelper.csvFileName?.let {
             AlertDialog.newInstance(
@@ -76,10 +87,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     override fun onResume() {
         super.onResume()
         subscribeDevice(pdmsDevice)
+        onBackPressSubject()
     }
 
     override fun onPause() {
         pdmsDisposable?.dispose()
+        backPressDisposable?.dispose()
         super.onPause()
     }
 
@@ -402,7 +415,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     }
 
                 } else {
-                    if(csvService?.getFile() != null) {
+                    if (csvService?.getFile() != null) {
                         AlertDialog.newInstance(
                             title = "CSV Export",
                             content = "Do you want to download CSV\nrecorded so far?",
@@ -449,7 +462,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun initDevice(macAddress: String) {
-        onBtnS0102Click()
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
 
@@ -561,6 +573,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun onBtnS0102Click() {
+        bleDevicePreferencesHelper.latestSelectedMainButton = true
         with(binding) {
             if (!btnPgS01S02.isSelected) {
                 btnPgS01S02.isSelected = !btnPgS01S02.isSelected
@@ -572,6 +585,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun onBtnS0304Click() {
+        bleDevicePreferencesHelper.latestSelectedMainButton = false
         with(binding) {
             if (!btnPgS03S04.isSelected) {
                 btnPgS03S04.isSelected = !btnPgS03S04.isSelected
@@ -580,6 +594,27 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 btnPgS01S02.isSelected = false
             }
         }
+    }
+
+    private fun onBackPressSubject() {
+        backPressDisposable = backPressSubject.buffer(2, 1)
+            .doFinally {
+                backPressDisposable = null
+            }
+            .map { it[0] to it[1] }
+            .subscribe({
+                if (it.second - it.first < 2000L) {
+                    super.onBackPressed()
+                } else {
+                    ToastUtil.makeToast(this, resources.getString(R.string.toast_back_press)).show()
+                }
+            }, {
+                Log.d(TAG, "$it")
+            })
+    }
+
+    override fun onBackPressed() {
+        backPressSubject.onNext(System.currentTimeMillis())
     }
 
 
