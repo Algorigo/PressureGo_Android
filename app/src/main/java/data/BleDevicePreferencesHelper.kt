@@ -20,6 +20,16 @@ class BleDevicePreferencesHelper(
             }
         }
 
+    var latestSelectedMainButton: Boolean
+        get() = preferences.getBoolean(KEY_LATEST_SELECTED_MAIN_BUTTON, true)
+        @Synchronized
+        set(value) {
+            preferences.edit().apply {
+                putBoolean(KEY_LATEST_SELECTED_MAIN_BUTTON, value)
+                apply()
+            }
+        }
+
     var csvFileName: String?
         get() = preferences.getString(KEY_CSV_FILE_NAME, null)
         @Synchronized
@@ -46,6 +56,7 @@ class BleDevicePreferencesHelper(
 
         const val KEY_LATEST_SHOW_DEVICE_MAC_ADDRESS = "KEY_LATEST_SHOW_DEVICE_MAC_ADDRESS"
         const val KEY_CSV_FILE_NAME = "KEY_CSV_FILE_NAME"
+        const val KEY_LATEST_SELECTED_MAIN_BUTTON = "KEY_LATEST_SELECTED_MAIN_BUTTON"
 
     }
 }

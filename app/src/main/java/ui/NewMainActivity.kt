@@ -45,12 +45,15 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
+        if(bleDevicePreferencesHelper.latestSelectedMainButton) {
+            onBtnS0102Click()
+        } else {
+            onBtnS0304Click()
+        }
         intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
             initDevice(it)
             bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
             Log.d(TAG, it)
-        } ?: run {
-            onBtnS0102Click()
         }
         bleDevicePreferencesHelper.csvFileName?.let {
             AlertDialog.newInstance(
@@ -402,7 +405,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     }
 
                 } else {
-                    if(csvService?.getFile() != null) {
+                    if (csvService?.getFile() != null) {
                         AlertDialog.newInstance(
                             title = "CSV Export",
                             content = "Do you want to download CSV\nrecorded so far?",
@@ -449,7 +452,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun initDevice(macAddress: String) {
-        onBtnS0102Click()
         pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
 
@@ -561,6 +563,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun onBtnS0102Click() {
+        bleDevicePreferencesHelper.latestSelectedMainButton = true
         with(binding) {
             if (!btnPgS01S02.isSelected) {
                 btnPgS01S02.isSelected = !btnPgS01S02.isSelected
@@ -572,6 +575,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun onBtnS0304Click() {
+        bleDevicePreferencesHelper.latestSelectedMainButton = false
         with(binding) {
             if (!btnPgS03S04.isSelected) {
                 btnPgS03S04.isSelected = !btnPgS03S04.isSelected
