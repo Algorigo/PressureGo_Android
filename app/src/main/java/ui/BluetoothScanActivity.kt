@@ -56,17 +56,16 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             }, {
                 Log.e(LOG_TAG, "", it)
             })
-
-        val list = BleManager.getInstance()
-            .getConnectedDevices()
-            .mapNotNull { it as? RxPDMSDevice }
-
-        Log.d(LOG_TAG, "size == ${list.size}")
     }
 
     override fun onResume() {
         super.onResume()
-        startScan()
+        ConfirmDialog.newInstance(
+            "Use your Location",
+            "PressureGo will use location in the background to use bluetooth"
+        ) {
+            startScan()
+        }.show(supportFragmentManager, LOG_TAG)
     }
 
     override fun onPause() {
