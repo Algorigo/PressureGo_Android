@@ -24,6 +24,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import service.AppKilledDetectingService
 import service.CSVRecordService
 import util.FileUtil
 import util.ServiceUtil
@@ -53,6 +54,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
+        Log.d(TAG, "${BleManager.getInstance().getConnectedDevices().size}")
         if (bleDevicePreferencesHelper.latestSelectedMainButton) {
             onBtnS0102Click()
         } else {
@@ -95,7 +97,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         backPressDisposable?.dispose()
         super.onPause()
     }
-
 
     private fun initView() {
         with(binding) {
@@ -490,15 +491,15 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     with(binding) {
                         if (it[0] != 0) {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[1] != 0) {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[2] != 0) {
                             ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
@@ -510,7 +511,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         } else {
                             ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                         }
-                        tvSensorPgS0102.text = "${it[1]}"
+                        tvSensorPgS0102.text = "${it[0]}"
                         tvSensorPgS03S04LeftTop.text = "${it[1]}"
                         tvSensorPgS03S04RightTop.text = "${it[0]}"
                         tvSensorPgS03S04RightBottom.text = "${it[3]}"
@@ -604,6 +605,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             .map { it[0] to it[1] }
             .subscribe({
                 if (it.second - it.first < 2000L) {
+                    val iterator = BleManager.getInstance().getConnectedDevices().iterator()
+                    while (iterator.hasNext()) {
+                        iterator.next().disconnect()
+                    }
+                    stopService(Intent(this@NewMainActivity, AppKilledDetectingService::class.java))
+                    stopService(Intent(this@NewMainActivity, CSVRecordService::class.java))
                     super.onBackPressed()
                 } else {
                     ToastUtil.makeToast(this, resources.getString(R.string.toast_back_press)).show()
