@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.algorigo.algorigoble.BleDevice
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.library.rx.Rx2ServiceBindingFactory
 import com.algorigo.pressurego.RxPDMSDevice
@@ -42,12 +43,14 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private var pdmsDevice: RxPDMSDevice? = null
     private var csvService: CSVRecordService? = null
+    private var macAddress: String? = null
 
     private val backPressSubject = BehaviorSubject.createDefault(0L)
 
     private var pdmsDisposable: Disposable? = null
     private var serviceDisposable: Disposable? = null
     private var backPressDisposable: Disposable? = null
+    private var deviceConnectionStateDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +64,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             onBtnS0304Click()
         }
         intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
+            macAddress = it
             initDevice(it)
             bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
             Log.d(TAG, it)
@@ -90,11 +94,32 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         super.onResume()
         subscribeDevice(pdmsDevice)
         onBackPressSubject()
+        deviceConnectionStateDisposable =
+            BleManager.getInstance().getConnectionStateObservable()
+                .doFinally {
+                    deviceConnectionStateDisposable = null
+                }
+                .observeOn(Schedulers.computation())
+                .filter { it.bleDevice.macAddress == this@NewMainActivity.macAddress }
+                .distinctUntilChanged()
+                .filter { it.connectionState == BleDevice.ConnectionState.DISCONNECTED}
+                .map { it.bleDevice}
+                .firstElement()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        binding.tvMacAddress.text = ""
+                    }, {
+                        Log.d(TAG, it.toString())
+                    }, {
+                        Log.d(TAG, "Maybe onComplete")
+                    })
     }
 
     override fun onPause() {
         pdmsDisposable?.dispose()
         backPressDisposable?.dispose()
+        deviceConnectionStateDisposable?.dispose()
         super.onPause()
     }
 
