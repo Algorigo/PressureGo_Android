@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import com.algorigo.algorigoble.BleDevice
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.library.rx.Rx2ServiceBindingFactory
 import com.algorigo.pressurego.RxPDMSDevice
@@ -24,6 +25,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import service.AppKilledDetectingService
 import service.CSVRecordService
 import util.FileUtil
 import util.ServiceUtil
@@ -41,24 +43,28 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
 
     private var pdmsDevice: RxPDMSDevice? = null
     private var csvService: CSVRecordService? = null
+    private var macAddress: String? = null
 
     private val backPressSubject = BehaviorSubject.createDefault(0L)
 
     private var pdmsDisposable: Disposable? = null
     private var serviceDisposable: Disposable? = null
     private var backPressDisposable: Disposable? = null
+    private var deviceConnectionStateDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
+        Log.d(TAG, "${BleManager.getInstance().getConnectedDevices().size}")
         if (bleDevicePreferencesHelper.latestSelectedMainButton) {
             onBtnS0102Click()
         } else {
             onBtnS0304Click()
         }
         intent.getStringExtra(KEY_MAC_ADDRESS)?.let {
+            macAddress = it
             initDevice(it)
             bleDevicePreferencesHelper.latestShowDeviceMacAddress = it
             Log.d(TAG, it)
@@ -88,14 +94,34 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         super.onResume()
         subscribeDevice(pdmsDevice)
         onBackPressSubject()
+        deviceConnectionStateDisposable =
+            BleManager.getInstance().getConnectionStateObservable()
+                .doFinally {
+                    deviceConnectionStateDisposable = null
+                }
+                .observeOn(Schedulers.computation())
+                .filter { it.bleDevice.macAddress == this@NewMainActivity.macAddress }
+                .distinctUntilChanged()
+                .filter { it.connectionState == BleDevice.ConnectionState.DISCONNECTED}
+                .map { it.bleDevice}
+                .firstElement()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        binding.tvMacAddress.text = ""
+                    }, {
+                        Log.d(TAG, it.toString())
+                    }, {
+                        Log.d(TAG, "Maybe onComplete")
+                    })
     }
 
     override fun onPause() {
         pdmsDisposable?.dispose()
         backPressDisposable?.dispose()
+        deviceConnectionStateDisposable?.dispose()
         super.onPause()
     }
-
 
     private fun initView() {
         with(binding) {
@@ -490,15 +516,15 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     with(binding) {
                         if (it[0] != 0) {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[1] != 0) {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[2] != 0) {
                             ivSensorPgS03S04LeftBottom.setImageResource(R.drawable.sensor_s0304_on)
@@ -510,7 +536,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         } else {
                             ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                         }
-                        tvSensorPgS0102.text = "${it[1]}"
+                        tvSensorPgS0102.text = "${it[0]}"
                         tvSensorPgS03S04LeftTop.text = "${it[1]}"
                         tvSensorPgS03S04RightTop.text = "${it[0]}"
                         tvSensorPgS03S04RightBottom.text = "${it[3]}"
@@ -604,6 +630,12 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             .map { it[0] to it[1] }
             .subscribe({
                 if (it.second - it.first < 2000L) {
+                    val iterator = BleManager.getInstance().getConnectedDevices().iterator()
+                    while (iterator.hasNext()) {
+                        iterator.next().disconnect()
+                    }
+                    stopService(Intent(this@NewMainActivity, AppKilledDetectingService::class.java))
+                    stopService(Intent(this@NewMainActivity, CSVRecordService::class.java))
                     super.onBackPressed()
                 } else {
                     ToastUtil.makeToast(this, resources.getString(R.string.toast_back_press)).show()
