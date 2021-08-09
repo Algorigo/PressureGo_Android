@@ -38,15 +38,14 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         binding = ActivityBluetoothScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initRecyclerView()
-        ConfirmDialog.newInstance(
-            "Use your Location",
-            "PressureGo will use location in the background to access Bluetooth on your phone.\n\n" +
-                    "Please allow our access to your location in order to use this app."
-        ).show(supportFragmentManager, LOG_TAG)
-
 
         if (intent.getBooleanExtra(FIRST_KEY, false)) {
             binding.btnBack.visibility = View.GONE
+            ConfirmDialog.newInstance(
+                "Use your Location",
+                "PressureGo will use location in the background to access Bluetooth on your phone.\n\n" +
+                        "Please allow our access to your location in order to use this app."
+            ).show(supportFragmentManager, LOG_TAG)
         } else {
             binding.btnBack.visibility = View.VISIBLE
             binding.btnBack.setOnClickListener {
@@ -61,6 +60,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             }, {
                 Log.e(LOG_TAG, "", it)
             })
+
     }
 
     override fun onResume() {
