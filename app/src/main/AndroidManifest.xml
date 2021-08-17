@@ -39,10 +39,6 @@
             android:exported="true"
             />
 
-        <service android:name="service.AppKilledDetectingService"
-            android:stopWithTask="true"
-            />
-
         <activity android:name=".NotificationActivity" />
     </application>
 
