@@ -8,7 +8,6 @@ import android.transition.AutoTransition
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -22,10 +21,8 @@ import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import service.AppKilledDetectingService
 import service.CSVRecordService
 import util.FileUtil
 import util.ServiceUtil
@@ -634,7 +631,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     while (iterator.hasNext()) {
                         iterator.next().disconnect()
                     }
-                    stopService(Intent(this@NewMainActivity, AppKilledDetectingService::class.java))
                     stopService(Intent(this@NewMainActivity, CSVRecordService::class.java))
                     super.onBackPressed()
                 } else {
