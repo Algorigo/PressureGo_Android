@@ -19,6 +19,7 @@ import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import data.BleDevicePreferencesHelper
+import extension.shareCsvFile
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -72,6 +73,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 content = resources.getString(R.string.csv_record_re_download_recorded),
                 yesCallback = {
                     bleDevicePreferencesHelper.csvFileName = null
+                    shareCsvFile(File(it))
                 },
                 noCallback = {
                     FileUtil.deleteFileCompletable(File(it))
@@ -453,6 +455,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                                         R.color.soft_green
                                     )
                                 )
+                                shareCsvFile(csvService?.getFile()!!)
                             },
                             noCallback = {
                                 csvService?.noRecordStopSelf()
