@@ -508,10 +508,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     with(binding) {
                         if (it[0] != 0) {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[1] != 0) {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
@@ -528,7 +526,19 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         } else {
                             ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                         }
-                        tvSensorPgS0102.text = "${it[0]}"
+                        if (it[0] != 0 || it[1] != 0) {
+                            if (it[0] != 0) {
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
+                                tvSensorPgS0102.text = "${it[0]}"
+                            }
+                            if (it[1] != 0) {
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
+                                tvSensorPgS0102.text = "${it[1]}"
+                            }
+                        } else {
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
+                            tvSensorPgS0102.text = "0"
+                        }
                         tvSensorPgS03S04LeftTop.text = "${it[1]}"
                         tvSensorPgS03S04RightTop.text = "${it[0]}"
                         tvSensorPgS03S04RightBottom.text = "${it[3]}"
