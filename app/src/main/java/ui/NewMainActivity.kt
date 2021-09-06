@@ -4,9 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.transition.AutoTransition
-import android.transition.ChangeBounds
-import android.transition.TransitionManager
+import android.transition.*
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -72,8 +70,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 title = resources.getString(R.string.csv_record_export),
                 content = resources.getString(R.string.csv_record_re_download_recorded),
                 yesCallback = {
-                    bleDevicePreferencesHelper.csvFileName = null
                     shareCsvFile(File(it))
+                    bleDevicePreferencesHelper.csvFileName = null
                 },
                 noCallback = {
                     FileUtil.deleteFileCompletable(File(it))
@@ -101,8 +99,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                 .observeOn(Schedulers.computation())
                 .filter { it.bleDevice.macAddress == this@NewMainActivity.macAddress }
                 .distinctUntilChanged()
-                .filter { it.connectionState == BleDevice.ConnectionState.DISCONNECTED}
-                .map { it.bleDevice}
+                .filter { it.connectionState == BleDevice.ConnectionState.DISCONNECTED }
+                .map { it.bleDevice }
                 .firstElement()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -178,9 +176,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
 
             clInterval.setOnClickListener {
-                if (ivIntervalArrow.isActivated.not()) {
-                    expandCollapseIntervalView(true)
-                }
+                expandCollapseIntervalView(ivIntervalArrow.isActivated.not())
             }
 
             ivIntervalArrow.setOnClickListener {
@@ -188,9 +184,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
 
             clAmplification.setOnClickListener {
-                if (ivAmplificationArrow.isActivated.not()) {
-                    expandCollapseAmplificationView(true)
-                }
+                expandCollapseAmplificationView(ivAmplificationArrow.isActivated.not())
             }
 
             ivAmplificationArrow.setOnClickListener {
@@ -198,9 +192,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
 
             clSensitivity.setOnClickListener {
-                if (ivSensitivityArrow.isActivated.not()) {
-                    expandCollapseSensitivityView(true)
-                }
+                expandCollapseSensitivityView(ivSensitivityArrow.isActivated.not())
             }
 
             ivSensitivityArrow.setOnClickListener {
@@ -516,10 +508,8 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                     with(binding) {
                         if (it[0] != 0) {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304_on)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
                         } else {
                             ivSensorPgS03S04RightTop.setImageResource(R.drawable.sensor_s0304)
-                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
                         }
                         if (it[1] != 0) {
                             ivSensorPgS03S04LeftTop.setImageResource(R.drawable.sensor_s0304_on)
@@ -536,7 +526,19 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
                         } else {
                             ivSensorPgS03S04RightBottom.setImageResource(R.drawable.sensor_s0304)
                         }
-                        tvSensorPgS0102.text = "${it[0]}"
+                        if (it[0] != 0 || it[1] != 0) {
+                            if (it[0] != 0) {
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
+                                tvSensorPgS0102.text = "${it[0]}"
+                            }
+                            if (it[1] != 0) {
+                                ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102_on)
+                                tvSensorPgS0102.text = "${it[1]}"
+                            }
+                        } else {
+                            ivSensorPgS01S02.setImageResource(R.drawable.sensor_s0102)
+                            tvSensorPgS0102.text = "0"
+                        }
                         tvSensorPgS03S04LeftTop.text = "${it[1]}"
                         tvSensorPgS03S04RightTop.text = "${it[0]}"
                         tvSensorPgS03S04RightBottom.text = "${it[3]}"
@@ -549,28 +551,28 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun expandCollapseIntervalView(expand: Boolean) {
-        val duration = 200L
+        val duration = 300L
         if (expand) {
-            binding.ivIntervalArrow.animate().setDuration(200).rotation(180f)
+            binding.ivIntervalArrow.animate().setDuration(duration).rotation(180f)
         } else {
             binding.ivIntervalArrow.animate().setDuration(duration).rotation(0f)
         }
-        TransitionManager.beginDelayedTransition(binding.clInterval, AutoTransition().apply {
-            addTransition(ChangeBounds())
+        TransitionManager.beginDelayedTransition(binding.clContainer, AutoTransition().apply {
             this.duration = duration
         })
+        binding.clInterval.isActivated = expand
         binding.ivIntervalArrow.isActivated = expand
         binding.group1.isVisible = expand
     }
 
     private fun expandCollapseAmplificationView(expand: Boolean) {
-        val duration = 200L
+        val duration = 300L
         if (expand) {
-            binding.ivAmplificationArrow.animate().setDuration(200).rotation(180f)
+            binding.ivAmplificationArrow.animate().setDuration(duration).rotation(180f)
         } else {
             binding.ivAmplificationArrow.animate().setDuration(duration).rotation(0f)
         }
-        TransitionManager.beginDelayedTransition(binding.clAmplification, AutoTransition().apply {
+        TransitionManager.beginDelayedTransition(binding.clContainer, AutoTransition().apply {
             addTransition(ChangeBounds())
             this.duration = duration
         })
@@ -579,13 +581,13 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun expandCollapseSensitivityView(expand: Boolean) {
-        val duration = 200L
+        val duration = 300L
         if (expand) {
-            binding.ivSensitivityArrow.animate().setDuration(200).rotation(180f)
+            binding.ivSensitivityArrow.animate().setDuration(duration).rotation(180f)
         } else {
             binding.ivSensitivityArrow.animate().setDuration(duration).rotation(0f)
         }
-        TransitionManager.beginDelayedTransition(binding.clSensitivity, AutoTransition().apply {
+        TransitionManager.beginDelayedTransition(binding.clContainer, AutoTransition().apply {
             addTransition(ChangeBounds())
             this.duration = duration
         })
