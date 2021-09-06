@@ -1,3 +1,8 @@
 include ':pressurego'
 include ':app'
 rootProject.name = "PressureGoApp"
+
+if (hasProperty('USE_LOCAL_ALGORIGO_BLE')) {
+    include ':algorigoble'
+    project(':algorigoble').projectDir = new File(ALGORIGO_BLE_PATH + "/algorigoble")
+}
