@@ -1,4 +1,4 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressurego_example
 
 import android.Manifest
 import android.bluetooth.*

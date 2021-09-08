@@ -1,4 +1,4 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressurego_example
 
 import android.app.Application
 import android.util.Log

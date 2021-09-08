@@ -1,4 +1,4 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressurego_example
 
 import android.Manifest
 import android.content.Intent
@@ -48,6 +48,7 @@ class RxActivity : PermissionAppCompatActivity() {
         stateDisposable = BleManager.getInstance().getConnectionStateObservable()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                Log.d(LOG_TAG, "${it.bleDevice} == ${it.connectionState}")
                 adjustRecycler()
             }, {
 

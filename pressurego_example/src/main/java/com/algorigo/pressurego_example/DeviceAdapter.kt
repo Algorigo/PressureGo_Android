@@ -1,4 +1,4 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressurego_example
 
 import android.view.LayoutInflater
 import android.view.View
