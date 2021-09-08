@@ -1,4 +1,4 @@
-package notification
+package com.algorigo.pressuregoapp.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import com.algorigo.pressuregoapp.R
-import service.CSVRecordService
+import com.algorigo.pressuregoapp.service.CSVRecordService
 
 object NotificationUtil {
 

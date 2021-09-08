@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.graphics.Color
 import android.graphics.Point

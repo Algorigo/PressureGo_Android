@@ -1,4 +1,4 @@
-package util
+package com.algorigo.pressuregoapp.util
 
 import android.app.ActivityManager
 import android.content.Context

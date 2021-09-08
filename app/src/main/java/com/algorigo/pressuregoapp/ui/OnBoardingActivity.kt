@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +27,7 @@ class OnBoardingActivity : AppCompatActivity() {
         with(binding) {
             onBoardingViewPager.adapter = object : RecyclerView.Adapter<ImageViewHolder>() {
 
-                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder{
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
                     return ImageView(parent.context).apply {
                         layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                         scaleType = ImageView.ScaleType.FIT_XY

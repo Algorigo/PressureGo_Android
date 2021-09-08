@@ -1,4 +1,4 @@
-package util
+package com.algorigo.pressuregoapp.util
 
 import android.content.Context
 import android.view.Gravity
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.LayoutToastBinding
-import extension.dpToPx
+import com.algorigo.pressuregoapp.extension.dpToPx
 
 object ToastUtil {
     fun makeToast(context: Context, text: String): Toast {

@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.content.Intent
 import android.os.Bundle

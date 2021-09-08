@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.content.Context
 import android.graphics.Canvas

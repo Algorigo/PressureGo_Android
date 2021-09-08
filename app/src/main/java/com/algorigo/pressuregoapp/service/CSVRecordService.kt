@@ -1,4 +1,4 @@
-package service
+package com.algorigo.pressuregoapp.service
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -11,7 +11,7 @@ import com.algorigo.algorigoble.BleDevice
 import com.algorigo.algorigoble.BleManager
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
-import data.BleDevicePreferencesHelper
+import com.algorigo.pressuregoapp.data.BleDevicePreferencesHelper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -19,10 +19,10 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
-import notification.NotificationUtil
+import com.algorigo.pressuregoapp.notification.NotificationUtil
 import org.joda.time.DateTime
-import ui.NewMainActivity
-import util.FileUtil
+import com.algorigo.pressuregoapp.ui.NewMainActivity
+import com.algorigo.pressuregoapp.util.FileUtil
 import java.io.File
 
 class CSVRecordService : Service() {

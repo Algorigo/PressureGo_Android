@@ -1,4 +1,4 @@
-package extension
+package com.algorigo.pressuregoapp.extension
 
 import android.content.Context
 import android.content.Intent

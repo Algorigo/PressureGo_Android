@@ -1,4 +1,4 @@
-package notification
+package com.algorigo.pressuregoapp.notification
 
 import android.app.Activity
 import android.os.Bundle

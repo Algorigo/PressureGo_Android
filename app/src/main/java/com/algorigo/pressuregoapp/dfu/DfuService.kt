@@ -1,8 +1,8 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressuregoapp.dfu
 
 import android.app.Activity
+import com.algorigo.pressuregoapp.notification.NotificationActivity
 import no.nordicsemi.android.dfu.DfuBaseService
-import notification.NotificationActivity
 
 class DfuService : DfuBaseService() {
     override fun getNotificationTarget(): Class<out Activity> {

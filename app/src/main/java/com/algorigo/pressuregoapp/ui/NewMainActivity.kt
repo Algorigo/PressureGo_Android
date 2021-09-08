@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,16 +16,16 @@ import com.algorigo.library.rx.Rx2ServiceBindingFactory
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
-import data.BleDevicePreferencesHelper
-import extension.shareCsvFile
+import com.algorigo.pressuregoapp.data.BleDevicePreferencesHelper
+import com.algorigo.pressuregoapp.extension.shareCsvFile
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import service.CSVRecordService
-import util.FileUtil
-import util.ServiceUtil
-import util.ToastUtil
+import com.algorigo.pressuregoapp.service.CSVRecordService
+import com.algorigo.pressuregoapp.util.FileUtil
+import com.algorigo.pressuregoapp.util.ServiceUtil
+import com.algorigo.pressuregoapp.util.ToastUtil
 import java.io.File
 
 

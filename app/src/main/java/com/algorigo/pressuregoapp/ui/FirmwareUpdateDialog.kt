@@ -1,4 +1,4 @@
-package ui
+package com.algorigo.pressuregoapp.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -15,9 +15,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import com.algorigo.pressurego.RxPDMSDevice
-import com.algorigo.pressuregoapp.DfuService
+import com.algorigo.pressuregoapp.dfu.DfuService
 import com.algorigo.pressuregoapp.R
-import com.algorigo.pressuregoapp.Utility
+import com.algorigo.pressuregoapp.dfu.Utility
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable

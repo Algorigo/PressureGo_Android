@@ -1,4 +1,4 @@
-package data
+package com.algorigo.pressuregoapp.data
 
 import android.content.Context
 import io.reactivex.rxjava3.core.Single

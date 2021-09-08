@@ -1,4 +1,4 @@
-package com.algorigo.pressuregoapp
+package com.algorigo.pressuregoapp.dfu
 
 import android.util.Log
 import io.reactivex.rxjava3.core.Observable
