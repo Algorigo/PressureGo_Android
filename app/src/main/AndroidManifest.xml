@@ -10,36 +10,27 @@
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".PressureGoApplication"
         android:theme="@style/Theme.PressureGoApp">
-        <activity android:name="ui.BluetoothScanActivity" />
-        <activity android:name="ui.SplashActivity">
+        <activity android:name=".ui.BluetoothScanActivity" />
+        <activity android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ui.OnBoardingActivity" />
-        <activity android:name="ui.NewMainActivity" />
-
-        <activity android:name=".RxPDMSDeviceActivity" />
-        <activity android:name=".BasicPDMSDeviceActivity" />
-        <activity android:name=".RxActivity" />
-        <activity android:name=".BasicActivity" />
-        <activity android:name=".MainActivity" >
-
-        </activity>
+        <activity android:name=".ui.OnBoardingActivity" />
+        <activity android:name=".ui.NewMainActivity" />
+        <activity android:name=".notification.NotificationActivity"/>
 
         <service
-            android:name=".DfuService"
+            android:name=".dfu.DfuService"
             android:exported="true" />
 
-        <service android:name="service.CSVRecordService"
+        <service android:name=".service.CSVRecordService"
             android:exported="true"
             />
 
-        <activity android:name=".NotificationActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

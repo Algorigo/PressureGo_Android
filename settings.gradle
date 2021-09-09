@@ -1,5 +1,4 @@
-include ':pressurego'
-include ':app'
+include ':app', ':pressurego', ':pressurego_example'
 rootProject.name = "PressureGoApp"
 
 if (hasProperty('USE_LOCAL_ALGORIGO_BLE')) {

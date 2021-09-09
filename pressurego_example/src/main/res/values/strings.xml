@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">pressurego_example</string>
+
+    <string name="start_scan">Start Scan</string>
+    <string name="stop_scan">Stop Scan</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnnect</string>
+</resources>
