@@ -6,7 +6,10 @@ import android.net.Uri
 import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.RawRes
-import com.algorigo.algorigoble.*
+import com.algorigo.algorigoble2.BleDevice
+import com.algorigo.algorigoble2.BleManager
+import com.algorigo.algorigoble2.BleScanFilter
+import com.algorigo.algorigoble2.InitializableBleDevice
 import com.jakewharton.rxrelay3.BehaviorRelay
 import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.core.Completable
@@ -24,7 +27,7 @@ import kotlin.NoSuchElementException
 
 class RxPDMSDevice : InitializableBleDevice() {
 
-    private var deviceName = ""
+    private var name = ""
     private var manufactureName = ""
     private var hardwareVersion = ""
     private var firmwareVersion = ""
@@ -37,23 +40,23 @@ class RxPDMSDevice : InitializableBleDevice() {
     private var batteryRelay = BehaviorRelay.create<Int>().toSerialized()
 
     override fun initializeCompletable(): Completable {
-        return getDeviceNameSingle()!!.ignoreElement()
-            .andThen(getManufacturerNameSingle()!!.ignoreElement())
-            .andThen(getHardwareVersionSingle()!!.ignoreElement())
-            .andThen(getFirmwareVersionSingle()!!.ignoreElement())
+        return getDeviceNameSingle().ignoreElement()
+            .andThen(getManufacturerNameSingle().ignoreElement())
+            .andThen(getHardwareVersionSingle().ignoreElement())
+            .andThen(getFirmwareVersionSingle().ignoreElement())
             .andThen(Completable.create { emitter ->
-                callbackDisposable = setupNotification(UUID.fromString(PDMSUtil.UUID_DATA_NOTIFICATION))
-                    ?.doFinally {
+                callbackDisposable = setupNotification(NotificationType.NOTIFICATION, UUID.fromString(PDMSUtil.UUID_DATA_NOTIFICATION))
+                    .doFinally {
                         callbackDisposable = null
                     }
-                    ?.flatMap {
+                    .flatMap {
                         emitter.onComplete()
                         it
                     }
-                    ?.doFinally {
+                    .doFinally {
                         disconnect()
                     }
-                    ?.subscribe({
+                    .subscribe({
                         onData(it)
                     }, {
                         Log.e(LOG_TAG, "enableSensor error", Exception(it))
@@ -64,9 +67,9 @@ class RxPDMSDevice : InitializableBleDevice() {
                         }
                     })
             })
-            .andThen(getSensingIntervalSingle()!!.ignoreElement())
-            .andThen(getAmplificationSingle()!!.ignoreElement())
-            .andThen(getSensitivitySingle()!!.ignoreElement())
+            .andThen(getSensingIntervalSingle().ignoreElement())
+            .andThen(getAmplificationSingle().ignoreElement())
+            .andThen(getSensitivitySingle().ignoreElement())
             .doOnComplete {
                 heartBeatRead()
             }
@@ -77,7 +80,7 @@ class RxPDMSDevice : InitializableBleDevice() {
         callbackDisposable?.dispose()
     }
 
-    fun sendDataOn(): Observable<IntArray>? {
+    fun sendDataOn(): Observable<IntArray> {
         return dataSubject
     }
 
@@ -112,61 +115,61 @@ class RxPDMSDevice : InitializableBleDevice() {
         return "PRESSUREGO"
     }
 
-    fun getDeviceName(): String {
-        return deviceName
+    fun getName(): String {
+        return name
     }
 
-    private fun getDeviceNameSingle(): Single<String>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_DEVICE_NAME))
-            ?.map {
+    private fun getDeviceNameSingle(): Single<String> {
+        return readCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_DEVICE_NAME))
+            .map {
                 Log.i(LOG_TAG, "UUID_DEVICE_TYPE:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 String(it)
             }
-            ?.doOnSuccess { deviceName = it }
+            .doOnSuccess { name = it }
     }
 
     fun getManufactureName(): String {
         return manufactureName
     }
 
-    private fun getManufacturerNameSingle(): Single<String>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_MANUFACTURER_NAME))
-            ?.map {
+    private fun getManufacturerNameSingle(): Single<String> {
+        return readCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_MANUFACTURER_NAME))
+            .map {
                 Log.i(LOG_TAG, "UUID_MANUFACTURER_ID:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 String(it)
             }
-            ?.doOnSuccess { manufactureName = it }
+            .doOnSuccess { manufactureName = it }
     }
 
     fun getFirmwareVersion(): String {
         return firmwareVersion
     }
 
-    private fun getFirmwareVersionSingle(): Single<String>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_FIRMWARE_REVISION))
-            ?.map {
+    private fun getFirmwareVersionSingle(): Single<String> {
+        return readCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_FIRMWARE_REVISION))
+            .map {
                 Log.i(LOG_TAG, "UUID_FIRMWARE_VERSION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 String(it)
             }
-            ?.doOnSuccess { firmwareVersion = it }
+            .doOnSuccess { firmwareVersion = it }
     }
 
     fun getHardwareVersion(): String {
         return hardwareVersion
     }
 
-    private fun getHardwareVersionSingle(): Single<String>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_HARDWARE_REVISION))
-            ?.map {
+    private fun getHardwareVersionSingle(): Single<String> {
+        return readCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_HARDWARE_REVISION))
+            .map {
                 Log.i(LOG_TAG, "UUID_HARDWARE_REVISION:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 String(it)
             }
-            ?.doOnSuccess { hardwareVersion = it }
+            .doOnSuccess { hardwareVersion = it }
     }
 
-    fun getBatteryPercentSingle(): Single<Int>? {
-        return readCharacteristic(UUID.fromString(PDMSUtil.UUID_BATTERY_LEVEL))
-            ?.map {
+    fun getBatteryPercentSingle(): Single<Int> {
+        return readCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_BATTERY_LEVEL))
+            .map {
                 Log.i(LOG_TAG, "UUID_BATTERY_LEVEL:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it.toInt()
             }
@@ -191,24 +194,24 @@ class RxPDMSDevice : InitializableBleDevice() {
         return sensingIntervalMillis
     }
 
-    private fun getSensingIntervalSingle(): Single<Int>? {
+    private fun getSensingIntervalSingle(): Single<Int> {
         val code = PDMSUtil.MessageGetCode.CODE_SENSOR_SCAN_INTERVAL
         return getSingle(code)
-            ?.doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
+            .doOnSuccess { sensingIntervalMillis = PDMSUtil.intervalValueToMillis(it) }
     }
 
-    fun setSensingIntervalMillisSingle(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int>? {
+    fun setSensingIntervalMillisSingle(@IntRange(from = PDMSUtil.intervalMillisMin, to = PDMSUtil.intervalMillisMax) sensingIntervalMillis: Int): Single<Int> {
         val sensingIntervalValue = PDMSUtil.intervalMillisToValue(sensingIntervalMillis)
         return setSensingIntervalSingle(sensingIntervalValue)
     }
 
-    private fun setSensingIntervalSingle(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int>? {
+    private fun setSensingIntervalSingle(@IntRange(from = 1, to = 255) sensingIntervalValue: Int): Single<Int> {
         val code = PDMSUtil.MessageSetCode.CODE_SENSOR_SCAN_INTERVAL
         return setSingle(code, sensingIntervalValue.toByte())
-            ?.map {
+            .map {
                 PDMSUtil.intervalValueToMillis(sensingIntervalValue)
             }
-            ?.doOnSuccess {
+            .doOnSuccess {
                 Log.i(LOG_TAG, "$code:$it")
                 sensingIntervalMillis = it
             }
@@ -218,16 +221,16 @@ class RxPDMSDevice : InitializableBleDevice() {
         return amp
     }
 
-    private fun getAmplificationSingle(): Single<Int>? {
+    private fun getAmplificationSingle(): Single<Int> {
         val code = PDMSUtil.MessageGetCode.CODE_AMPLIFICATION
         return getSingle(code)
-            ?.doOnSuccess { amp = it }
+            .doOnSuccess { amp = it }
     }
 
-    fun setAmplificationSingle(@IntRange(from = 1, to = 255) amplification: Int): Single<Int>? {
+    fun setAmplificationSingle(@IntRange(from = 1, to = 255) amplification: Int): Single<Int> {
         val code = PDMSUtil.MessageSetCode.CODE_AMPLIFICATION
         return setSingle(code, amplification.toByte())
-            ?.doOnSuccess {
+            .doOnSuccess {
                 Log.i(LOG_TAG, "$code:$it")
                 amp = it
             }
@@ -237,25 +240,25 @@ class RxPDMSDevice : InitializableBleDevice() {
         return sens
     }
 
-    private fun getSensitivitySingle(): Single<Int>? {
+    private fun getSensitivitySingle(): Single<Int> {
         val code = PDMSUtil.MessageGetCode.CODE_SENSITIVITY
         return getSingle(code)
-            ?.doOnSuccess { sens = it }
+            .doOnSuccess { sens = it }
     }
 
-    fun setSensitivitySingle(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int>? {
+    fun setSensitivitySingle(@IntRange(from = 1, to = 255) sensitivity: Int): Single<Int> {
         val code = PDMSUtil.MessageSetCode.CODE_SENSITIVITY
         return setSingle(code, sensitivity.toByte())
-            ?.doOnSuccess {
+            .doOnSuccess {
                 Log.i(LOG_TAG, "$code:$it")
                 sens = it
             }
     }
 
-    private fun getSingle(code: PDMSUtil.MessageGetCode): Single<Int>? {
+    private fun getSingle(code: PDMSUtil.MessageGetCode): Single<Int> {
         var relay: PublishRelay<ByteArray>? = null
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.message)
-            ?.doOnSubscribe {
+        return writeCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.message)
+            .doOnSubscribe {
                 if (relayMap[code.byte] != null) {
                     relay = relayMap[code.byte]
                     Log.d(LOG_TAG, "true")
@@ -266,19 +269,19 @@ class RxPDMSDevice : InitializableBleDevice() {
                     Log.d(LOG_TAG, "false")
                 }
             }
-            ?.flatMap {
+            .flatMap {
                 relay!!.firstOrError()
             }
-            ?.map {
+            .map {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it[2].toUByte().toInt()
             }
     }
 
-    private fun setSingle(code: PDMSUtil.MessageSetCode, byte: Byte): Single<Int>? {
+    private fun setSingle(code: PDMSUtil.MessageSetCode, byte: Byte): Single<Int> {
         var relay: PublishRelay<ByteArray>? = null
-        return writeCharacteristic(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(byte))
-            ?.doOnSubscribe {
+        return writeCharacteristicSingle(UUID.fromString(PDMSUtil.UUID_COMMUNICATION), code.getMessage(byte))
+            .doOnSubscribe {
                 if (relayMap[code.byte] != null) {
                     relay = relayMap[code.byte]
                 } else {
@@ -287,7 +290,7 @@ class RxPDMSDevice : InitializableBleDevice() {
                     }
                 }
             }
-            ?.map {
+            .map {
                 Log.i(LOG_TAG, "$code:${it.map { it.toUByte().toUInt() }.toTypedArray().contentToString()}")
                 it[2].toUByte().toInt()
             }
@@ -311,19 +314,19 @@ class RxPDMSDevice : InitializableBleDevice() {
     }
 
     fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, uri: Uri): Observable<Int> {
-        return DfuAdapter(context, macAddress, deviceName, uri).let {
+        return DfuAdapter(context, deviceId, name, uri).let {
             update(clazz, it)
         }
     }
 
     fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, path: String): Observable<Int> {
-        return DfuAdapter(context, macAddress, deviceName, path).let {
+        return DfuAdapter(context, deviceId, name, path).let {
             update(clazz, it)
         }
     }
 
     fun <T : DfuBaseService> update(context: Context, clazz: Class<T>, @RawRes resRawId: Int): Observable<Int> {
-        return DfuAdapter(context, macAddress, deviceName, resRawId).let {
+        return DfuAdapter(context, deviceId, name, resRawId).let {
             update(clazz, it)
         }
     }
@@ -374,16 +377,6 @@ class RxPDMSDevice : InitializableBleDevice() {
                 isMatch(bluetoothDevice) -> RxPDMSDevice()
                 else -> null
             }
-        }
-
-        override fun getBleScanFilters(): Array<BleScanFilter> {
-            return arrayOf(
-                getScanFilter()
-            )
-        }
-
-        override fun getBleScanSettings(): BleScanSettings {
-            return BleScanSettings.Builder().build()
         }
     }
 

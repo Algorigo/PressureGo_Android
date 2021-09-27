@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.algorigo.algorigoble.BleManager
-import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
@@ -20,9 +18,6 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-
-        BleManager.init(applicationContext, BleManager.BleManagerEngine.ALGORIGO_BLE)
-        BleManager.getInstance().bleDeviceDelegate = RxPDMSDevice.DeviceDelegate()
     }
 
     override fun onResume() {

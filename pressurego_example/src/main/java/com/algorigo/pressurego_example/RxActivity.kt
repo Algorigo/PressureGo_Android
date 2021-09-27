@@ -6,15 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.algorigoble2.BleManager
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class RxActivity : PermissionAppCompatActivity() {
 
+    private lateinit var bleManager: BleManager
     private lateinit var stateDisposable: Disposable
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
@@ -30,7 +33,7 @@ class RxActivity : PermissionAppCompatActivity() {
 
         override fun onItemSelected(device: DeviceAdapter.Device) {
             if (device.connected) {
-                devices.find { it.macAddress == device.macAddress }?.also {
+                devices.find { it.deviceId == device.macAddress }?.also {
                     val intent = Intent(this@RxActivity, RxPDMSDeviceActivity::class.java)
                     intent.putExtra(PDMSDeviceActivity.MAC_ADDRESS_KEY, device.macAddress)
                     startActivity(intent)
@@ -43,12 +46,11 @@ class RxActivity : PermissionAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan)
 
-        BleManager.init(applicationContext, BleManager.BleManagerEngine.ALGORIGO_BLE)
-        BleManager.getInstance().bleDeviceDelegate = RxPDMSDevice.DeviceDelegate()
-        stateDisposable = BleManager.getInstance().getConnectionStateObservable()
+        bleManager = BleManagerProvider.getBleManager(applicationContext)
+        stateDisposable = bleManager.getConnectionStateObservable()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Log.d(LOG_TAG, "${it.bleDevice} == ${it.connectionState}")
+                Log.d(LOG_TAG, "${it.first} == ${it.second}")
                 adjustRecycler()
             }, {
 
@@ -76,7 +78,11 @@ class RxActivity : PermissionAppCompatActivity() {
 
     private fun startScan() {
         scanDisposable = requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-            .andThen(BleManager.getInstance().scanObservable(5000).subscribeOn(Schedulers.io()))
+            .andThen(
+                bleManager.scanObservable()
+                    .take(5000, TimeUnit.MILLISECONDS)
+                    .subscribeOn(Schedulers.io())
+            )
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {
                 findViewById<Button>(R.id.scan_btn).text = getText(R.string.stop_scan)
@@ -95,7 +101,7 @@ class RxActivity : PermissionAppCompatActivity() {
 
     private fun adjustRecycler() {
         deviceAdapter.devices =
-            devices.map { DeviceAdapter.Device(it.name, it.macAddress, it.connected) }
+            devices.map { DeviceAdapter.Device(it.deviceName, it.deviceId, it.connected) }
         deviceAdapter.notifyDataSetChanged()
     }
 
@@ -104,7 +110,7 @@ class RxActivity : PermissionAppCompatActivity() {
     }
 
     private fun connect(macAddress: String) {
-        devices.find { it.macAddress == macAddress }?.connectCompletable(false)
+        devices.find { it.deviceId == macAddress }?.connectCompletable()
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 Log.e(LOG_TAG, "connect complete")
@@ -114,7 +120,7 @@ class RxActivity : PermissionAppCompatActivity() {
     }
 
     private fun disconnect(macAddress: String) {
-        devices.find { it.macAddress == macAddress }?.disconnect()
+        devices.find { it.deviceId == macAddress }?.disconnect()
     }
 
     companion object {
