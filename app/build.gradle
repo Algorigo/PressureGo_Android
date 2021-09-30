@@ -68,7 +68,7 @@ dependencies {
 
     implementation 'com.algorigo.library:algorigoutil:1.3.2'
 
-    implementation 'com.algorigo.rx:algorigoble2:2.0.0-jaehongyoo-SNAPSHOT'
+    implementation 'com.algorigo.rx:algorigoble2:2.0.0-circleci-SNAPSHOT'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
