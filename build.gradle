@@ -17,8 +17,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-
-        maven { url NEXUS_SNAPSHOT_REPOSITORY_URL }
     }
 }
 
