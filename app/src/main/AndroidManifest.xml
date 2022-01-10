@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PressureGoApp">
         <activity android:name=".ui.BluetoothScanActivity" />
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name=".ui.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
