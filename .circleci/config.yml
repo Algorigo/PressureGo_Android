@@ -30,7 +30,8 @@ jobs:
     - run:
         command: |
           ./gradlew build
-        name: 'Run: ./gradlew build'
+        no_output_timeout: 30m
+        name: 'Run: ./gradlew build --no-daemon --max-workers=2'
     - save_cache:
         key: gradle-v1a-{{ arch }}-{{ checksum "./tmp_gradle_cache_seed" }}
         name: Save gradle cache

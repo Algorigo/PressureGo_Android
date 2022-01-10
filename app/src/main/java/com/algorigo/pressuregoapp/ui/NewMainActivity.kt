@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.algorigo.algorigoble.BleDevice
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.algorigoble2.BleDevice
 import com.algorigo.library.rx.Rx2ServiceBindingFactory
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
@@ -53,7 +53,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
-        Log.d(TAG, "${BleManager.getInstance().getConnectedDevices().size}")
+        Log.d(TAG, "${BleManagerProvider.getBleManager(this).getConnectedDevices().size}")
         if (bleDevicePreferencesHelper.latestSelectedMainButton) {
             onBtnS0102Click()
         } else {
@@ -92,15 +92,15 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         subscribeDevice(pdmsDevice)
         onBackPressSubject()
         deviceConnectionStateDisposable =
-            BleManager.getInstance().getConnectionStateObservable()
+            BleManagerProvider.getBleManager(this).getConnectionStateObservable()
                 .doFinally {
                     deviceConnectionStateDisposable = null
                 }
                 .observeOn(Schedulers.computation())
-                .filter { it.bleDevice.macAddress == this@NewMainActivity.macAddress }
+                .filter { it.first.deviceId == this@NewMainActivity.macAddress }
                 .distinctUntilChanged()
-                .filter { it.connectionState == BleDevice.ConnectionState.DISCONNECTED }
-                .map { it.bleDevice }
+                .filter { it.second == BleDevice.ConnectionState.DISCONNECTED }
+                .map { it.first }
                 .firstElement()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -162,7 +162,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             btnSensitivity.isEnabled = false
 
             tvMyDevices.setOnClickListener {
-                MyDevicesDialog.newInstance(pdmsDevice?.macAddress).apply {
+                MyDevicesDialog.newInstance(pdmsDevice?.deviceId).apply {
                     show(supportFragmentManager, MyDevicesDialog::class.java.simpleName)
                 }
             }
@@ -355,7 +355,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             }
             clCsvRecord.setOnClickListener {
                 if (serviceDisposable == null) {
-                    if (BleManager.getInstance().getConnectedDevices().isEmpty()) {
+                    if (BleManagerProvider.getBleManager(this@NewMainActivity).getConnectedDevices().isEmpty()) {
                         ConfirmDialog.newInstance(
                             title = resources.getString(R.string.csv_record_no_device_connected_title),
                             content = resources.getString(R.string.csv_record_no_device_connected_content),
@@ -480,7 +480,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
     }
 
     private fun initDevice(macAddress: String) {
-        pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
+        pdmsDevice = BleManagerProvider.getBleManager(this).getDevice(macAddress) as? RxPDMSDevice
         pdmsDevice?.apply {
 
             binding.tvIntervalValue.isInvisible = false
@@ -632,7 +632,7 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
             .map { it[0] to it[1] }
             .subscribe({
                 if (it.second - it.first < 2000L) {
-                    val iterator = BleManager.getInstance().getConnectedDevices().iterator()
+                    val iterator = BleManagerProvider.getBleManager(this).getConnectedDevices().iterator()
                     while (iterator.hasNext()) {
                         iterator.next().disconnect()
                     }

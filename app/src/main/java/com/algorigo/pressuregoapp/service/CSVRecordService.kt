@@ -7,8 +7,9 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.algorigo.algorigoble.BleDevice
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.algorigoble2.BleDevice
+import com.algorigo.algorigoble2.BleManager
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.data.BleDevicePreferencesHelper
@@ -28,7 +29,7 @@ import java.io.File
 class CSVRecordService : Service() {
 
     private val bleManager: BleManager by lazy {
-        BleManager.getInstance()
+        BleManagerProvider.getBleManager(this)
     }
     private lateinit var startStreamingTime: DateTime
     private lateinit var bleDevicePreferencesHelper: BleDevicePreferencesHelper
@@ -76,20 +77,20 @@ class CSVRecordService : Service() {
         connectionStateDisposable = initConnectedDevicesSingle()
             .doOnSuccess {
                 it.forEach { device ->
-                    deviceMap[device.macAddress] = Pair(device, device.connectionState)
+                    deviceMap[device.deviceId] = Pair(device, device.connectionState)
                     devicesConnectionSubject.onNext(
                         Pair(
-                            device.macAddress,
+                            device.deviceId,
                             Pair(device, device.connectionState)
                         )
                     )
                 }
-            }.flatMapObservable { BleManager.getInstance().getConnectionStateObservable() }
+            }.flatMapObservable { bleManager.getConnectionStateObservable() }
             .doOnNext {
                 devicesConnectionSubject.onNext(
                     Pair(
-                        it.bleDevice.macAddress,
-                        Pair(it.bleDevice as RxPDMSDevice, it.bleDevice.connectionState)
+                        it.first.deviceId,
+                        Pair(it.first as RxPDMSDevice, it.first.connectionState)
                     )
                 )
             }
@@ -230,7 +231,7 @@ class CSVRecordService : Service() {
     private fun writeCsvLine(device: RxPDMSDevice, intArray: IntArray): String {
         val builder = StringBuilder()
         builder.append(
-            "${device.macAddress},${
+            "${device.deviceId},${
                 System.currentTimeMillis()
             },${device.getAmplification()},${device.getSensitivity()},${
                 intArray.contentToString().let { it.substring(1, it.length - 1).replace(" ", "") }

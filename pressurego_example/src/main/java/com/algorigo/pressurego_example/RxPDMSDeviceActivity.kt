@@ -3,7 +3,7 @@ package com.algorigo.pressurego_example
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
@@ -24,11 +24,11 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
     }
 
     override fun initDevice(macAddress: String) {
-        pdmsDevice = BleManager.getInstance().getDevice(macAddress) as? RxPDMSDevice
+        pdmsDevice = BleManagerProvider.getBleManager(this).getDevice(macAddress) as? RxPDMSDevice
     }
 
     override fun getDeviceName() {
-        deviceNameTextView.text = pdmsDevice?.getDeviceName()
+        deviceNameTextView.text = pdmsDevice?.getName()
     }
 
     override fun getManufactureName() {

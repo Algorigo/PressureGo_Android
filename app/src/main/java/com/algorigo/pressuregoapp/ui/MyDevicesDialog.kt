@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.DialogMyDevicesBinding
@@ -24,7 +24,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
 
     private var callback: Callback? = null
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
-        ConnectedRecyclerAdapter(this, macAddress, true)
+        ConnectedRecyclerAdapter(requireContext(), this, macAddress, true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
             myDevicesAddDeviceButton.setOnClickListener {
                 onAddDeviceClick()
             }
-            BleManager.getInstance()
+            BleManagerProvider.getBleManager(requireContext())
                 .getConnectedDevices()
                 .mapNotNull { it as? RxPDMSDevice }
                 .let {
@@ -73,7 +73,7 @@ class MyDevicesDialog : BottomSheetDialogFragment(),
     }
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
-        callback?.onDeviceSelected(device.macAddress)
+        callback?.onDeviceSelected(device.deviceId)
         dismiss()
     }
 

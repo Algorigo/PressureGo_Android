@@ -1,16 +1,18 @@
 package com.algorigo.pressuregoapp.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ItemBluetoothScanConnectedDeviceBinding
 
 class ConnectedRecyclerAdapter(
+    private val context: Context,
     private val delegate: ConnectedRecyclerDelegate,
     private val selectedMacAddress: String? = null,
     private val isMyDeviceInfo: Boolean = false
@@ -34,7 +36,7 @@ class ConnectedRecyclerAdapter(
                     delegate.onConnectedDeviceSelected(device)
                 }
                 deviceName.text = device.getDisplayName()
-                macAddressView.text = device.macAddress
+                macAddressView.text = device.deviceId
                 selectedMacAddress?.let {
                     clConnectedDevice.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.pressure_go_white_opacity_7))
                 }
@@ -59,7 +61,7 @@ class ConnectedRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: ConnectedRecyclerViewHolder, position: Int) {
-        BleManager.getInstance()
+        BleManagerProvider.getBleManager(context)
             .getConnectedDevices()
             .mapNotNull { it as? RxPDMSDevice }[position]
             .also {
@@ -68,7 +70,7 @@ class ConnectedRecyclerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return BleManager.getInstance().getConnectedDevices().mapNotNull { it as? RxPDMSDevice }
+        return BleManagerProvider.getBleManager(context).getConnectedDevices().mapNotNull { it as? RxPDMSDevice }
             .count()
     }
 

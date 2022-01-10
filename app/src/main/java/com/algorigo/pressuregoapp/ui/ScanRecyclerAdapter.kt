@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.algorigo.algorigoble.BleDevice
+import com.algorigo.algorigoble2.BleDevice
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
 
@@ -25,7 +25,7 @@ class ScanRecyclerAdapter(private val delegate: ScanRecyclerDelegate) : Recycler
                 delegate.onDeviceSelected(device)
             }
             itemView.findViewById<TextView>(R.id.device_name).text = device.getDisplayName()
-            itemView.findViewById<TextView>(R.id.mac_address_view).text = device.macAddress
+            itemView.findViewById<TextView>(R.id.mac_address_view).text = device.deviceId
             itemView.findViewById<ProgressBar>(R.id.device_progress).visibility = when (device.connectionState) {
                 BleDevice.ConnectionState.CONNECTING -> View.VISIBLE
                 else -> View.GONE

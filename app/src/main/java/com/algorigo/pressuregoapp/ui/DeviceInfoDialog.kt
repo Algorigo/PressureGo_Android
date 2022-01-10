@@ -49,7 +49,7 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
             text = device.getDisplayName()
         }
         view.findViewById<TextView>(R.id.device_info_mac_address_view).run {
-            text = device.macAddress
+            text = device.deviceId
         }
         view.findViewById<TextView>(R.id.device_info_hardware_version_view).run {
             text = device.getHardwareVersion()

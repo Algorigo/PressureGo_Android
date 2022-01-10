@@ -5,16 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.algorigoble2.BleScanSettings
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
+import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
-import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.databinding.ActivityBluetoothScanBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class BluetoothScanActivity : PermissionAppCompatActivity(),
     ConnectedRecyclerAdapter.ConnectedRecyclerDelegate,
@@ -27,7 +26,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private var devices = listOf<RxPDMSDevice>()
 
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
-        ConnectedRecyclerAdapter(this)
+        ConnectedRecyclerAdapter(this, this)
     }
     private val scanRecyclerAdapter: ScanRecyclerAdapter by lazy {
         ScanRecyclerAdapter(this)
@@ -53,7 +52,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             }
         }
 
-        connectionStateDisposable = BleManager.getInstance().getConnectionStateObservable()
+        connectionStateDisposable = BleManagerProvider.getBleManager(this).getConnectionStateObservable()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 adjustRecycler()
@@ -90,7 +89,10 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             scanDisposable =
                 requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
                     .andThen(
-                        BleManager.getInstance().scanObservable(5000).subscribeOn(Schedulers.io())
+                        BleManagerProvider.getBleManager(this@BluetoothScanActivity)
+                            .scanObservable(BleScanSettings.Builder().build(), RxPDMSDevice.getScanFilter())
+                            .take(5000, TimeUnit.MILLISECONDS)
+                            .subscribeOn(Schedulers.io())
                     )
                     .map { it.mapNotNull { it as? RxPDMSDevice } }
                     .observeOn(AndroidSchedulers.mainThread())
@@ -116,7 +118,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
 
     private fun adjustRecycler() {
         with(binding) {
-            BleManager.getInstance()
+            BleManagerProvider.getBleManager(this@BluetoothScanActivity)
                 .getConnectedDevices()
                 .mapNotNull { it as? RxPDMSDevice }
                 .count()
@@ -133,7 +135,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
         Intent(this, NewMainActivity::class.java).apply {
             flags =
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(NewMainActivity.KEY_MAC_ADDRESS, device.macAddress)
+            putExtra(NewMainActivity.KEY_MAC_ADDRESS, device.deviceId)
         }.also {
             startActivity(it)
         }
@@ -158,7 +160,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     override fun onDeviceSelected(device: RxPDMSDevice) {
-        device.connectCompletable(false)
+        device.connectCompletable()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 adjustRecycler()

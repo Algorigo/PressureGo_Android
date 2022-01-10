@@ -86,12 +86,12 @@ nexus {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName versionStr
 
@@ -127,7 +127,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
 
-    implementation 'com.algorigo.rx:algorigoble:1.4.0'
+    if (project.hasProperty('LOCAL_ALGORIGO_BLE')) {
+        implementation project(':algorigoble2')
+    } else {
+        implementation 'com.algorigo.rx:algorigoble2:2.0.4'
+    }
 
     //ReactiveX
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
