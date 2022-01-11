@@ -20,8 +20,10 @@ import com.algorigo.pressuregoapp.R
 import com.algorigo.pressuregoapp.dfu.Utility
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.io.File
 
 class FirmwareUpdateDialog : BottomSheetDialogFragment() {
@@ -105,7 +107,9 @@ class FirmwareUpdateDialog : BottomSheetDialogFragment() {
         } else {
             Observable.error(IllegalStateException("firmwareRemote and firmwareLocal is null"))
         }
-        updateDisposable = updateObservable
+        updateDisposable = device.getBatteryPercentSingle()
+            .flatMapCompletable { showBatteryAlert(it) }
+            .andThen(updateObservable)
             .doFinally {
                 updateDisposable = null
             }
@@ -166,6 +170,36 @@ class FirmwareUpdateDialog : BottomSheetDialogFragment() {
                 }
                 .create().show()
         }
+    }
+
+    private fun showBatteryAlert(battery: Int): Completable {
+        val subject = PublishSubject.create<Any>()
+        return subject
+            .ignoreElements()
+            .doOnSubscribe {
+                if (battery > 25) {
+                    subject.onComplete()
+                    return@doOnSubscribe
+                }
+
+                requireActivity().runOnUiThread {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Battery Low")
+                        .setMessage("If you power off while Firmware Updating, device will be beyond recovery.")
+                        .setNegativeButton("Cancel Update") { _, _ ->
+                            Log.e("!!!", "setNegativeButton")
+                            subject.onError(RuntimeException())
+                        }
+                        .setPositiveButton("Proceed Update") { _, _ ->
+                            subject.onComplete()
+                        }
+                        .setOnCancelListener { _ ->
+                            Log.e("!!!", "setOnCancelListener")
+                            subject.onError(RuntimeException())
+                        }
+                        .show()
+                }
+            }
     }
 
     companion object {
