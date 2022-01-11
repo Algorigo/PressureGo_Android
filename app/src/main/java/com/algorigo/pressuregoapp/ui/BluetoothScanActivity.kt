@@ -9,9 +9,11 @@ import androidx.appcompat.app.AlertDialog
 import com.algorigo.algorigoble2.BleScanSettings
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.BleManagerProvider
+import com.algorigo.pressurego.PDMSUtil
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.databinding.ActivityBluetoothScanBinding
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -25,7 +27,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private var connectionStateDisposable: Disposable? = null
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
-    private var checkUpdateDisposable: Disposable? = null
+    private var connectDisposable: Disposable? = null
 
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
         ConnectedRecyclerAdapter(this, this)
@@ -61,7 +63,6 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             }, {
                 Log.e(LOG_TAG, "", it)
             })
-
     }
 
     override fun onResume() {
@@ -77,7 +78,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     override fun onDestroy() {
         super.onDestroy()
         connectionStateDisposable?.dispose()
-        checkUpdateDisposable?.dispose()
+        connectDisposable?.dispose()
     }
 
     private fun initRecyclerView() {
@@ -135,12 +136,14 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     override fun onConnectedDeviceSelected(device: RxPDMSDevice) {
-        Intent(this, NewMainActivity::class.java).apply {
-            flags =
-                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(NewMainActivity.KEY_MAC_ADDRESS, device.deviceId)
-        }.also {
-            startActivity(it)
+        if (connectDisposable == null) {
+            Intent(this, NewMainActivity::class.java).apply {
+                flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(NewMainActivity.KEY_MAC_ADDRESS, device.deviceId)
+            }.also {
+                startActivity(it)
+            }
         }
     }
 
@@ -163,28 +166,20 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     override fun onDeviceSelected(device: RxPDMSDevice) {
-        device.bondCompletable()
+        connectDisposable = device.bondCompletable()
             .andThen(device.connectCompletable())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                adjustRecycler()
-                checkUpdate(device)
-            }, {
-                Log.e(LOG_TAG, "", it)
-            })
-    }
-
-    private fun checkUpdate(device: RxPDMSDevice) {
-        checkUpdateDisposable = device.checkUpdateExist()
+            .andThen(device.checkUpdateExist())
             .doFinally {
-                checkUpdateDisposable = null
+                connectDisposable = null
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                adjustRecycler()
                 showUpdateCheckDialog(device, it)
             }, {
                 Log.e(LOG_TAG, "", it)
             }, {
+                adjustRecycler()
             })
     }
 
