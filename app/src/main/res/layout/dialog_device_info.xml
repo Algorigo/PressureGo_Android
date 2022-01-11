@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="PRESSUREGO" />
 
-    <ui.BatteryView
+    <com.algorigo.pressuregoapp.ui.BatteryView
         android:id="@+id/device_info_battery_view"
         android:layout_width="36dp"
         android:layout_height="36dp"

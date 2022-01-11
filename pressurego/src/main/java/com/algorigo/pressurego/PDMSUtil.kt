@@ -138,15 +138,8 @@ object PDMSUtil {
     }
 
     fun latestFirmware(
-        list: List<Pair<String, String>>,
-        firmwareVersion: String
-    ): String? {
-        return list.maxByOrNull { it.first }?.let { pair ->
-            if (pair.first.toLowerCase() > firmwareVersion.toLowerCase()) {
-                pair.second
-            } else {
-                null
-            }
-        }
+        list: List<Pair<String, String>>
+    ): Pair<String, String>? {
+        return list.maxByOrNull { it.first }
     }
 }

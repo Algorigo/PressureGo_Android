@@ -243,15 +243,17 @@ You can request permission easily with PermissionAppCompatActivity class of [Alg
 ```implementation 'com.algorigo.library:algorigoutil:1.3.0'```
 
 ```kotlin
-import com.algorigo.algorigoble.BleManager
+import com.algorigo.algorigoble2.BleManager
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.RxPDMSDevice
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class PDMSActivity : PermissionAppCompatActivity() {
 
+    private lateinit var bleManager: BleManager
     private var pdmsDevice: RxPDMSDevice?
     private var scanDisposable: Disposable? = null
     private var dataDisposable: Disposable? = null
@@ -263,13 +265,12 @@ class PDMSActivity : PermissionAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
 
-        BleManager.init(applicationContext)
-        BleManager.getInstance().bleDeviceDelegate = RxPDMSDevice.DeviceDelegate()
+        bleManager = BleManager(applicationContext, RxPDMSDevice.DeviceDelegate())
     }
 
     private fun startScan() {
         scanDisposable = requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-                    .andThen(BleManager.getInstance().scanObservable(5000).subscribeOn(Schedulers.io()))
+                    .andThen(bleManager.scanObservable().take(5, TimeUnit.SECOND).subscribeOn(Schedulers.io()))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         devices = it.mapNotNull { it as? RxPDMSDevice }
@@ -481,7 +482,7 @@ Remember to add your service to *AndroidManifest.xml*.
 - [Firmware List](https://pressure-go.s3.ap-northeast-2.amazonaws.com/firmware/firmware.json "Firmware List")
 
 ## Store
-- [Device Mart](https://www.devicemart.co.kr/main/index "Device Mart")
+- [Naver Store](https://smartstore.naver.com/algorigo/category/494ddc25b8a4477aa2b79f4ef390e410?cp=1 "Naver Store")
 
 ## Link
 - [Algorigo](https://www.algorigo.com "Algorigo")

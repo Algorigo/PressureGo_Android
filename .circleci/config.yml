@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: circleci/android:api-30
+    environment:
+      GRADLE_OPTS: -Xmx3200m -XX:+HeapDumpOnOutOfMemoryError -Dorg.gradle.caching=true -Dorg.gradle.configureondemand=true -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false
     steps:
     - checkout
     - run:
@@ -28,7 +30,8 @@ jobs:
     - run:
         command: |
           ./gradlew build
-        name: 'Run: ./gradlew build'
+        no_output_timeout: 30m
+        name: 'Run: ./gradlew build --no-daemon --max-workers=2'
     - save_cache:
         key: gradle-v1a-{{ arch }}-{{ checksum "./tmp_gradle_cache_seed" }}
         name: Save gradle cache
