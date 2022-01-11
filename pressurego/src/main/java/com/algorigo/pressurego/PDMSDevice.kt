@@ -298,7 +298,13 @@ class PDMSDevice(val bluetoothDevice: BluetoothDevice, val callback: Callback? =
         val firmwareVersion = getFirmwareVersion()
         val result = PDMSUtil.firmwareList()
         return result?.let {
-            PDMSUtil.latestFirmware(it, firmwareVersion)
+            PDMSUtil.latestFirmware(it)?.let { pair ->
+                if (pair.first.lowercase(Locale.getDefault()) > firmwareVersion.lowercase(Locale.getDefault())) {
+                    pair.second
+                } else {
+                    null
+                }
+            }
         }
     }
 

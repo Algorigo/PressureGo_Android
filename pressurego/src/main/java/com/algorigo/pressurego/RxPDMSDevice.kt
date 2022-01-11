@@ -296,7 +296,7 @@ class RxPDMSDevice : InitializableBleDevice() {
             }
     }
 
-    fun checkUpdateExist(): Maybe<String> {
+    fun checkUpdateExist(): Maybe<Pair<String, String>> {
         return Single.create<List<Pair<String, String>>> {
             val result = PDMSUtil.firmwareList()
             if (result != null) {
@@ -307,8 +307,12 @@ class RxPDMSDevice : InitializableBleDevice() {
         }
             .subscribeOn(Schedulers.io())
             .flatMapMaybe {
-                PDMSUtil.latestFirmware(it, firmwareVersion)?.let {
-                    Maybe.just(it)
+                PDMSUtil.latestFirmware(it)?.let { pair ->
+                    if (pair.first.lowercase(Locale.getDefault()) > firmwareVersion.lowercase(Locale.getDefault())) {
+                        Maybe.just(pair)
+                    } else {
+                        Maybe.empty()
+                    }
                 } ?: Maybe.empty()
             }
     }

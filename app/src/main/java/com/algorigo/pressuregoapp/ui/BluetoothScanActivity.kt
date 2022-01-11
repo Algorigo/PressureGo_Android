@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import com.algorigo.algorigoble2.BleScanSettings
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.BleManagerProvider
@@ -24,6 +25,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private var connectionStateDisposable: Disposable? = null
     private var scanDisposable: Disposable? = null
     private var devices = listOf<RxPDMSDevice>()
+    private var checkUpdateDisposable: Disposable? = null
 
     private val connectedRecyclerAdapter: ConnectedRecyclerAdapter by lazy {
         ConnectedRecyclerAdapter(this, this)
@@ -75,6 +77,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     override fun onDestroy() {
         super.onDestroy()
         connectionStateDisposable?.dispose()
+        checkUpdateDisposable?.dispose()
     }
 
     private fun initRecyclerView() {
@@ -165,9 +168,40 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 adjustRecycler()
+                checkUpdate(device)
             }, {
                 Log.e(LOG_TAG, "", it)
             })
+    }
+
+    private fun checkUpdate(device: RxPDMSDevice) {
+        checkUpdateDisposable = device.checkUpdateExist()
+            .doFinally {
+                checkUpdateDisposable = null
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                showUpdateCheckDialog(device, it)
+            }, {
+                Log.e(LOG_TAG, "", it)
+            }, {
+            })
+    }
+
+    private fun showUpdateCheckDialog(device: RxPDMSDevice, remoteFirmware: Pair<String, String>) {
+        AlertDialog.Builder(this)
+            .setTitle("Update Firmware exist")
+            .setMessage("Do you want to update to version ${remoteFirmware.first}?")
+            .setNegativeButton("Cancel") { _, _ -> }
+            .setPositiveButton("OK") { _, _ ->
+                FirmwareUpdateDialog().also {
+                    it.device = device
+                    it.firmwareRemote = remoteFirmware.second
+                }.apply {
+                    show(supportFragmentManager, FirmwareUpdateDialog::class.java.simpleName)
+                }
+            }
+            .create().show()
     }
 
     companion object {

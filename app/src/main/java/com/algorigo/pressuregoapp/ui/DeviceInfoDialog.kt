@@ -67,7 +67,7 @@ class DeviceInfoDialog : BottomSheetDialogFragment() {
                         }
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
-                            showUpdateCheckDialog(it)
+                            showUpdateCheckDialog(it.second)
                         }, {
                             Log.e(LOG_TAG, "", it)
                         }, {
