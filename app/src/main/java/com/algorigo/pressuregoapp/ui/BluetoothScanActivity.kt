@@ -168,7 +168,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     override fun onDeviceSelected(device: RxPDMSDevice) {
         connectDisposable = device.bondCompletable()
             .andThen(device.connectCompletable())
-            .andThen(device.checkUpdateExist())
+            .andThen(device.checkUpdateExist().timeout(5, TimeUnit.SECONDS))
             .doFinally {
                 connectDisposable = null
             }
