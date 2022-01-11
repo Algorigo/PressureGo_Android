@@ -12,7 +12,7 @@ plugins {
     id 'kotlin-android'
 }
 
-def versionStr = '1.1.0'
+def versionStr = '1.1.1'
 
 def getCurrentGitBranch() {
     def gitBranch = "Unknown branch"
