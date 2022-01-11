@@ -160,7 +160,8 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     }
 
     override fun onDeviceSelected(device: RxPDMSDevice) {
-        device.connectCompletable()
+        device.bondCompletable()
+            .andThen(device.connectCompletable())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 adjustRecycler()

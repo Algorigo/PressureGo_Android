@@ -110,7 +110,11 @@ class RxActivity : PermissionAppCompatActivity() {
     }
 
     private fun connect(macAddress: String) {
-        devices.find { it.deviceId == macAddress }?.connectCompletable()
+        devices.find { it.deviceId == macAddress }
+            ?.let {
+                it.bondCompletable()
+                    .andThen(it.connectCompletable())
+            }
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 Log.e(LOG_TAG, "connect complete")
