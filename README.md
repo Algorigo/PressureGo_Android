@@ -482,7 +482,7 @@ Remember to add your service to *AndroidManifest.xml*.
 - [Firmware List](https://pressure-go.s3.ap-northeast-2.amazonaws.com/firmware/firmware.json "Firmware List")
 
 ## Store
-- [Device Mart](https://www.devicemart.co.kr/main/index "Device Mart")
+- [Naver Store](https://smartstore.naver.com/algorigo/category/494ddc25b8a4477aa2b79f4ef390e410?cp=1 "Naver Store")
 
 ## Link
 - [Algorigo](https://www.algorigo.com "Algorigo")
