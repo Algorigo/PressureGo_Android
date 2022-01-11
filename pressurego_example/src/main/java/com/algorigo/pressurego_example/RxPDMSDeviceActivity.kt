@@ -138,8 +138,8 @@ class RxPDMSDeviceActivity : PDMSDeviceActivity() {
         pdmsDevice?.checkUpdateExist()
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
-                firmwareRemotePath = it
-                firmwarePathTextView.text = it
+                firmwareRemotePath = it.second
+                firmwarePathTextView.text = it.second
             }, {
                 Log.e(LOG_TAG, "", it)
                 firmwarePathTextView.text = "Firmware Error : ${it.message}"
