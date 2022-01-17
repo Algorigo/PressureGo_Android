@@ -2,21 +2,22 @@ package com.algorigo.pressuregoapp.ui
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AlertDialog
+import androidx.annotation.RequiresApi
 import com.algorigo.algorigoble2.BleScanSettings
 import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.BleManagerProvider
-import com.algorigo.pressurego.PDMSUtil
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.databinding.ActivityBluetoothScanBinding
+import com.algorigo.pressuregoapp.util.AppInfoUtil
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import androidx.appcompat.app.AlertDialog
 
 class BluetoothScanActivity : PermissionAppCompatActivity(),
     ConnectedRecyclerAdapter.ConnectedRecyclerDelegate,
@@ -91,7 +92,14 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     private fun startScan() {
         with(binding) {
             scanDisposable =
-                requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+                AppInfoUtil.getSdkVersionSingle()
+                    .flatMapCompletable { sdkVersion ->
+                        if(sdkVersion >= Build.VERSION_CODES.S) {
+                            requestPermissionCompletable(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+                        } else {
+                            requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+                        }
+                    }
                     .andThen(
                         BleManagerProvider.getBleManager(this@BluetoothScanActivity)
                             .scanObservable(BleScanSettings.Builder().build(), RxPDMSDevice.getScanFilter())
@@ -168,7 +176,7 @@ class BluetoothScanActivity : PermissionAppCompatActivity(),
     override fun onDeviceSelected(device: RxPDMSDevice) {
         connectDisposable = device.bondCompletable()
             .andThen(device.connectCompletable())
-            .andThen(device.checkUpdateExist())
+            .andThen(device.checkUpdateExist().timeout(5, TimeUnit.SECONDS))
             .doFinally {
                 connectDisposable = null
             }
