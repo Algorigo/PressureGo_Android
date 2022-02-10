@@ -80,5 +80,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'
     
     //DFU
-    implementation 'no.nordicsemi.android:dfu:1.11.1'
+    implementation 'no.nordicsemi.android:dfu:1.12.1-beta01'
 }
