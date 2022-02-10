@@ -5,13 +5,7 @@ import io.reactivex.rxjava3.core.Single
 
 object AppInfoUtil {
 
-    fun getSdkVersionSingle(): Single<Int> {
-        return Single.create { emitter ->
-            try {
-                emitter.onSuccess(Build.VERSION.SDK_INT)
-            } catch (e: Exception) {
-                emitter.onError(e)
-            }
-        }
+    fun getSdkVersion(): Int {
+        return Build.VERSION.SDK_INT
     }
 }
