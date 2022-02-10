@@ -1,35 +1,39 @@
 package com.algorigo.pressuregoapp.ui
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.transition.*
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.algorigo.algorigoble2.BleDevice
 import com.algorigo.library.rx.Rx2ServiceBindingFactory
+import com.algorigo.library.rx.permission.PermissionAppCompatActivity
 import com.algorigo.pressurego.BleManagerProvider
 import com.algorigo.pressurego.RxPDMSDevice
 import com.algorigo.pressuregoapp.R
-import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import com.algorigo.pressuregoapp.data.BleDevicePreferencesHelper
+import com.algorigo.pressuregoapp.databinding.ActivityNewMainBinding
 import com.algorigo.pressuregoapp.extension.shareCsvFile
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.BehaviorSubject
 import com.algorigo.pressuregoapp.service.CSVRecordService
+import com.algorigo.pressuregoapp.util.AppInfoUtil
 import com.algorigo.pressuregoapp.util.FileUtil
 import com.algorigo.pressuregoapp.util.ServiceUtil
 import com.algorigo.pressuregoapp.util.ToastUtil
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.io.File
 
 
-class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
+class NewMainActivity : PermissionAppCompatActivity(), MyDevicesDialog.Callback {
 
     private lateinit var binding: ActivityNewMainBinding
 
@@ -53,7 +57,6 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
-        Log.d(TAG, "${BleManagerProvider.getBleManager(this).getConnectedDevices().size}")
         if (bleDevicePreferencesHelper.latestSelectedMainButton) {
             onBtnS0102Click()
         } else {
@@ -91,26 +94,33 @@ class NewMainActivity : AppCompatActivity(), MyDevicesDialog.Callback {
         super.onResume()
         subscribeDevice(pdmsDevice)
         onBackPressSubject()
-        deviceConnectionStateDisposable =
-            BleManagerProvider.getBleManager(this).getConnectionStateObservable()
-                .doFinally {
-                    deviceConnectionStateDisposable = null
+        deviceConnectionStateDisposable = Single.fromCallable { AppInfoUtil.getSdkVersion() }
+            .flatMapCompletable { sdkVersion ->
+                if (sdkVersion >= Build.VERSION_CODES.S) {
+                    requestPermissionCompletable(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+                } else {
+                    requestPermissionCompletable(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
                 }
-                .observeOn(Schedulers.computation())
-                .filter { it.first.deviceId == this@NewMainActivity.macAddress }
-                .distinctUntilChanged()
-                .filter { it.second == BleDevice.ConnectionState.DISCONNECTED }
-                .map { it.first }
-                .firstElement()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        binding.tvMacAddress.text = ""
-                    }, {
-                        Log.d(TAG, it.toString())
-                    }, {
-                        Log.d(TAG, "Maybe onComplete")
-                    })
+            }
+            .andThen(BleManagerProvider.getBleManager(this).getConnectionStateObservable())
+            .doFinally {
+                deviceConnectionStateDisposable = null
+            }
+            .observeOn(Schedulers.computation())
+            .filter { it.first.deviceId == this@NewMainActivity.macAddress }
+            .distinctUntilChanged()
+            .filter { it.second == BleDevice.ConnectionState.DISCONNECTED }
+            .map { it.first }
+            .firstElement()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {
+                    binding.tvMacAddress.text = ""
+                }, {
+                    Log.d(TAG, it.toString())
+                }, {
+                    Log.d(TAG, "Maybe onComplete")
+                })
     }
 
     override fun onPause() {
